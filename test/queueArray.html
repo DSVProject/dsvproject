@@ -124,7 +124,7 @@
 			
 			// layout code
 			
-			var arrIdx = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+		var arrIdx = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
 	
 	    var svgContainer = d3.select("#viz").append("svg")
 	                       	.attr("width", width)
@@ -204,6 +204,35 @@
 	    	.attr("x", 175)
 				.attr("y", 130)
 				.text( "tail");
+		
+		//Stack Object	
+		function FixedCapacityStack() {
+			this.stack = [];
+			this.cap = 15;
+			this.N = 0;
+			
+			this.isEmpty = function() { return this.N == 0; }
+			this.size = function() { return this.N; }
+			this.push = function(item) { 
+				if(this.N < this.cap-1) {
+					this.stack[this.N] = item;
+					this.N++;
+				}
+			}
+			this.pop = function() {
+				this.N--;
+				return this.stack[this.N];
+							}
+			this.displayAll = function() { 
+				var array = [];
+				
+				if(this.isEmpty() == true)
+					return null;
+				for(i=0;i<this.N;i++)
+					array[i] = this.stack[i];
+				return array; 
+			}
+		}
 	    
     </script>
   </body>
