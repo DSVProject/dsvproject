@@ -12,13 +12,13 @@
         stroke-width:2px;
       }
       
-      .array-imp-sqr{
+      .array-sqr{
         fill:white;
         stroke:black;
         stroke-width:2px;
       }
       
-      .array-imp-sqr-highlight{
+      .array-sqr-highlight{
         stroke:gold;
         stroke-width:7px;
         fill-opacity:0.0;
@@ -35,8 +35,8 @@
   <body>
     <div>
       <input type="text">
-      <input type="button" id="btn-enqueue" onclick="findTail()" value="Enqueue">
-      <input type="button" id="btn-dequeue" onclick="findHead()" value="Dequeue">
+      <input type="button" id="btn-push" onclick="findTop()" value="Push">
+      <input type="button" id="btn-pop" onclick="findHead()" value="Pop">
       <input type="button" id="btn-clear" onclick="" value="Clear">
       <input type="button" id="btn-resetPos" onclick="resetPos()" value="Reset Position">
     </div>
@@ -44,21 +44,28 @@
     
     <script type="text/javascript">
       
-      var jsonQueue = [
-        {
-          "idx":0,
-          "value":"A"
-        }, {
-          "idx":1,
-          "value":"B"
-        }, {
-          "idx":2,
-          "value":"C"
-        }
-      ];
-    
-    
       //general variables
+      var jsonArray = [
+        {"idx":0,"x":50,"y":300, "value":null},
+        {"idx":1,"x":100,"y":300, "value":null},
+        {"idx":2,"x":150,"y":300, "value":null},
+        {"idx":3,"x":200,"y":300, "value":null},
+        {"idx":4,"x":250,"y":300, "value":null},
+        {"idx":5,"x":300,"y":300, "value":null},
+        {"idx":6,"x":350,"y":300, "value":null},
+        {"idx":7,"x":400,"y":300, "value":null},
+        {"idx":8,"x":450,"y":300, "value":null},
+        {"idx":9,"x":500,"y":300, "value":null},
+        {"idx":10,"x":550,"y":300, "value":null},
+        {"idx":11,"x":600,"y":300, "value":null},
+        {"idx":12,"x":650,"y":300, "value":null},
+        {"idx":13,"x":700,"y":300, "value":null},
+        {"idx":14,"x":750,"y":300, "value":null},
+        {"idx":15,"x":800,"y":300, "value":null},
+        {"idx":"top","x":50,"y":50, "value":0}
+        //{"idx":"tail","x":150,"y":50, "value":0}
+      ]
+
       var width = 900,
       height = 500;
           
@@ -78,32 +85,9 @@
       }
       
       // animation functions
-      function findTail(){
-        var highlight = d3.select("#g-rect")
-          .append("rect")
-          .attr("class", "array-imp-sqr-highlight")
-          .attr("x", 150)
-          .attr("y", 50)
-          .attr("height", 50)
-          .attr("width", 50)
-        
-        highlight.transition()            
-          .delay(100)            
-          .duration(3000)
-          .attr("x", 50)
-          .attr("y", 300)
-        
-        highlight.transition()
-          .delay(3500)
-          .duration(1000)
-          .attr("x", 700)
-          .delay(3800)
-          .remove();
-      };
-      
-      function findHead(){
-        var highlight = d3.select("#g-rect").append("rect")
-        .attr("class", "array-imp-sqr-highlight")
+      function findTop(){
+        var highlight = d3.select("#g-array").append("rect")
+        .attr("class", "array-sqr-highlight")
         .attr("x", 50)
         .attr("y", 50)
         .attr("height", 50)
@@ -123,10 +107,7 @@
              .remove();
       };
       
-      // layout code
-      
-      var arrIdx = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
-      
+      // layout code      
       var svgContainer = d3.select("#viz").append("svg")
         .attr("width", width)
         .attr("height", height)
@@ -142,102 +123,85 @@
       panGroup.append("rect")
         .attr('width', width)
         .attr('height', height)
-        .attr('fill', 'white');
-                
+        .attr('fill', 'white');      
       
       // this groups will hold the graphic elements          
       var arrayGroup = panGroup.append("g")
-        .attr("id", "g-rect");
+        .attr("id", "g-array");
         
-      var squares = arrayGroup.selectAll("rect")
-        .data(arrIdx)
-        .enter()
-        .append("rect");
-                      
-      var squaresAtt = squares                
-        .attr("id", function (d) {return "array-imp-sqr-" + d; })
-        .attr("class", "array-imp-sqr")
-        .attr("x", function (d) {return ((d)+1) * 50;})
-        .attr("y", 300)
-        .attr("height", 50)
-        .attr("width", 50)
-        .on("mouseover", function(){d3.select(this).style("fill", "pink");})
-        .on("mouseout", function(){d3.select(this).style("fill", "white");});
-                        
-      arrayGroup.append("rect")
-        .attr("id", "array-imp-sqr-head")
-        .attr("class", "array-imp-sqr")
-        .attr("x", 50)
-        .attr("y", 50)
-        .attr("height", 50)
-        .attr("width", 50);
+      var labelGroup = panGroup.append("g")
+        .attr("id", "g-label");
         
-      arrayGroup.append("rect")
-        .attr("id", "array-imp-sqr-tail")
-        .attr("class", "array-imp-sqr")
-        .attr("x", 150)
-        .attr("y", 50)
-        .attr("height", 50)
-        .attr("width", 50);
-                      
       var textGroup = panGroup.append("g")
-        .attr("id", "g-labels");
-      
-      var text = textGroup.selectAll("text")
-        .data(arrIdx)
-        .enter()
-        .append("text");
-              
-      var textLabels = text
-        .attr("class", "label")
-        .attr("x", function (d) {return ((d+1) * 50) + 25;})
-        .attr("y", 380)
-        .text( function (d) { return d; });
-                
-      textGroup.append("text")
-        .attr("class", "label")
-        .attr("x", 75)
-        .attr("y", 130)
-        .text( "head");
+        .attr("id", "g-text");
         
-      textGroup.append("text")
+      // this code create the graphic elements
+      var positions = arrayGroup.selectAll("rect")
+        .data(jsonArray)
+        .enter()
+        .append("rect")              
+        .attr("id", function (d) {return "array-" + d.idx; })
+        .attr("class", "array-sqr")
+        .attr("x", function (d) {return d.x;})
+        .attr("y", function (d) {return d.y;})
+        .attr("height", 50)
+        .attr("width", 50);
+        //.on("mouseover", function(){d3.select(this).style("fill", "pink");})
+        //.on("mouseout", function(){d3.select(this).style("fill", "white");});
+        
+      var labels = labelGroup.selectAll("text")
+        .data(jsonArray)
+        .enter()
+        .append("text")
         .attr("class", "label")
-        .attr("x", 175)
-        .attr("y", 130)
-        .text( "tail");
+        .attr("x", function (d) {return d.x + 25;})
+        .attr("y", function (d) {return d.y + 80;})
+        .text(function (d) { return d.idx; });
+        
+      var texts = textGroup.selectAll("text")
+        .data(jsonArray)
+        .enter()
+        .append("text")
+        .attr("class", "label")
+        .attr("x", function (d) {return d.x + 25;})
+        .attr("y", function (d) {return d.y + 30;})
+        .text(function (d) {return d.value;})
     
-    //Stack Object  
-    function FixedCapacityStack() {
-      this.stack = [];
-      this.cap = 15;
-      this.N = 0;
-      
-      this.isEmpty = function() { return this.N == 0; }
-      
-      this.size = function() { return this.N; }
-      
-      this.push = function(item) { 
-        if(this.N < this.cap-1) {
-          this.stack[this.N] = item;
-          this.N++;
+      //Stack Object  
+      function FixedCapacityStack() {
+        this.stack = [];
+        this.cap = 15;
+        this.N = 0;
+        
+        this.isEmpty = function() { return this.N == 0; }
+        
+        this.size = function() { return this.N; }
+        
+        this.push = function(item) { 
+          if(this.N < this.cap-1) {
+            this.stack[this.N] = item;
+            this.N++;
+            d3.select("#array-top")
+              .attr("value", this.N)
+              .text(function (d) {return d.value;});
+          }
+        }
+        
+        this.pop = function() {
+          this.N--;
+          return this.stack[this.N];
+        }
+        
+        this.displayAll = function() { 
+          var array = [];
+          
+          if(this.isEmpty() == true)
+            return null;
+          for(i=0;i<this.N;i++)
+            array[i] = this.stack[i];
+          return array; 
         }
       }
-      
-      this.pop = function() {
-        this.N--;
-        return this.stack[this.N];
-      }
-      
-      this.displayAll = function() { 
-        var array = [];
-        
-        if(this.isEmpty() == true)
-          return null;
-        for(i=0;i<this.N;i++)
-          array[i] = this.stack[i];
-        return array; 
-      }
-    }
       
     </script>
   </body>
