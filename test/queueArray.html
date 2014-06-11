@@ -34,7 +34,7 @@
   </head>
   <body>
     <div>
-      <input type="text">
+      <input type="text" id="input">
       <input type="button" id="btn-push" onclick="findTop()" value="Push">
       <input type="button" id="btn-pop" onclick="findHead()" value="Pop">
       <input type="button" id="btn-clear" onclick="" value="Clear">
@@ -171,7 +171,7 @@
       //Stack Object  
       function FixedCapacityStack() {
         this.stack = [];
-        this.cap = 15;
+        this.cap = 16;
         this.N = 0;
         
         this.isEmpty = function() { return this.N == 0; }
@@ -179,7 +179,7 @@
         this.size = function() { return this.N; }
         
         this.push = function(item) { 
-          if(this.N < this.cap-1) {
+          if(this.N < this.cap) {
             this.stack[this.N] = item;
             d3.select("#text-"+this.N)
               .text(item);
