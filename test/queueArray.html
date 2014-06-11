@@ -116,7 +116,7 @@
       
       // this code enables panning and zooming
       var panGroup = svgContainer.append("g")
-        .call(zoom.on("zoom", rescale))
+        //.call(zoom.on("zoom", rescale))
         .append("g")
         .attr("id", "g-pan");
       
@@ -162,6 +162,7 @@
         .data(jsonArray)
         .enter()
         .append("text")
+        .attr("id", function (d) {return "text-" + d.idx; })
         .attr("class", "label")
         .attr("x", function (d) {return d.x + 25;})
         .attr("y", function (d) {return d.y + 30;})
@@ -180,15 +181,20 @@
         this.push = function(item) { 
           if(this.N < this.cap-1) {
             this.stack[this.N] = item;
+            d3.select("#text-"+this.N)
+              .text(item);
             this.N++;
-            d3.select("#array-top")
-              .attr("value", this.N)
-              .text(function (d) {return d.value;});
+            d3.select("#text-top")
+              .text(this.N);
           }
         }
         
         this.pop = function() {
           this.N--;
+          d3.select("#text-"+this.N)
+              .text(null);
+          d3.select("#text-top")
+              .text(this.N);
           return this.stack[this.N];
         }
         
