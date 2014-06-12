@@ -43,8 +43,8 @@
   <body>
     <div>
       <input type="text" id="txt-input" onclick="" value="">
-      <input type="button" id="btn-push" onclick="push()" value="Push">
-      <input type="button" id="btn-pop" onclick="pop()" value="Pop">
+      <input type="button" id="btn-push" onclick="enqueue()" value="Enqueue">
+      <input type="button" id="btn-pop" onclick="dequeue()" value="Dequeue">
       <input type="button" id="btn-clear" onclick="" value="Clear">
       <input type="button" id="btn-resetPos" onclick="resetPos()" value="Reset Position">
     </div>
@@ -70,15 +70,15 @@
         {"idx":13,"x":700,"y":300, "value":null},
         {"idx":14,"x":750,"y":300, "value":null},
         {"idx":15,"x":800,"y":300, "value":null},
-        {"idx":"top","x":50,"y":50, "value":0}
-        //{"idx":"tail","x":150,"y":50, "value":0}
+        {"idx":"head","x":50,"y":50, "value":0},
+        {"idx":"tail","x":150,"y":50, "value":0}
       ]
 
       var width = 900,
       height = 500;
           
       var zoom = d3.behavior.zoom();
-      var stack = new FixedCapacityStack();
+      var queue = new FixedCapacityQueue();
     
       // general functions
       
@@ -116,16 +116,17 @@
              .remove();
       };
       
-      function push(){
+      
+      function enqueue(){
         var input = $("#txt-input");
         
-        stack.push(input.val());
+        queue.enqueue(input.val());
         
         input.val("");
       }
       
-      function pop(){
-        stack.pop();
+      function dequeue(){
+        queue.dequeue();
       }
       
       // layout code      
@@ -188,46 +189,43 @@
         .attr("x", function (d) {return d.x + 25;})
         .attr("y", function (d) {return d.y + 30;})
         .text(function (d) {return d.value;})
+        
+      var test = d3.select("#text-0").data();
+      
+      var x = test.map(function(d) { return d.__data__; });
+      
+      alert(x[0]);
     
       //Stack Object  
-      function FixedCapacityStack() {
-        this.stack = [];
+      function FixedCapacityQueue() {
+        this.queue = [];
         this.cap = 16;
-        this.N = 0;
+        this.head = 0;
+        this.tail = 0;
         
-        this.isEmpty = function() { return this.N == 0; }
-        
-        this.size = function() { return this.N; }
-        
-        this.push = function(item) { 
-          if(this.N < this.cap) {
-            this.stack[this.N] = item;
-            d3.select("#text-"+this.N)
+        this.isEmpty = function() { return this.tail == 0; }
+                
+        this.enqueue = function(item) { 
+            if(this.tail < this.cap) {
+              this.queue[this.tail] = item;
+              d3.select("#text-"+this.tail)
               .text(item);
-            this.N++;
-            d3.select("#text-top")
-              .text(this.N);
-          }
+              this.tail++;
+              d3.select("#text-tail")
+              .text(this.tail);
+            }
         }
         
-        this.pop = function() {
-          this.N--;
-          d3.select("#text-"+this.N)
+        this.dequeue = function() {
+          d3.select("#text-"+this.head)
               .text(null);
-          d3.select("#text-top")
-              .text(this.N);
-          return this.stack[this.N];
+          var v = this.queue[this.head];
+          this.head++;
+          d3.select("#text-head")
+              .text(this.head);
+          return v;
         }
-        
-        this.displayAll = function() { 
-          var array = [];
-          
-          if(this.isEmpty() == true)
-            return null;
-          for(i=0;i<this.N;i++)
-            array[i] = this.stack[i];
-          return array; 
-        }
+
       }
       
     </script>
