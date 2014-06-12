@@ -19,7 +19,7 @@
         stroke-width:2px;
       }
       
-      .array-sqr-highlight{
+      .array-highlight{
         stroke:gold;
         stroke-width:7px;
         fill-opacity:0.0;
@@ -42,18 +42,21 @@
   </head>
   <body>
     <div>
-      <input type="text" id="txt-input" onclick="" placeholder="Enter new values here">
+      <input type="text" id="txt-input" maxlength="4" placeholder="Enter new values here">
       <input type="button" id="btn-push" onclick="push()" value="Push">
       <input type="button" id="btn-pop" onclick="pop()" value="Pop">
-      <input type="button" id="btn-clear" onclick="" value="Clear">
+      <input type="button" id="btn-clear" onclick="empty()" value="Clear">
       <input type="button" id="btn-resetPos" onclick="resetPos()" value="Reset Position">
     </div>
     <div id="viz"></div>
     
     <script type="text/javascript">
+      var internalArray = {};
       
       //general variables
-      var jsonArray = [
+      internalArray = [
+        {"idx":"top","x":50,"y":50, "value":0},
+        //{"idx":"tail","x":150,"y":50, "value":0},
         {"idx":0,"x":50,"y":300, "value":null},
         {"idx":1,"x":100,"y":300, "value":null},
         {"idx":2,"x":150,"y":300, "value":null},
@@ -69,19 +72,83 @@
         {"idx":12,"x":650,"y":300, "value":null},
         {"idx":13,"x":700,"y":300, "value":null},
         {"idx":14,"x":750,"y":300, "value":null},
-        {"idx":15,"x":800,"y":300, "value":null},
-        {"idx":"top","x":50,"y":50, "value":0}
-        //{"idx":"tail","x":150,"y":50, "value":0}
+        {"idx":15,"x":800,"y":300, "value":null}
       ]
 
       var width = 900,
       height = 500;
           
       var zoom = d3.behavior.zoom();
+      
+      // layout code      
+      var svgContainer = d3.select("#viz").append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("pointer-events", "all")
+        .style("border", "1px solid black"); 
+        
+      draw();
+      
+      function draw(){
+        // this code enables panning and zooming
+        var panGroup = svgContainer.append("g")
+          //.call(zoom.on("zoom", rescale))
+          .append("g")
+          .attr("id", "g-pan");
+        
+        panGroup.append("rect")
+          .attr("width", width)
+          .attr("height", height)
+          .attr("fill", "white");      
+        
+        // this groups will hold the graphic elements          
+        var arrayGroup = panGroup.append("g")
+          .attr("id", "g-array");
+          
+        var labelGroup = panGroup.append("g")
+          .attr("id", "g-label");
+          
+        var textGroup = panGroup.append("g")
+          .attr("id", "g-text");
+          
+        // this code create the graphic elements
+        var positions = arrayGroup.selectAll("rect")
+          .data(internalArray)
+          .enter()
+          .append("rect")              
+          .attr("id", function (d) {return "array-" + d.idx; })
+          .attr("class", "array-sqr")
+          .attr("x", function (d) {return d.x;})
+          .attr("y", function (d) {return d.y;})
+          .attr("height", 50)
+          .attr("width", 50);
+          //.on("mouseover", function(){d3.select(this).style("fill", "pink");})
+          //.on("mouseout", function(){d3.select(this).style("fill", "white");});
+          
+        var labels = labelGroup.selectAll("text")
+          .data(internalArray)
+          .enter()
+          .append("text")
+          .attr("class", "label")
+          .attr("x", function (d) {return d.x + 25;})
+          .attr("y", function (d) {return d.y + 80;})
+          .text(function (d) { return d.idx; });
+          
+        var texts = textGroup.selectAll("text")
+          .data(internalArray)
+          .enter()
+          .append("text")
+          .attr("id", function (d) {return "text-" + d.idx; })
+          .attr("class", "label")
+          .attr("x", function (d) {return d.x + 25;})
+          .attr("y", function (d) {return d.y + 30;})
+          .text(function (d) {return d.value;})
+      }
+      
       var stack = new FixedCapacityStack();
     
       // general functions
-      
+        
       // reposition g
       function rescale() {
         d3.select("#g-pan").attr("transform", "translate(" + d3.event.translate + ") scale(" + d3.event.scale + ")");
@@ -94,33 +161,62 @@
       }
       
       // animation functions
-      function findTop(){
-        var highlight = d3.select("#g-array").append("rect")
-        .attr("class", "array-sqr-highlight")
-        .attr("x", 50)
-        .attr("y", 50)
-        .attr("height", 50)
-        .attr("width", 50)
-
+      function createHighlight(){        
+        d3.select("#g-array")
+          .append("rect")
+          .attr("id", "array-highlight")
+          .attr("class", "array-highlight")
+          .attr("x", 50)
+          .attr("y", 50)
+          .attr("height", 50)
+          .attr("width", 50);
+      };
+      
+      function moveHighlight(){
+        d3.select("#array-highlight")
+          .transition()            
+          .delay(100)            
+          .duration(1500)
+          .attr("x", internalArray[stack.N]["x"])
+          .attr("y", 300);
+      }
+      
+      function deleteHighlight(){
+        d3.select("#array-highlight")
+          .remove();
+      } 
+      
+      function findTop(){        
+        var highlight = d3.select("#g-array")
+          .append("rect")
+          .attr("id", "array-highlight")
+          .attr("class", "array-highlight")
+          .attr("x", 50)
+          .attr("y", 50)
+          .attr("height", 50)
+          .attr("width", 50)
           
           highlight.transition()            
             .delay(100)            
             .duration(3000)
-            .attr("x", 50)
-            .attr("y", 300)
-         .transition()
-             .delay(3500)
-             .duration(1000)
-             .attr("x", 700)
-             .delay(3800)
-             .remove();
+            .attr("x", internalArray[stack.N]["x"])
+            .attr("y", internalArray[stack.N]["y"])
+            .remove();
       };
+      
+      function verify(){
+        var input = $("#txt-input");
+        
+        if (input.val() != ""){
+          createHighlight();
+          moveHighlight();
+        }
+      }
       
       function push(){
         var input = $("#txt-input");
         
         stack.push(input.val());
-        
         input.val("");
       }
       
@@ -128,67 +224,19 @@
         stack.pop();
       }
       
-      // layout code      
-      var svgContainer = d3.select("#viz").append("svg")
-        .attr("width", width)
-        .attr("height", height)
-        .attr("pointer-events", "all")
-        .style("border", "1px solid black"); 
-      
-      // this code enables panning and zooming
-      var panGroup = svgContainer.append("g")
-        //.call(zoom.on("zoom", rescale))
-        .append("g")
-        .attr("id", "g-pan");
-      
-      panGroup.append("rect")
-        .attr('width', width)
-        .attr('height', height)
-        .attr('fill', 'white');      
-      
-      // this groups will hold the graphic elements          
-      var arrayGroup = panGroup.append("g")
-        .attr("id", "g-array");
-        
-      var labelGroup = panGroup.append("g")
-        .attr("id", "g-label");
-        
-      var textGroup = panGroup.append("g")
-        .attr("id", "g-text");
-        
-      // this code create the graphic elements
-      var positions = arrayGroup.selectAll("rect")
-        .data(jsonArray)
-        .enter()
-        .append("rect")              
-        .attr("id", function (d) {return "array-" + d.idx; })
-        .attr("class", "array-sqr")
-        .attr("x", function (d) {return d.x;})
-        .attr("y", function (d) {return d.y;})
-        .attr("height", 50)
-        .attr("width", 50);
-        //.on("mouseover", function(){d3.select(this).style("fill", "pink");})
-        //.on("mouseout", function(){d3.select(this).style("fill", "white");});
-        
-      var labels = labelGroup.selectAll("text")
-        .data(jsonArray)
-        .enter()
-        .append("text")
-        .attr("class", "label")
-        .attr("x", function (d) {return d.x + 25;})
-        .attr("y", function (d) {return d.y + 80;})
-        .text(function (d) { return d.idx; });
-        
-      var texts = textGroup.selectAll("text")
-        .data(jsonArray)
-        .enter()
-        .append("text")
-        .attr("id", function (d) {return "text-" + d.idx; })
-        .attr("class", "label")
-        .attr("x", function (d) {return d.x + 25;})
-        .attr("y", function (d) {return d.y + 30;})
-        .text(function (d) {return d.value;})
-    
+      function empty(){
+        d3.select("#g-text")
+          .selectAll("text")
+          .transition()
+          .text(null);
+          
+        d3.select("#text-top")
+          .transition()
+          .text("0");
+          
+        stack.N = 0;
+      }
+          
       //Stack Object  
       function FixedCapacityStack() {
         this.stack = [];
@@ -200,23 +248,32 @@
         this.size = function() { return this.N; }
         
         this.push = function(item) { 
-          if(this.N < this.cap) {
+          if(this.N < this.cap && item!="") {
             this.stack[this.N] = item;
             d3.select("#text-"+this.N)
+              .transition()
               .text(item);
             this.N++;
+            
+            deleteHighlight()
+            
             d3.select("#text-top")
+              .transition()
               .text(this.N);
           }
         }
         
         this.pop = function() {
-          this.N--;
-          d3.select("#text-"+this.N)
+          if(!this.isEmpty()){
+            this.N--;
+            d3.select("#text-"+this.N)
+              .transition()
               .text(null);
-          d3.select("#text-top")
+            d3.select("#text-top")
+              .transition()
               .text(this.N);
-          return this.stack[this.N];
+            return this.stack[this.N];
+          }
         }
         
         this.displayAll = function() { 
