@@ -42,10 +42,10 @@
   </head>
   <body>
     <div>
-      <input type="text" id="txt-input" onclick="" value="">
+      <input type="text" id="txt-input" maxlength="4" placeholder="Enter new values here">
       <input type="button" id="btn-push" onclick="enqueue()" value="Enqueue">
       <input type="button" id="btn-pop" onclick="dequeue()" value="Dequeue">
-      <input type="button" id="btn-clear" onclick="" value="Clear">
+      <input type="button" id="btn-clear" onclick="empty()" value="Clear">
       <input type="button" id="btn-resetPos" onclick="resetPos()" value="Reset Position">
     </div>
     <div id="viz"></div>
@@ -115,20 +115,7 @@
              .delay(3800)
              .remove();
       };
-      
-      
-      function enqueue(){
-        var input = $("#txt-input");
-        
-        queue.enqueue(input.val());
-        
-        input.val("");
-      }
-      
-      function dequeue(){
-        queue.dequeue();
-      }
-      
+            
       // layout code      
       var svgContainer = d3.select("#viz").append("svg")
         .attr("width", width)
@@ -190,11 +177,35 @@
         .attr("y", function (d) {return d.y + 30;})
         .text(function (d) {return d.value;})
         
-      var test = d3.select("#text-0").data();
+      function enqueue(){
+        var input = $("#txt-input");
+        
+        if(input.val() != "") {
+          queue.enqueue(input.val());
+          input.val('');
+        }
+      }
       
-      var x = test.map(function(d) { return d.__data__; });
+      function dequeue(){
+        queue.dequeue();
+      }
       
-      alert(x[0]);
+      function empty(){
+        d3.select("#g-text")
+          .selectAll("text")
+          .transition()
+          .text(null);
+          
+        d3.select("#text-head")
+          .transition()
+          .text("0");
+        
+        d3.select("#text-tail")
+          .transition()
+          .text("0");
+        
+        queue = new FixedCapacityQueue();
+      }
     
       //Stack Object  
       function FixedCapacityQueue() {
@@ -208,22 +219,34 @@
         this.enqueue = function(item) { 
             if(this.tail < this.cap) {
               this.queue[this.tail] = item;
+              
               d3.select("#text-"+this.tail)
-              .text(item);
+                .transition()
+                .text(item);
+              
               this.tail++;
+              
               d3.select("#text-tail")
-              .text(this.tail);
+                .transititon()
+                .text(this.tail);
             }
         }
         
         this.dequeue = function() {
-          d3.select("#text-"+this.head)
-              .text(null);
-          var v = this.queue[this.head];
-          this.head++;
-          d3.select("#text-head")
-              .text(this.head);
-          return v;
+          if(!this.isEmpty()) {
+            d3.select("#text-"+this.head)
+                .transition()
+                .text(null);
+            
+            var v = this.queue[this.head];
+            
+            this.head++;
+            
+            d3.select("#text-head")
+                .transition()
+                .text(this.head);
+            return v;
+          }
         }
 
       }
