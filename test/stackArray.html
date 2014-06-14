@@ -51,17 +51,15 @@
     
     <script type="text/javascript">
       var stack = new StackArray();
-      var anim = new ArrayImp();
+      var anim = stack.getAnim();
       
       anim.init("stack");
-
 
       function push(){
         var input = $("#txt-input");
         
         stack.push(input.val());
-        
-        $("#txt-input").val("");
+        input.val("");
       }
       
       function pop(){
