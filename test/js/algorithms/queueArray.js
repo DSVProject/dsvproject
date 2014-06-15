@@ -1,37 +1,6 @@
-// Defines a Stack object (Array Implementation). Used to keep track of the object internally and to interact with the animations
+// Defines a Queue object (Array Implementation). Used to keep track of the object internally and to interact with the animations
 
 var QueueArray = function(){
-  //array
-  var arrayObj = {
-    "id": null,
-  
-    "cell": {
-      "class": null,
-      "cx": null,
-      "cy": null,
-      "x": null,
-      "y": null,
-      "r": null,
-      "width": null,
-      "height": null,
-      "fill": null,
-      "stroke": null,
-      "stroke-width": null
-    },
-  
-    "text": {
-      "class": null,
-      "x": null,
-      "y": null,
-      "text": null,
-      "fill": null,
-      "font-family": null,
-      "font-weight": null,
-      "font-size": null,
-      "text-anchor": null
-    }
-  }
-  
   var anim = new ArrayObject();
 
   var internalQueue = [];
@@ -57,14 +26,14 @@ var QueueArray = function(){
 
       if(tail < cap && item!="") {
         internalQueue[tail] = item;
-        anim.enqueue(item, tail, ++tail); // possivel merda
+        anim.enqueue(item, tail, ++tail);
       }
   }
   
   this.dequeue = function() {
     if(!this.isEmpty()) {
       var v = queue[head];
-      anim.dequeue(head, ++head); // possivel merda
+      anim.dequeue(head, ++head);
       
       if(head == tail)
         this.init();

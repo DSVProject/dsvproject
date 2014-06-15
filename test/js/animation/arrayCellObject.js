@@ -1,3 +1,7 @@
+// Defines a graphic unit called 'Cell'. In this implementation the array is made of Cells.
+// Each Cell will contain all the properties regarding structure and graphics.
+// Default properties are defined on animation/constant.js
+
 var ArrayCellObject = function(id, x, y, text, cellClass, textClass){
   var arrayObj = {
     "id": null,

@@ -5,10 +5,6 @@ const SVG_CIRCLE = "circle";
 const SVG_RECT = "rect";
 const SVG_TEXT = "text";
 
-const CELL_DEFAULT = "default";
-const CELL_HIGHLIGHT = "highlight";
-const CELL_SELECT = "select";
-
 //Values in miliseconds
 const DEFAULT_ANIMATION_DURATION = 500;
 const DEFAULT_ANIMATION_DELAY = 500;

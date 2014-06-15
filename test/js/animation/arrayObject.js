@@ -1,3 +1,6 @@
+// Defines an Array of "Cells".
+// All the animations are controled from this file.
+
 var ArrayObject = function(){
   // General global variables
   var arrayCapacity = 16;
@@ -13,12 +16,10 @@ var ArrayObject = function(){
   
   // Number of iterations of the current animation
   var iterationNumber = 0;
-  // Type of ArrayObject
-  var type;
   
   // Initiliase the graphic objects related to this implementation
   this.init = function(type){
-    // this groups will hold the graphic elements          
+    // This groups will hold the graphic elements          
     var arrayGroup = d3.select("#g-main")
         .append("g")
         .attr("id", "g-array");
@@ -30,31 +31,27 @@ var ArrayObject = function(){
     var textGroup = d3.select("#g-main")
         .append("g")
         .attr("id", "g-text");
-  
-    this.type = type;
+    
+    // Generate the properties of the specific Cell elements
     if (type == "stack"){
       cellList["top"] = new ArrayCellObject("top", 50, 50, 0, "cell", "innerText");
       internalArray.push(cellList["top"].getAttributes());
-
-      for(var i=0; i<arrayCapacity; i++){
-        cellList[i] = new ArrayCellObject(i, (i+1)*50, 300, null, "cell", "innerText");
-        internalArray.push(cellList[i].getAttributes());
-      }
       
-    }else{ //queue
+    } else { //queue
       cellList["head"] = new ArrayCellObject("head", 50, 50, 0, "cell", "innerText");
       internalArray.push(cellList["head"].getAttributes());
       
       cellList["tail"] = new ArrayCellObject("tail", 150, 50, 0, "cell", "innerText");
       internalArray.push(cellList["tail"].getAttributes());
-
-      for(var i=0; i<arrayCapacity; i++){
-        cellList[i] = new ArrayCellObject(i, (i+1)*50, 300, null, "cell", "innerText");
-        internalArray.push(cellList[i].getAttributes());
-      }
     }
     
-    // this code create the graphic elements
+    // Generate element properties for each array posisition
+    for(var i=0; i<arrayCapacity; i++){
+      cellList[i] = new ArrayCellObject(i, (i+1)*50, 300, null, "cell", "innerText");
+      internalArray.push(cellList[i].getAttributes());
+    }
+    
+    // Create the graphic elements based on the data contained on internalArray
     var positions = arrayGroup.selectAll(SVG_RECT)
         .data(internalArray, function (d) {return d.id;})
       .enter().append(SVG_RECT)              
@@ -394,33 +391,5 @@ var ArrayObject = function(){
   function clearLog(){
     d3.select("#log").selectAll("div")
         .remove();
-  }
-  
-  function deepCopy(obj){
-    var newObj;
-  
-    if(obj instanceof Array){
-      var i;
-  
-      newObj = [];
-  
-      for (i = 0; i < obj.length; i++) {
-        newObj.push(deepCopy(obj[i]));
-      }
-    }
-  
-    else if(obj instanceof Object){
-      newObj = {};
-  
-      for(keys in obj){
-        newObj[keys] = deepCopy(obj[keys]);
-      }
-    }
-  
-    else{
-      newObj = obj;
-    }
-  
-    return newObj;
   }
 }
