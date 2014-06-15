@@ -121,7 +121,6 @@ var StackArray = function(){
   var anim = new ArrayObject();
 
   var internalStack = [];
-  var jsonStack = [];
   var cap = 16;
   var N = 0;
   
@@ -131,7 +130,6 @@ var StackArray = function(){
   
   this.init = function() {
     internalStack = [];
-    jsonStack = [];
     N = 0;
     
     anim.empty();
@@ -144,9 +142,7 @@ var StackArray = function(){
   this.push = function(item) {
     if(N < cap && item!="") {      
       internalStack[N] = item;
-      N++;
-
-      anim.push(item, N-1, N);
+      anim.push(item, N, ++N);
     }
     
     return;
@@ -154,9 +150,7 @@ var StackArray = function(){
   
   this.pop = function() {
     if(!this.isEmpty()){
-      N--;
-      
-      anim.pop(N);
+      anim.pop(--N);
       
       return internalStack[N];
     }

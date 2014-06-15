@@ -13,6 +13,8 @@ var ArrayObject = function(){
   
   // Number of iterations of the current animation
   var iterationNumber = 0;
+  // Type of ArrayObject
+  var type;
   
   // Initiliase the graphic objects related to this implementation
   this.init = function(type){
@@ -29,6 +31,7 @@ var ArrayObject = function(){
         .append("g")
         .attr("id", "g-text");
   
+    this.type = type;
     if (type == "stack"){
       cellList["top"] = new ArrayCellObject("top", 50, 50, 0, "cell", "innerText");
       internalArray.push(cellList["top"].getAttributes());
@@ -118,7 +121,7 @@ var ArrayObject = function(){
     
     setTimeout(function(){
       animate();
-    }, DEFAULT_ANIMATION_DURATION);
+    }, DEFAULT_ANIMATION_DURATION * 2);
   }
   
   function animate(){
@@ -126,7 +129,7 @@ var ArrayObject = function(){
 
     setTimeout(function(){
       animate();
-    }, DEFAULT_ANIMATION_DURATION);
+    }, DEFAULT_ANIMATION_DURATION * 2);
   }
   
   function next(){
@@ -151,7 +154,7 @@ var ArrayObject = function(){
     saveState(internalArray);
     
     for(var k in internalArray) {
-      if (internalArray[k].id == "top"){
+      if (internalArray[k].id == "top" || internalArray[k].id == "head" || internalArray[k].id == "tail"){
         internalArray[k]["text"]["text"] = 0;
       } else {
         internalArray[k]["text"]["text"] = null;
@@ -172,17 +175,21 @@ var ArrayObject = function(){
     
     for(var k in internalArray) {
       if (internalArray[k].id == removedValue) {
+        blinkContainer(internalArray[k].id, "red");
+      
         internalArray[k]["text"]["text"] = null;
         cellList[removedValue].changeText(null);
+        
+        saveState(internalArray, "Pop the top position.");
+        
+        blinkContainer(internalArray[k].id, "white");
         break;
       }
     }
     
-    saveState(internalArray, "Pop the top position.");
-    
-    blinkContainer("top", true);
+    blinkContainer("top", "palegreen");
     updatePointer("top", removedValue);
-    blinkContainer("top", false);
+    blinkContainer("top", "white");
     
     play();
   }
@@ -197,9 +204,9 @@ var ArrayObject = function(){
     moveHighlight(insertedIndex);
     changeValue(insertedValue, insertedIndex);
     deleteHighlight();
-    blinkContainer("top", true);
+    blinkContainer("top", "palegreen");
     updatePointer("top", newTop);
-    blinkContainer("top", false);
+    blinkContainer("top", "white");
     
     play();
   }
@@ -216,18 +223,39 @@ var ArrayObject = function(){
     moveHighlight(insertedIndex);
     changeValue(insertedValue, insertedIndex);
     deleteHighlight();
-    blinkContainer("tail", true);
+    blinkContainer("tail", "palegreen");
     updatePointer("tail", newTail);
-    blinkContainer("tail", false);
+    blinkContainer("tail", "white");
+    
+    play();
   }
   
-  this.dequeue = function(removedValue){
+  this.dequeue = function(removedValue, newHead){
     clearLog();
     
     this.newStateList();
     saveState(internalArray, "The current queue.");
     
-    //TODO
+    for(var k in internalArray) {
+      if (internalArray[k].id == removedValue) {
+        blinkContainer(internalArray[k].id, "red");
+      
+        internalArray[k]["text"]["text"] = null;
+        cellList[removedValue].changeText(null);
+        
+        saveState(internalArray, "Dequeue the first used position.");
+        
+        blinkContainer(internalArray[k].id, "white");
+        
+        break;
+      }
+    }
+    
+    blinkContainer("head", "palegreen");
+    updatePointer("head", newHead);
+    blinkContainer("head", "white");
+    
+    play();
   }
   
   // Other Functions
@@ -301,14 +329,10 @@ var ArrayObject = function(){
     saveState(internalArray, "Update the " + id + " index.");
   }
   
-  function blinkContainer(id, bool){
+  function blinkContainer(id, color){
     for(var k in internalArray) {
       if (internalArray[k].id == id) {
-        if (bool) {
-          internalArray[k]["cell"]["fill"] = "palegreen";
-        } else {
-          internalArray[k]["cell"]["fill"] = "white";
-        }
+        internalArray[k]["cell"]["fill"] = color;
         break;
       }
     }
