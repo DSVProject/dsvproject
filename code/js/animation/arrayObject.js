@@ -118,7 +118,7 @@ var ArrayObject = function(){
     
     setTimeout(function(){
       animate();
-    }, DEFAULT_ANIMATION_DURATION * 2);
+    }, DEFAULT_ANIMATION_DURATION);
   }
   
   function animate(){
@@ -126,7 +126,7 @@ var ArrayObject = function(){
 
     setTimeout(function(){
       animate();
-    }, DEFAULT_ANIMATION_DURATION * 2);
+    }, DEFAULT_ANIMATION_DURATION);
   }
   
   function next(){
@@ -172,7 +172,7 @@ var ArrayObject = function(){
     
     for(var k in internalArray) {
       if (internalArray[k].id == removedValue) {
-        blinkContainer(internalArray[k].id, "red");
+        blinkContainer(internalArray[k].id, "tomato");
       
         internalArray[k]["text"]["text"] = null;
         cellList[removedValue].changeText(null);
@@ -235,7 +235,7 @@ var ArrayObject = function(){
     
     for(var k in internalArray) {
       if (internalArray[k].id == removedValue) {
-        blinkContainer(internalArray[k].id, "red");
+        blinkContainer(internalArray[k].id, "tomato");
       
         internalArray[k]["text"]["text"] = null;
         cellList[removedValue].changeText(null);

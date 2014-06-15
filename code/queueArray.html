@@ -2,8 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>D3 Test - Stack</title>
-    <script type="text/javascript" src="d3/d3.js"></script>
+    <title>D3 Test - Queue</title>
+    <script type="text/javascript" src="js/d3.min.js"></script>
     <script type="text/javascript" src="js/jquery-2.1.1.js"></script>
     
     <style>
@@ -46,8 +46,8 @@
   <body>
     <div>
       <input type="text" id="txt-input" maxlength="4" placeholder="Enter new values here">
-      <input type="button" id="btn-push" onclick="push()" value="Push">
-      <input type="button" id="btn-pop" onclick="pop()" value="Pop">
+      <input type="button" id="btn-enqueue" onclick="enqueue()" value="Enqueue">
+      <input type="button" id="btn-dequeue" onclick="dequeue()" value="Dequeue">
       <input type="button" id="btn-clear" onclick="empty()" value="Clear">
       <input type="button" id="btn-resetPos" onclick="resetPos()" value="Reset Position">
     </div>
@@ -59,28 +59,29 @@
     <script src="js/animation/svg.js"></script>
     <script src="js/animation/arrayObject.js"></script>
     <script src="js/animation/arrayCellObject.js"></script>
-    <script src="js/algorithms/stackArray.js"></script>
+    <script src="js/algorithms/queueArray.js"></script>
     
     <script type="text/javascript">
-      var stack = new StackArray();
-      var anim = stack.getAnim();
+      var queue = new QueueArray();
+      var anim = queue.getAnim();
       
-      anim.init("stack");
+      anim.init("queue");
 
-      function push(){
+      function enqueue(){
         var input = $("#txt-input");
         
-        stack.push(input.val());
+        queue.enqueue(input.val());
         input.val("");
       }
       
-      function pop(){
-        stack.pop();
+      function dequeue(){
+        queue.dequeue();
       }
       
       function empty(){
-        stack.init();
+        queue.init();
       }
+      
     </script>
   </body>
 </html>    
