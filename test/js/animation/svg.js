@@ -11,7 +11,7 @@ var svgContainer = d3.select("#viz").append("svg")
 var panGroup = svgContainer.append("g")
   //.call(zoom.on("zoom", rescale))
   .append("g")
-  .attr("id", "g-pan");
+  .attr("id", "g-main");
 
 panGroup.append("rect")
   .attr("width", MAIN_SVG_WIDTH)
@@ -20,11 +20,11 @@ panGroup.append("rect")
   
 // reposition g
 function rescale() {
-  d3.select("#g-pan").attr("transform", "translate(" + d3.event.translate + ") scale(" + d3.event.scale + ")");
+  d3.select("#g-main").attr("transform", "translate(" + d3.event.translate + ") scale(" + d3.event.scale + ")");
 }
 
 function resetPos() {
-  d3.select("#g-pan").attr('transform', null);
+  d3.select("#g-main").attr('transform', null);
   zoom.scale(1);
   zoom.translate([0, 0]);
 }

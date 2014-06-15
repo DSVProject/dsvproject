@@ -7,19 +7,28 @@
     <script type="text/javascript" src="js/jquery-2.1.1.js"></script>
     
     <style>
-      .array-sqr{
+      /*
+      .cell{
         fill:white;
         stroke:black;
         stroke-width:2px;
       }
+      */
       
-      .array-highlight{
+      .cell-highlight{
         stroke:gold;
         stroke-width:7px;
         fill-opacity:0.0;
       }
       
       .label{
+        font-family:sans-serif;
+        font-size:18px;
+        text-anchor:middle;
+        fill:black;
+      }
+      
+      .innerText{
         font-family:sans-serif;
         font-size:18px;
         text-anchor:middle;
@@ -43,10 +52,12 @@
       <input type="button" id="btn-resetPos" onclick="resetPos()" value="Reset Position">
     </div>
     <div id="viz"></div>
+    <div id="log"></div>
     
     <script src="js/animation/constant.js"></script>
     <script src="js/animation/svg.js"></script>
-    <script src="js/animation/arrayImp.js"></script>
+    <script src="js/animation/arrayObject.js"></script>
+    <script src="js/animation/arrayCellObject.js"></script>
     <script src="js/algorithms/stackArray.js"></script>
     
     <script type="text/javascript">
@@ -67,6 +78,7 @@
       }
       
       function empty(){
+        /*
         d3.select("#g-text")
           .selectAll("text")
           .transition()
@@ -75,6 +87,7 @@
         d3.select("#text-top")
           .transition()
           .text("0");
+        */
           
         stack.init();
       }
