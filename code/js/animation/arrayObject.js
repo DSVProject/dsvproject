@@ -311,7 +311,7 @@ var ArrayObject = function(){
       }
     }
     
-    saveState(internalArray, "Iserting value.");
+    saveState(internalArray, "Inserting value.");
   }
   
   function updatePointer(id, newTop){
