@@ -16,9 +16,9 @@ var CoreAnimObject = function(){
   // Initiliase the graphic objects related to this implementation
   this.init = function(type, subtype){
     // This groups will hold the graphic elements          
-    var cellGroup = d3.select("#g-main")
+    var shapeGroup = d3.select("#g-main")
         .append("g")
-        .attr("id", "g-array");
+        .attr("id", "g-shape");
       
     var labelGroup = d3.select("#g-main")
         .append("g")
@@ -96,24 +96,38 @@ var CoreAnimObject = function(){
   }
   
   // Animation Control Functions
-  
-  this.newStateList = function(){
-    stateList = {};
-    iterationNumber = 0;
-    
-    saveState(internalJson, "Initial state.");
-  }
-  
-  function saveState(structure, status){
+  /**
+    * Creates a snapshot of the current state of all the objects on the screen.
+    * All other functions that change any property of a graphic element should call this function as a last instruction. 
+    *
+    * @param {String} status : an optional message about the changes, that will appear on the screen log.
+    */
+  this.saveState = function(status){
     var state = {};
     
-    state["data"] = deepCopy(structure);
+    state["data"] = deepCopy(internalJson);
     state["status"] = status;
   
     stateList[iterationNumber] = state;
     iterationNumber++;
   }
   
+  /**
+    * Reset the state list.
+    * Called as the first instruction, before making changes on the graphic elements.
+    */
+  this.newStateList = function(){
+    stateList = {};
+    iterationNumber = 0;
+    
+    this.saveState("Initial state.");
+  }
+  
+  /**
+    * Start playing all the states saved in StateList.
+    * 
+    * @param {Number} duration : optional, if null the default animation duration value will be used.
+    */
   this.play = function(duration){
     if(duration == null || isNaN(duration) || duration < 0) duration = DEFAULT_ANIMATION_DURATION;
     
@@ -123,68 +137,91 @@ var CoreAnimObject = function(){
     draw(stateList[iterationNumber], duration);
     
     setTimeout(function(){
-      animate(duration);
+      next(duration);
     }, duration);
   }
   
-  function animate(duration){
-    next(duration);
-
-    setTimeout(function(){
-      animate(duration);
-    }, duration);
-  }
-  
+  /**
+    * Call the next item from StateList
+    *
+    * @param {Number} duration : optional, if null the default animation duration value will be used.
+    */
   function next(duration){
     if(iterationNumber < 0) iterationNumber = 0;
     
     iterationNumber++;
     
-    if(iterationNumber >= stateList.length) {
-		  iterationNumber = stateList.length-1;
-		  return;
+    if(iterationNumber < Object.keys(stateList).length) {
+		  draw(stateList[iterationNumber], duration);
+		  
+		  setTimeout(function(){
+        next(duration);
+      }, duration);
 	  }
-
-    draw(stateList[iterationNumber], duration);
   }
   
   // Structure Control Functions
   
+  /**
+    * Set the text element of one graphic unit.
+    *
+    * @param {String || Number} id : the id of the item.
+    * @param {String} newValue : the new value that will be set.
+    */
   this.setValue = function(id, newValue){
     objectList[id].setText(newValue);
-    saveState(internalJson, id + " value set to " + newValue);
+    this.saveState(id + " value set to " + newValue);
   }
   
   this.setCellColor = function(id, color){
     objectList[id].setFill(color);
-    saveState(internalJson);
+    this.saveState();
+  }
+  
+  /**
+    * Create an initial graphic element, that will appear on the screen when the page is loaded.
+    * When calling this function all the animations will happen at once, and not step by step.
+    *
+    * @param {String || Number} id : the id of the item.
+    * @param {Number} x : the x coordinate of the item.
+    * @param {Number} y : the y coordinate of the item.
+    * @param {String} value : the value of the item.
+    */
+  this.createNewInitialItem = function(id, x, y, value){
+    objectList[id] = new ArrayCellObject(id, x, y, value, "shape", "innerText");
+    
+    internalJson.push(objectList[id].getAttributes());
+    
+    return objectList[id];
   }
   
   // Other Functions
   this.createNewCell = function(id, x, y, value){
-    objectList[id] = new ArrayCellObject(id, x, y, value, "cell", "innerText");
+    objectList[id] = new ArrayCellObject(id, x, y, value, "shape", "innerText");
     
     internalJson.push(objectList[id].getAttributes());
     
-    saveState(internalJson, "New cell created.");
+    this.saveState("New cell created.");
   }
   
   
   this.createArrayHighlight = function(id){
-    objectList["highlight"] = new ArrayCellObject("highlight", objectList[id].getCoordinateX(), objectList[id].getCoordinateY(), null, "cell-highlight", "innerText");
+    objectList["highlight"] = new ArrayCellObject("highlight", objectList[id].getCoordinateX(), objectList[id].getCoordinateY(), null, "highlight", "innerText");
     
+    /*
     objectList["highlight"].setFillOpacity(animProperties["cell"]["highlight"]["fill-opacity"]);
     objectList["highlight"].setStroke(animProperties["cell"]["highlight"]["stroke"]);
     objectList["highlight"].setStrokeWidth(animProperties["cell"]["highlight"]["stroke-width"]);
+    */
   
     internalJson.push(objectList["highlight"].getAttributes());
     
-    saveState(internalJson, "The current " + id + " index.");
+    this.saveState("The current " + id + " index.");
   };
   
   this.moveHighlight = function(insertedIndex){
-    objectList["highlight"].moveCell(objectList[insertedIndex].getCoordinateX(), objectList[insertedIndex].getCoordinateY());
-    saveState(internalJson, "Where the new value should be inserted.");
+    objectList["highlight"].moveShape(objectList[insertedIndex].getCoordinateX(), objectList[insertedIndex].getCoordinateY());
+    this.saveState("Where the new value should be inserted.");
   }
   
   this.deleteHighlight = function(){
@@ -195,28 +232,29 @@ var CoreAnimObject = function(){
       }
     }
     
-    saveState(internalJson);
+    this.saveState();
   }
   
   function draw(currentData, dur){
     if(dur == null || isNaN(dur) || dur < 0) dur = DEFAULT_ANIMATION_DURATION;
   
-    var cells = d3.select("#g-array").selectAll(SVG_RECT)
+    var cells = d3.select("#g-shape").selectAll()
         .data(currentData["data"], function (d) {return d.id;});
       
-    cells.enter().append(SVG_RECT)              
+    cells.enter().append(SVG_RECT) 
+        .filter(function (d) {return d.shape == SVG_RECT;})           
         .attr("id", function (d) {return "array-" + d.id;})
-        .attr("class", function (d) {return d.cell.class});
+        .attr("class", function (d) {return d.rect.class});
     cells.transition()
         .duration(dur)
-        .attr("x", function (d) {return d.cell.x;})
-        .attr("y", function (d) {return d.cell.y;})
-        .attr("height", function (d) {return d.cell.height;})
-        .attr("width", function (d) {return d.cell.width;})
-        .attr("fill", function (d) {return d.cell.fill;})
-        .attr("fill-opacity", function (d) {return d.cell.fillOpacity;})
-        .attr("stroke", function (d) {return d.cell.stroke;})
-        .attr("stroke-width", function (d) {return d.cell.strokeWidth;});
+        .attr("x", function (d) {return d.rect.x;})
+        .attr("y", function (d) {return d.rect.y;})
+        .attr("height", function (d) {return d.rect.height;})
+        .attr("width", function (d) {return d.rect.width;})
+        .attr("fill", function (d) {return d.rect.fill;})
+        .attr("fill-opacity", function (d) {return d.rect.fillOpacity;})
+        .attr("stroke", function (d) {return d.rect.stroke;})
+        .attr("stroke-width", function (d) {return d.rect.strokeWidth;});
     cells.exit()
         .remove();
      
@@ -225,8 +263,8 @@ var CoreAnimObject = function(){
         
     labels.enter().append("text")
         .attr("class", "label")
-        .attr("x", function (d) {return d.cell.x + 25;})
-        .attr("y", function (d) {return d.cell.y + 80;})
+        .attr("x", function (d) {return d.rect.x + 25;})
+        .attr("y", function (d) {return d.rect.y + 80;})
         .text(function (d) { return d.id; });
     labels.exit()
         .remove();
@@ -262,23 +300,5 @@ var CoreAnimObject = function(){
   this.clearLog = function(){
     d3.select("#log").selectAll("div")
         .remove();
-  }
-  
-  this.clearArray = function(){
-    this.clearLog();
-  
-    this.newStateList();
-    
-    for(var k in objectList){
-      if(objectList[k].getID == "top" || objectList[k].getID == "head" || objectList[k].getID == "tail"){
-        alert("entrei");
-        objectList[k].setText(0);
-      }else{
-        objectList[k].setText(null); 
-      }
-    }
-    
-    saveState(internalJson);
-    this.play();
   }
 }

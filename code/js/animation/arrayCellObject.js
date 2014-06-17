@@ -1,18 +1,29 @@
-// Defines a graphic unit called 'Cell'. In this implementation the array is made of Cells.
-// Each instance of this file will contain all the graphic properties of the current Cell.
 // Default properties are defined on 'animation/constant.js'
 
-var ArrayCellObject = function(id, x, y, text, cellClass, textClass){
+
+/**
+  * Defines a square graphic unit.
+  * This 'class' will hold all the properties and methods regarding this single unit. 
+  *
+  * @param {String || Number} id : the id of this object.
+  * @param {Number} x : the x coordinate of this object on the screen.
+  * @param {Number} y : the y coordinate of this object on the screen.
+  * @param {String} text : the inner text of this object, that will be displayed on the screen.
+  * @param {String} rectClass : the CSS class of the rect svg element.
+  * @param {String} textClass : the CSS class of the text svg element.
+  */
+var ArrayCellObject = function(id, x, y, text, rectClass, textClass){
   var arrayObj = {
     "id": null,
     
-    "cell": {
+    "shape": "rect",
+    
+    "label": null,
+    
+    "rect": {
       "class": null,
-      "cx": null,
-      "cy": null,
       "x": null,
       "y": null,
-      "r": null,
       "width": null,
       "height": null,
       "fill": null,
@@ -36,18 +47,21 @@ var ArrayCellObject = function(id, x, y, text, cellClass, textClass){
   
   initArrayObj();
 
+  /**
+    * Initialise the element, with the provided parameters and other default properties.
+    */
   function initArrayObj(){
     arrayObj["id"] = id;
     
-    arrayObj["cell"]["class"] = cellClass;
-    arrayObj["cell"]["x"] = x;
-    arrayObj["cell"]["y"] = y;
-    arrayObj["cell"]["width"] = CELL_WIDTH_DEFAULT;
-    arrayObj["cell"]["height"] = CELL_HEIGHT_DEFAULT;
-    arrayObj["cell"]["fill"] = CELL_FILL_DEFAULT;
-    arrayObj["cell"]["fillOpacity"] = animProperties["cell"]["default"]["fill-opacity"];
-    arrayObj["cell"]["stroke"] = animProperties["cell"]["default"]["stroke"];
-    arrayObj["cell"]["strokeWidth"] = animProperties["cell"]["default"]["stroke-width"];
+    arrayObj["rect"]["class"] = rectClass;
+    arrayObj["rect"]["x"] = x;
+    arrayObj["rect"]["y"] = y;
+    arrayObj["rect"]["width"] = CELL_WIDTH_DEFAULT;
+    arrayObj["rect"]["height"] = CELL_HEIGHT_DEFAULT;
+    arrayObj["rect"]["fill"] = CELL_FILL_DEFAULT;
+    arrayObj["rect"]["fillOpacity"] = animProperties["cell"]["default"]["fill-opacity"];
+    arrayObj["rect"]["stroke"] = animProperties["cell"]["default"]["stroke"];
+    arrayObj["rect"]["strokeWidth"] = animProperties["cell"]["default"]["stroke-width"];
     
     arrayObj["text"]["class"] = textClass;
     arrayObj["text"]["x"] = x + 25;
@@ -60,67 +74,117 @@ var ArrayCellObject = function(id, x, y, text, cellClass, textClass){
     arrayObj["text"]["text"] = text;
   }
   
+  /**
+    * @return {arrayObj} : the content of this object property map.
+    */
   this.getAttributes = function(){
     return arrayObj;
   }
   
+  /**
+    * @return {String || Number} : the id of this object.
+    */
   this.getID = function(){
     return arrayObj["id"];
   }
   
+  /**
+    * Set the CSS class of the rect svg element.
+    *
+    * @param {String} newClass : the new CSS class.
+    */
   this.setCellClass = function(newClass){
-    arrayObj["cell"]["class"] = newClass;
+    arrayObj["rect"]["class"] = newClass;
   }
   
+  /**
+    * @return {Number} : the x coordinate of the rect svg element.
+    */
   this.getCoordinateX = function(){
-    return arrayObj["cell"]["x"];
+    return arrayObj["rect"]["x"];
   }
   
+  /**
+    * @return {Number} : the y coordinate of the rect svg element.
+    */
   this.getCoordinateY = function(){
-    return arrayObj["cell"]["y"];
+    return arrayObj["rect"]["y"];
   }
   
+  /**
+    * Set the fill color of the rect svg element.
+    *
+    * @param {String} newFill : the new CSS or svg color.
+    */
   this.setFill = function(newFill){
     if(newFill == null) return;
-    arrayObj["cell"]["fill"] = newFill;
+    arrayObj["rect"]["fill"] = newFill;
   }
   
+  /**
+    * Set the fill opacity of the rect svg element.
+    *
+    * @param {Number} newOpacity : the new opacity value.
+    */
   this.setFillOpacity = function(newOpacity){
+    if(newOpacity == null|| isNaN(newOpacity)) return;
     if(newOpacity < 0) newOpacity = 0.0;
-    arrayObj["cell"]["fillOpacity"] = newOpacity;
+    
+    arrayObj["rect"]["fillOpacity"] = newOpacity;
   }
   
+  /**
+    * Set the stroke color of the rect svg element.
+    *
+    * @param {String} newStroke : the new CSS or svg stroke color.
+    */
   this.setStroke = function(newStroke){
-    if(newStroke == null || isNaN(newStroke)) return;
-    arrayObj["cell"]["stroke"] = newStroke;
+    arrayObj["rect"]["stroke"] = newStroke;
   }
   
+  /**
+    * Set the stroke width of the rect svg element.
+    *
+    * @param {Number} newOpacity : the new stroke width value.
+    */
   this.setStrokeWidth = function(newStrokeWidth){
     if(newStrokeWidth == null || isNaN(newStrokeWidth)) return;
-    arrayObj["cell"]["strokeWidth"] = newStrokeWidth;
+    if(newStrokeWidth < 0) newStrokeWidth = 0;
+    
+    arrayObj["rect"]["strokeWidth"] = newStrokeWidth;
   }
   
-  this.moveCell = function(x, y){
-    arrayObj["cell"]["x"] = x;
-    arrayObj["cell"]["y"] = y;
+  /**
+    * Move this object from its current position to a new position.
+    *
+    * @param {Number} x : the destination x coordinate.
+    * @param {Number} y : the destination y coordinate.
+    */
+  this.moveShape = function(x, y){
+    if(x == null || y == null || isNaN(x) || isNaN(y)) return;
+  
+    arrayObj["rect"]["x"] = x;
+    arrayObj["rect"]["y"] = y;
 
     arrayObj["text"]["x"] = x + 25;
     arrayObj["text"]["y"] = y + 30;
   }
   
-  this.setText = function(newCellText){
-    arrayObj["text"]["text"] = newCellText;
+  /**
+    * Set the text of the text svg element.
+    *
+    * @param {String} newText : the new text.
+    */
+  this.setText = function(newText){
+    arrayObj["text"]["text"] = newText;
   }
   
+  /**
+    * Set the text color of the text svg element.
+    *
+    * @param {String} newColor : the new CSS or svg color.
+    */
   this.setFontColor = function(newColor){
     arrayObj["text"]["fill"] = newColor;
-  }
-  
-  this.changeCellProperty = function(property, newPropertyValue){
-    arrayObj["cell"][property] = newPropertyValue;
-  }
-  
-  this.changeTextProperty = function(property, newPropertyValue){
-    arrayObj["text"][property] = newPropertyValue;
   }
 }

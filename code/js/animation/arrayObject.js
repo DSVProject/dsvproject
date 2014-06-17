@@ -3,15 +3,17 @@
 
 var ArrayObject = function(){
   var coreAnim = new CoreAnimObject();
+  var array = {};
 
   this.init = function(type){
     coreAnim.init("array", type);
     
-    coreAnim.createNewCell("top",50,50,0);
+    array["top"] = coreAnim.createNewInitialItem("top",50,50,0);
     for(var i=0; i<16; i++){
-      coreAnim.createNewCell(i, (i+1)*50, 300, null);    
+      array[i] = coreAnim.createNewInitialItem(i, (i+1)*50, 300, null);    
     }
-    coreAnim.play(500);
+    coreAnim.saveState();
+    coreAnim.play(0);
   }
   /*
   // General global variables
@@ -161,16 +163,38 @@ var ArrayObject = function(){
   // Structure Control Functions
   */
   this.empty = function(){
-    coreAnim.clearArray();
+    coreAnim.clearLog();
+    coreAnim.newStateList();
+    
+    array["top"].setText(0);
+    for(var i=0; i<16; i++){
+      array[i].setText(null);
+    }
+    
+    coreAnim.saveState();
+    coreAnim.play();
   }
   
   // Stack Functions
   
   this.pop = function(removedIndex){
     coreAnim.clearLog();
-    
     coreAnim.newStateList();
     
+    array[removedIndex].setFill(CELL_FILL_DECREMENT);
+    coreAnim.saveState();
+    
+    array[removedIndex].setText(null);
+    array[removedIndex].setFill(CELL_FILL_DEFAULT);
+    coreAnim.saveState("Pop the top position.");
+    
+    array["top"].setFill(CELL_FILL_INCREMENT);
+    coreAnim.saveState();
+    
+    array["top"].setText(removedIndex);
+    array["top"].setFill(CELL_FILL_DEFAULT);
+    coreAnim.saveState("Change the top pointer.")
+    /*
     coreAnim.setCellColor(removedIndex, CELL_FILL_DECREMENT);
     coreAnim.setValue(removedIndex, null);
     coreAnim.setCellColor(removedIndex, CELL_FILL_DEFAULT);
@@ -178,6 +202,7 @@ var ArrayObject = function(){
     coreAnim.setCellColor("top", CELL_FILL_INCREMENT);
     coreAnim.setValue("top", removedIndex);
     coreAnim.setCellColor("top", CELL_FILL_DEFAULT);
+    */
     
     coreAnim.play();
     
@@ -205,15 +230,22 @@ var ArrayObject = function(){
   this.push = function(insertedValue, insertedIndex, newTop){
     coreAnim.clearLog();
     coreAnim.newStateList();
+    
     coreAnim.createArrayHighlight("top");
     coreAnim.moveHighlight(insertedIndex);
-    coreAnim.setValue(insertedIndex, insertedValue);
+    
+    array[insertedIndex].setText(insertedValue);
+    coreAnim.saveState("Inserting the new value");
+
     coreAnim.deleteHighlight();
     
-    coreAnim.setCellColor("top", CELL_FILL_INCREMENT);
-    coreAnim.setValue("top", newTop);
-    coreAnim.setCellColor("top", CELL_FILL_DEFAULT);
-        
+    array["top"].setFill(CELL_FILL_INCREMENT);
+    coreAnim.saveState();
+    
+    array["top"].setText(newTop);
+    array["top"].setFill(CELL_FILL_DEFAULT);
+    coreAnim.saveState("Change the top pointer.")
+    
     coreAnim.play();
   
     /*
