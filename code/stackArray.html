@@ -41,6 +41,11 @@
         font-style:italic;
       }
       
+      .check{
+        font-family:sans-serif;
+        font-size:24px;
+      }
+      
     </style>
   </head>
   <body>
@@ -50,6 +55,7 @@
       <input type="button" id="btn-pop" onclick="pop()" value="Pop">
       <input type="button" id="btn-clear" onclick="empty()" value="Clear">
       <input type="button" id="btn-resetPos" onclick="resetPos()" value="Reset Position">
+      <input type="checkbox" id="chk-learn" value="learningMode" class="check">Learning Mode
     </div>
     <div id="viz"></div>
     <div id="log"></div>
@@ -58,6 +64,7 @@
     <script src="js/animation/constant.js"></script>
     <script src="js/animation/svg.js"></script>
     <script src="js/animation/arrayObject.js"></script>
+    <script src="js/animation/coreAnimObject.js"></script>
     <script src="js/animation/arrayCellObject.js"></script>
     <script src="js/algorithms/stackArray.js"></script>
     

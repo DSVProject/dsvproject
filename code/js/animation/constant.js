@@ -9,6 +9,13 @@ const SVG_TEXT = "text";
 const DEFAULT_ANIMATION_DURATION = 500;
 const DEFAULT_ANIMATION_DELAY = 500;
 
+const CELL_WIDTH_DEFAULT = 50;
+const CELL_HEIGHT_DEFAULT = 50;
+
+const CELL_FILL_DEFAULT = "white";
+const CELL_FILL_INCREMENT = "palegreen";
+const CELL_FILL_DECREMENT = "tomato";
+
 const animProperties = {
   "cell":{
     "width":50,
@@ -24,8 +31,11 @@ const animProperties = {
       "stroke-width":7,
       "fill-opacity":0.0
     },
-    "select":{
-      "fill":"pink"
+    "increment":{
+      "fill":"palegreen"
+    },
+    "decrement":{
+      "fill":"tomato"
     }
   },
   "text":{
@@ -33,5 +43,9 @@ const animProperties = {
     "font-family":"sans-serif",
     "font-size":18,
     "text-anchor":"middle"
+  },
+  "edge": {
+    "stroke":"black",
+    "strokeWidth":2
   }
 };

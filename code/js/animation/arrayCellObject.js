@@ -1,6 +1,6 @@
 // Defines a graphic unit called 'Cell'. In this implementation the array is made of Cells.
-// Each Cell will contain all the properties regarding structure and graphics.
-// Default properties are defined on animation/constant.js
+// Each instance of this file will contain all the graphic properties of the current Cell.
+// Default properties are defined on 'animation/constant.js'
 
 var ArrayCellObject = function(id, x, y, text, cellClass, textClass){
   var arrayObj = {
@@ -42,9 +42,9 @@ var ArrayCellObject = function(id, x, y, text, cellClass, textClass){
     arrayObj["cell"]["class"] = cellClass;
     arrayObj["cell"]["x"] = x;
     arrayObj["cell"]["y"] = y;
-    arrayObj["cell"]["width"] = animProperties["cell"]["width"];
-    arrayObj["cell"]["height"] = animProperties["cell"]["height"];
-    arrayObj["cell"]["fill"] = animProperties["cell"]["default"]["fill"];
+    arrayObj["cell"]["width"] = CELL_WIDTH_DEFAULT;
+    arrayObj["cell"]["height"] = CELL_HEIGHT_DEFAULT;
+    arrayObj["cell"]["fill"] = CELL_FILL_DEFAULT;
     arrayObj["cell"]["fillOpacity"] = animProperties["cell"]["default"]["fill-opacity"];
     arrayObj["cell"]["stroke"] = animProperties["cell"]["default"]["stroke"];
     arrayObj["cell"]["strokeWidth"] = animProperties["cell"]["default"]["stroke-width"];
@@ -68,36 +68,52 @@ var ArrayCellObject = function(id, x, y, text, cellClass, textClass){
     return arrayObj["id"];
   }
   
-  this.changeText = function(newCellText){
-    arrayObj["text"]["text"] = newCellText;
+  this.setCellClass = function(newClass){
+    arrayObj["cell"]["class"] = newClass;
   }
   
-  this.changeFill = function(newFill){
-    if(newFill == null || isNaN(newFill)) return;
+  this.getCoordinateX = function(){
+    return arrayObj["cell"]["x"];
+  }
+  
+  this.getCoordinateY = function(){
+    return arrayObj["cell"]["y"];
+  }
+  
+  this.setFill = function(newFill){
+    if(newFill == null) return;
     arrayObj["cell"]["fill"] = newFill;
   }
   
-  this.changeFillOpacity = function(newOpacity){
+  this.setFillOpacity = function(newOpacity){
     if(newOpacity < 0) newOpacity = 0.0;
     arrayObj["cell"]["fillOpacity"] = newOpacity;
   }
   
-  this.changeStroke = function(newStroke){
+  this.setStroke = function(newStroke){
     if(newStroke == null || isNaN(newStroke)) return;
     arrayObj["cell"]["stroke"] = newStroke;
   }
   
-  this.changeStrokeWidth = function(newStrokeWidth){
+  this.setStrokeWidth = function(newStrokeWidth){
     if(newStrokeWidth == null || isNaN(newStrokeWidth)) return;
     arrayObj["cell"]["strokeWidth"] = newStrokeWidth;
   }
   
   this.moveCell = function(x, y){
-    attributeList["cell"]["x"] = x;
-    attributeList["cell"]["y"] = y;
+    arrayObj["cell"]["x"] = x;
+    arrayObj["cell"]["y"] = y;
 
-    attributeList["text"]["x"] = x + 25;
-    attributeList["text"]["y"] = y + 30;
+    arrayObj["text"]["x"] = x + 25;
+    arrayObj["text"]["y"] = y + 30;
+  }
+  
+  this.setText = function(newCellText){
+    arrayObj["text"]["text"] = newCellText;
+  }
+  
+  this.setFontColor = function(newColor){
+    arrayObj["text"]["fill"] = newColor;
   }
   
   this.changeCellProperty = function(property, newPropertyValue){

@@ -2,6 +2,12 @@
 // All the animations are controled from this file.
 
 var ArrayObject = function(){
+  var coreAnim = new CoreAnimObject();
+
+  this.init = function(type){
+    coreAnim.init("array", type);
+  }
+  /*
   // General global variables
   var arrayCapacity = 16;
   
@@ -31,6 +37,10 @@ var ArrayObject = function(){
     var textGroup = d3.select("#g-main")
         .append("g")
         .attr("id", "g-text");
+        
+    var edgeGroup = d3.select("#g-main")
+        .append("g")
+        .attr("id", "g-edge");
     
     // Generate the properties of the specific Cell elements
     if (type == "stack"){
@@ -141,71 +151,85 @@ var ArrayObject = function(){
 
     draw(stateList[iterationNumber]);
   }
-  
+
   // Structure Control Functions
-  
+  */
   this.empty = function(){
-    clearLog();
-  
-    this.newStateList();
-    saveState(internalArray);
-    
-    for(var k in internalArray) {
-      if (internalArray[k].id == "top" || internalArray[k].id == "head" || internalArray[k].id == "tail"){
-        internalArray[k]["text"]["text"] = 0;
-      } else {
-        internalArray[k]["text"]["text"] = null;
-      }
-    }
-    
-    saveState(internalArray);
-    play();
+    coreAnim.clearArray();
   }
   
   // Stack Functions
   
-  this.pop = function(removedValue){
+  this.pop = function(removedIndex){
+    coreAnim.clearLog();
+    
+    coreAnim.newStateList();
+    
+    coreAnim.setCellColor(removedIndex, CELL_FILL_DECREMENT);
+    coreAnim.setValue(removedIndex, null);
+    coreAnim.setCellColor(removedIndex, CELL_FILL_DEFAULT);
+    
+    coreAnim.setCellColor("top", CELL_FILL_INCREMENT);
+    coreAnim.setValue("top", removedIndex);
+    coreAnim.setCellColor("top", CELL_FILL_DEFAULT);
+    
+    coreAnim.play();
+    
+    /*
     clearLog();
     
     this.newStateList();
     saveState(internalArray, "The current stack.");
     
-    for(var k in internalArray) {
-      if (internalArray[k].id == removedValue) {
-        blinkContainer(internalArray[k].id, "tomato");
-      
-        internalArray[k]["text"]["text"] = null;
-        cellList[removedValue].changeText(null);
-        
-        saveState(internalArray, "Pop the top position.");
-        
-        blinkContainer(internalArray[k].id, "white");
-        break;
-      }
-    }
-    
-    blinkContainer("top", "palegreen");
-    updatePointer("top", removedValue);
-    blinkContainer("top", "white");
+    blinkContainer(cellList[removedValue].getID(), CELL_FILL_DECREMENT);
+    cellList[removedValue].setText(null);
+    saveState(internalArray, "Pop the top position.");
+    blinkContainer(cellList[removedValue].getID(), CELL_FILL_DEFAULT);
+
+
+    blinkContainer("top", CELL_FILL_INCREMENT);
+    cellList["top"].setText(removedValue);
+    saveState(internalArray, "Update the top index.");
+    blinkContainer("top", CELL_FILL_DEFAULT);
     
     play();
+    */
   }
   
   this.push = function(insertedValue, insertedIndex, newTop){
+    coreAnim.clearLog();
+    coreAnim.newStateList();
+    coreAnim.createArrayHighlight("top");
+    coreAnim.moveHighlight(insertedIndex);
+    coreAnim.setValue(insertedIndex, insertedValue);
+    coreAnim.deleteHighlight();
+    
+    coreAnim.setCellColor("top", CELL_FILL_INCREMENT);
+    coreAnim.setValue("top", newTop);
+    coreAnim.setCellColor("top", CELL_FILL_DEFAULT);
+    
+    coreAnim.play();
+  
+    /*
     clearLog();
     
     this.newStateList();
     saveState(internalArray, "The current stack.");
     
-    createHighlight("top");
+    createArrayHighlight("top");
     moveHighlight(insertedIndex);
-    changeValue(insertedValue, insertedIndex);
+    alert("cheguei aqui");
+    cellList[insertedIndex].setText(insertedValue);
+    saveState(internalArray, "Inserting value.");
     deleteHighlight();
-    blinkContainer("top", "palegreen");
-    updatePointer("top", newTop);
-    blinkContainer("top", "white");
+    
+    blinkContainer("top", CELL_FILL_INCREMENT);
+    cellList["top"].setText(newTop);
+    saveState(internalArray, "Update the top index.");
+    blinkContainer("top", CELL_FILL_DEFAULT);
     
     play();
+    */
   }
   
   // Queue Functions
@@ -216,13 +240,20 @@ var ArrayObject = function(){
     this.newStateList();
     saveState(internalArray, "The current queue.");
     
-    createHighlight("tail");
-    moveHighlight(insertedIndex);
-    changeValue(insertedValue, insertedIndex);
-    deleteHighlight();
-    blinkContainer("tail", "palegreen");
-    updatePointer("tail", newTail);
-    blinkContainer("tail", "white");
+    if ($("#chk-learn").is(":checked")){
+      createNewValue(insertedValue);
+    } else {
+      createArrayHighlight("tail");
+      moveHighlight(insertedIndex);
+      cellList[insertedIndex].setText(insertedValue);
+      saveState(internalArray, "Inserting value.");
+      deleteHighlight();
+      
+      blinkContainer("tail", CELL_FILL_INCREMENT);
+      cellList["tail"].setText(newTail);
+      saveState(internalArray, "Update the tail index.");
+      blinkContainer("tail", CELL_FILL_DEFAULT);
+    }
     
     play();
   }
@@ -233,20 +264,11 @@ var ArrayObject = function(){
     this.newStateList();
     saveState(internalArray, "The current queue.");
     
-    for(var k in internalArray) {
-      if (internalArray[k].id == removedValue) {
-        blinkContainer(internalArray[k].id, "tomato");
-      
-        internalArray[k]["text"]["text"] = null;
-        cellList[removedValue].changeText(null);
-        
-        saveState(internalArray, "Dequeue the first used position.");
-        
-        blinkContainer(internalArray[k].id, "white");
-        
-        break;
-      }
-    }
+    blinkContainer(cellList[removedValue].getID(), CELL_FILL_DECREMENT);
+    cellList[removedValue].setText(null);
+    saveState(internalArray, "Dequeue the first used position.");
+    blinkContainer(cellList[removedValue].getID(), CELL_FILL_DEFAULT);
+    
     
     blinkContainer("head", "palegreen");
     updatePointer("head", newHead);
@@ -255,15 +277,26 @@ var ArrayObject = function(){
     play();
   }
   
+  /*
   // Other Functions
+  function createNewValue(value){
+    cellList["newValue"] = new ArrayCellObject("newValue", 500, 50, value, "cell", "innerText");
+    
+    internalArray.push(cellList["newValue"].getAttributes());
+    
+    saveState(internalArray, "Testing");
+  }
   
-  function createHighlight(id){
+  
+  function createArrayHighlight(id){
     for(var k in internalArray) {
       if (internalArray[k].id == id){
         cellList["highlight"] = new ArrayCellObject("highlight", internalArray[k]["cell"]["x"], internalArray[k]["cell"]["y"], null, "cell-highlight", "innerText");
-        cellList["highlight"].changeFillOpacity(animProperties["cell"]["highlight"]["fill-opacity"]);
-        cellList["highlight"].changeStroke(animProperties["cell"]["highlight"]["stroke"]);
-        cellList["highlight"].changeStrokeWidth(animProperties["cell"]["highlight"]["stroke-width"]);
+        
+        
+        cellList["highlight"].setFillOpacity(animProperties["cell"]["highlight"]["fill-opacity"]);
+        cellList["highlight"].setStroke(animProperties["cell"]["highlight"]["stroke"]);
+        cellList["highlight"].setStrokeWidth(animProperties["cell"]["highlight"]["stroke-width"]);
        
         break;
       }
@@ -275,19 +308,7 @@ var ArrayObject = function(){
   };
   
   function moveHighlight(insertedIndex){
-    for(var k in internalArray) {
-      if (internalArray[k].id == insertedIndex) {
-        for(var j in internalArray) {
-          if (internalArray[j].id == "highlight") {
-            internalArray[j]["cell"]["x"] = internalArray[k]["cell"]["x"];
-            internalArray[j]["cell"]["y"] = internalArray[k]["cell"]["y"];
-            break;
-          }
-        }
-        break;
-      }
-    }
-    
+    cellList["highlight"].moveCell(cellList[insertedIndex].getCoordinateX(), cellList[insertedIndex].getCoordinateY());
     saveState(internalArray, "Where the new value should be inserted.");
   }
   
@@ -306,7 +327,7 @@ var ArrayObject = function(){
     for(var k in internalArray) {
       if (internalArray[k].id == insertedIndex) {
         internalArray[k]["text"]["text"] = insertedValue;
-        cellList[insertedIndex].changeText(insertedValue);
+        cellList[insertedIndex].setText(insertedValue);
         break;
       }
     }
@@ -318,7 +339,7 @@ var ArrayObject = function(){
     for(var k in internalArray) {
       if (internalArray[k].id == id) {
         internalArray[k]["text"]["text"] = newTop;
-        cellList[id].changeText(newTop);
+        cellList[id].setText(newTop);
         break;
       }
     }
@@ -359,6 +380,19 @@ var ArrayObject = function(){
         .attr("stroke-width", function (d) {return d.cell.strokeWidth;});
     cells.exit()
         .remove();
+    
+    /*   
+    var labels = d3.select("#g-label").selectAll("text")
+        .data(currentData["data"], function (d) {return d.id;});
+        
+    labels.enter().append("text")
+        .attr("class", "label")
+        .attr("x", function (d) {return d.cell.x + 25;})
+        .attr("y", function (d) {return d.cell.y + 80;})
+        .text(function (d) { return d.id; });
+    labels.exit()
+        .remove();
+
       
     var texts = d3.select("#g-text").selectAll("text")
         .data(currentData["data"], function (d) {return d.id;});
@@ -392,4 +426,5 @@ var ArrayObject = function(){
     d3.select("#log").selectAll("div")
         .remove();
   }
+  */
 }
