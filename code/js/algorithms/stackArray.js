@@ -118,7 +118,7 @@ var StackArray = function(){
     }
   }
 
-  var anim = new ArrayObject();
+  var anim = new StackArrayAnim();
 
   var internalStack = [];
   var cap = 16;

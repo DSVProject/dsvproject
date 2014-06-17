@@ -188,7 +188,7 @@ var CoreAnimObject = function(){
     * @param {String} value : the value of the item.
     */
   this.createNewInitialItem = function(id, x, y, value){
-    objectList[id] = new ArrayCellObject(id, x, y, value, "shape", "innerText");
+    objectList[id] = new SquareObject(id, x, y, value, "shape", "innerText");
     
     internalJson.push(objectList[id].getAttributes());
     
@@ -197,7 +197,7 @@ var CoreAnimObject = function(){
   
   // Other Functions
   this.createNewCell = function(id, x, y, value){
-    objectList[id] = new ArrayCellObject(id, x, y, value, "shape", "innerText");
+    objectList[id] = new SquareObject(id, x, y, value, "shape", "innerText");
     
     internalJson.push(objectList[id].getAttributes());
     
@@ -206,7 +206,7 @@ var CoreAnimObject = function(){
   
   
   this.createArrayHighlight = function(id){
-    objectList["highlight"] = new ArrayCellObject("highlight", objectList[id].getCoordinateX(), objectList[id].getCoordinateY(), null, "highlight", "innerText");
+    objectList["highlight"] = new SquareObject("highlight", objectList[id].getCoordinateX(), objectList[id].getCoordinateY(), null, "highlight", "innerText");
     
     /*
     objectList["highlight"].setFillOpacity(animProperties["cell"]["highlight"]["fill-opacity"]);

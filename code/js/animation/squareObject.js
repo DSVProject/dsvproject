@@ -12,7 +12,7 @@
   * @param {String} rectClass : the CSS class of the rect svg element.
   * @param {String} textClass : the CSS class of the text svg element.
   */
-var ArrayCellObject = function(id, x, y, text, rectClass, textClass){
+var SquareObject = function(id, x, y, text, rectClass, textClass){
   var arrayObj = {
     "id": null,
     
@@ -44,6 +44,8 @@ var ArrayCellObject = function(id, x, y, text, rectClass, textClass){
       "text": null
     }
   }
+  
+  var edgeList = {};
   
   initArrayObj();
 
@@ -168,6 +170,10 @@ var ArrayCellObject = function(id, x, y, text, rectClass, textClass){
 
     arrayObj["text"]["x"] = x + 25;
     arrayObj["text"]["y"] = y + 30;
+    
+    for(key in edgeList){
+      edgeList[key].refreshPath();
+    }
   }
   
   /**
@@ -186,5 +192,26 @@ var ArrayCellObject = function(id, x, y, text, rectClass, textClass){
     */
   this.setFontColor = function(newColor){
     arrayObj["text"]["fill"] = newColor;
+  }
+  
+  this.addEdge = function(graphEdge){
+    edgeList[graphEdge.getAttributes()["id"]] = graphEdge;
+  }
+
+  this.removeEdge = function(graphEdge){
+    if(edgeList[graphEdge.getAttributes()["id"]] == null || edgeList[graphEdge.getAttributes()["id"]] == undefined) return;
+
+    delete edgeList[graphEdge.getAttributes()["id"]];
+  }
+
+  this.getEdge = function(){
+    var reply = [];
+    var key;
+
+    for(key in edgeList){
+      reply.push(edgeList[key]);
+    }
+
+    return reply;
   }
 }
