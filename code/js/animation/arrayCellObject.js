@@ -5,7 +5,7 @@
 var ArrayCellObject = function(id, x, y, text, cellClass, textClass){
   var arrayObj = {
     "id": null,
-
+    
     "cell": {
       "class": null,
       "cx": null,

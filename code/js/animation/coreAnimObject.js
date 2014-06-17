@@ -31,7 +31,7 @@ var CoreAnimObject = function(){
     var edgeGroup = d3.select("#g-main")
         .append("g")
         .attr("id", "g-edge");
-    
+    /**
     if (type == "array") {
       // Generate the properties of the specific Cell elements
       if (subtype == "stack"){
@@ -92,6 +92,7 @@ var CoreAnimObject = function(){
           .attr("text-anchor", function (d) {return d.text.textAnchor;})        
           .text(function (d) {return d.text.text;});
     }
+    **/
   }
   
   // Animation Control Functions
@@ -113,27 +114,28 @@ var CoreAnimObject = function(){
     iterationNumber++;
   }
   
-  this.play = function(){
+  this.play = function(duration){
+    if(duration == null || isNaN(duration) || duration < 0) duration = DEFAULT_ANIMATION_DURATION;
+    
     if(stateList == null) return;
     iterationNumber = 0;
     
-    // The first iteration is always the original state, so we send 0 as the duration
-    draw(stateList[iterationNumber], 0);
+    draw(stateList[iterationNumber], duration);
     
     setTimeout(function(){
-      animate();
-    }, DEFAULT_ANIMATION_DURATION);
+      animate(duration);
+    }, duration);
   }
   
-  function animate(){
-    next();
+  function animate(duration){
+    next(duration);
 
     setTimeout(function(){
-      animate();
-    }, DEFAULT_ANIMATION_DURATION);
+      animate(duration);
+    }, duration);
   }
   
-  function next(){
+  function next(duration){
     if(iterationNumber < 0) iterationNumber = 0;
     
     iterationNumber++;
@@ -143,7 +145,7 @@ var CoreAnimObject = function(){
 		  return;
 	  }
 
-    draw(stateList[iterationNumber]);
+    draw(stateList[iterationNumber], duration);
   }
   
   // Structure Control Functions
@@ -196,9 +198,8 @@ var CoreAnimObject = function(){
     saveState(internalJson);
   }
   
-  function draw(currentData, dur, del){
-    if(dur == null || isNaN(dur) || dur <= 0) dur = DEFAULT_ANIMATION_DURATION;
-    if(del == null || isNaN(del) || del <= 0) del = DEFAULT_ANIMATION_DELAY;
+  function draw(currentData, dur){
+    if(dur == null || isNaN(dur) || dur < 0) dur = DEFAULT_ANIMATION_DURATION;
   
     var cells = d3.select("#g-array").selectAll(SVG_RECT)
         .data(currentData["data"], function (d) {return d.id;});
@@ -218,8 +219,7 @@ var CoreAnimObject = function(){
         .attr("stroke-width", function (d) {return d.cell.strokeWidth;});
     cells.exit()
         .remove();
-    
-    /*   
+     
     var labels = d3.select("#g-label").selectAll("text")
         .data(currentData["data"], function (d) {return d.id;});
         
@@ -230,7 +230,6 @@ var CoreAnimObject = function(){
         .text(function (d) { return d.id; });
     labels.exit()
         .remove();
-    */
       
     var texts = d3.select("#g-text").selectAll("text")
         .data(currentData["data"], function (d) {return d.id;});

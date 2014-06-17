@@ -6,6 +6,12 @@ var ArrayObject = function(){
 
   this.init = function(type){
     coreAnim.init("array", type);
+    
+    coreAnim.createNewCell("top",50,50,0);
+    for(var i=0; i<16; i++){
+      coreAnim.createNewCell(i, (i+1)*50, 300, null);    
+    }
+    coreAnim.play(500);
   }
   /*
   // General global variables
@@ -207,7 +213,7 @@ var ArrayObject = function(){
     coreAnim.setCellColor("top", CELL_FILL_INCREMENT);
     coreAnim.setValue("top", newTop);
     coreAnim.setCellColor("top", CELL_FILL_DEFAULT);
-    
+        
     coreAnim.play();
   
     /*
