@@ -31,68 +31,6 @@ var CoreAnimObject = function(){
     var edgeGroup = d3.select("#g-main")
         .append("g")
         .attr("id", "g-edge");
-    /**
-    if (type == "array") {
-      // Generate the properties of the specific Cell elements
-      if (subtype == "stack"){
-        objectList["top"] = new ArrayCellObject("top", 50, 50, 0, "cell", "innerText");
-        internalJson.push(objectList["top"].getAttributes());
-        
-      } else { //queue
-        objectList["head"] = new ArrayCellObject("head", 50, 50, 0, "cell", "innerText");
-        internalJson.push(objectList["head"].getAttributes());
-        
-        objectList["tail"] = new ArrayCellObject("tail", 150, 50, 0, "cell", "innerText");
-        internalJson.push(objectList["tail"].getAttributes());
-      }
-      
-      // Generate element properties for each array posisition
-      for(var i=0; i<16; i++){
-        objectList[i] = new ArrayCellObject(i, (i+1)*50, 300, null, "cell", "innerText");
-        internalJson.push(objectList[i].getAttributes());
-      }
-      
-      // Create the graphic elements based on the data contained on internalArray
-      var positions = cellGroup.selectAll(SVG_RECT)
-          .data(internalJson, function (d) {return d.id;})
-        .enter().append(SVG_RECT)              
-          .attr("id", function (d) {return "array-" + d.id;})
-          .attr("class", function (d) {return d.cell.class})
-          .attr("x", function (d) {return d.cell.x;})
-          .attr("y", function (d) {return d.cell.y;})
-          .attr("height", function (d) {return d.cell.height;})
-          .attr("width", function (d) {return d.cell.width;})
-          .attr("fill", function (d) {return d.cell.fill;})
-          .attr("fill-opacity", function (d) {return d.cell.fillOpacity;})
-          .attr("stroke", function (d) {return d.cell.stroke;})
-          .attr("stroke-width", function (d) {return d.cell.strokeWidth;});
-  
-        //.on("mouseover", function(){d3.select(this).style("fill", "pink");})
-        //.on("mouseout", function(){d3.select(this).style("fill", "white");});
-      
-      var labels = labelGroup.selectAll("text")
-          .data(internalJson, function (d) {return d.id;})
-        .enter().append("text")
-          .attr("class", "label")
-          .attr("x", function (d) {return d.cell.x + 25;})
-          .attr("y", function (d) {return d.cell.y + 80;})
-          .text(function (d) { return d.id; });
-        
-      var texts = textGroup.selectAll("text")
-          .data(internalJson, function (d) {return d.id;})
-        .enter().append("text")
-          .attr("id", function (d) {return "text-" + d.id; })
-          .attr("class", function (d) {return d.text.class})
-          .attr("x", function (d) {return d.text.x;})
-          .attr("y", function (d) {return d.text.y;})
-          .attr("fill", function (d) {return d.text.fill;})
-          .attr("font-family", function (d) {return d.text.fontFamily;})
-          .attr("font-weigh", function (d) {return d.text.fontWeight;})
-          .attr("font-size", function (d) {return d.text.fontSize;})
-          .attr("text-anchor", function (d) {return d.text.textAnchor;})        
-          .text(function (d) {return d.text.text;});
-    }
-    **/
   }
   
   // Animation Control Functions
