@@ -14,7 +14,7 @@ var CoreAnimObject = function(){
   var iterationNumber = 0;
   
   // Initiliase the graphic objects related to this implementation
-  this.init = function(type, subtype){
+  this.init = function(){
     // This groups will hold the graphic elements          
     var shapeGroup = d3.select("#g-main")
         .append("g")
@@ -206,13 +206,11 @@ var CoreAnimObject = function(){
   
   
   this.createArrayHighlight = function(id){
-    objectList["highlight"] = new SquareObject("highlight", objectList[id].getCoordinateX(), objectList[id].getCoordinateY(), null, "highlight", "innerText");
+    objectList["highlight"] = new SquareObject("highlight", objectList[id].getCoordinateX(), objectList[id].getCoordinateY(), null, "shape", "innerText");
     
-    /*
     objectList["highlight"].setFillOpacity(animProperties["cell"]["highlight"]["fill-opacity"]);
     objectList["highlight"].setStroke(animProperties["cell"]["highlight"]["stroke"]);
     objectList["highlight"].setStrokeWidth(animProperties["cell"]["highlight"]["stroke-width"]);
-    */
   
     internalJson.push(objectList["highlight"].getAttributes());
     
@@ -238,7 +236,7 @@ var CoreAnimObject = function(){
   function draw(currentData, dur){
     if(dur == null || isNaN(dur) || dur < 0) dur = DEFAULT_ANIMATION_DURATION;
   
-    var cells = d3.select("#g-shape").selectAll()
+    var cells = d3.select("#g-shape").selectAll(".shape")
         .data(currentData["data"], function (d) {return d.id;});
       
     cells.enter().append(SVG_RECT) 
@@ -251,10 +249,10 @@ var CoreAnimObject = function(){
         .attr("y", function (d) {return d.rect.y;})
         .attr("height", function (d) {return d.rect.height;})
         .attr("width", function (d) {return d.rect.width;})
-        .attr("fill", function (d) {return d.rect.fill;})
-        .attr("fill-opacity", function (d) {return d.rect.fillOpacity;})
-        .attr("stroke", function (d) {return d.rect.stroke;})
-        .attr("stroke-width", function (d) {return d.rect.strokeWidth;});
+        .style("fill", function (d) {return d.rect.fill;})
+        .style("fill-opacity", function (d) {return d.rect.fillOpacity;})
+        .style("stroke", function (d) {return d.rect.stroke;})
+        .style("stroke-width", function (d) {return d.rect.strokeWidth;});
     cells.exit()
         .remove();
      
@@ -279,11 +277,11 @@ var CoreAnimObject = function(){
         .duration(dur)
         .attr("x", function (d) {return d.text.x;})
         .attr("y", function (d) {return d.text.y;})
-        .attr("fill", function (d) {return d.text.fill;})
-        .attr("font-family", function (d) {return d.text.fontFamily;})
-        .attr("font-weigh", function (d) {return d.text.fontWeight;})
-        .attr("font-size", function (d) {return d.text.fontSize;})
-        .attr("text-anchor", function (d) {return d.text.textAnchor;})   
+        .style("fill", function (d) {return d.text.fill;})
+        .style("font-family", function (d) {return d.text.fontFamily;})
+        .style("font-weigh", function (d) {return d.text.fontWeight;})
+        .style("font-size", function (d) {return d.text.fontSize;})
+        .style("text-anchor", function (d) {return d.text.textAnchor;})   
         .text(function (d) {return d.text.text;});
     texts.exit()
         .remove();

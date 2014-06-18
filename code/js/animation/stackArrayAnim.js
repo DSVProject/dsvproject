@@ -6,7 +6,7 @@ var StackArrayAnim = function(){
   var array = {};
 
   this.init = function(type){
-    coreAnim.init("array", type);
+    coreAnim.init();
     
     array["top"] = coreAnim.createNewInitialItem("top",50,50,0);
     for(var i=0; i<16; i++){
@@ -61,6 +61,7 @@ var StackArrayAnim = function(){
     coreAnim.moveHighlight(insertedIndex);
     
     array[insertedIndex].setText(insertedValue);
+    array[insertedIndex].setRectClass("highlight");
     coreAnim.saveState("Inserting the new value");
 
     coreAnim.deleteHighlight();

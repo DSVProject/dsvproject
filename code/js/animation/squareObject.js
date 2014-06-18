@@ -95,7 +95,7 @@ var SquareObject = function(id, x, y, text, rectClass, textClass){
     *
     * @param {String} newClass : the new CSS class.
     */
-  this.setCellClass = function(newClass){
+  this.setRectClass = function(newClass){
     arrayObj["rect"]["class"] = newClass;
   }
   
