@@ -213,7 +213,7 @@ var SquareObject = function(id, x, y, text, rectClass, textClass){
     var json = [];
     json.push(propObj);
   
-    var shape = d3.select("#g-shape").selectAll(".shape")
+    var shape = d3.select("#g-shape").selectAll(SVG_RECT)
         .data(json, function (d) {return d.id;});
       
     shape.enter().append(SVG_RECT)        
@@ -314,23 +314,31 @@ var SquareObject = function(id, x, y, text, rectClass, textClass){
     d3.select("shape-" + propObj["id"]).call(drag); 
   }
   
+  function isValidDestination(){
+    return false;
+  }
+  
   function dragstart(d) {
     d.rect.x = Number(d3.select(this).attr("x"));
     d.rect.y = Number(d3.select(this).attr("y"));
   }
   
   function dragmove(d) {
+    var initX = Number(d3.select(this).attr("x"));
+    var initY = Number(d3.select(this).attr("y"))
+
     d3.select("#shape-" + d.id).attr("transform", function(d,i){
-      return "translate(" + [d3.event.x - (d.rect.x+25) , d3.event.y - (d.rect.y+35)] + ")"
+      return "translate(" + [d3.event.x - (initX + 25) , d3.event.y - (initY + 35)] + ")"
     });
     
-    d3.select("#label-" + d.id).text(null).attr("transform", function(d,i){
-      return "translate(" + [d3.event.x - (d.rect.x+25) , d3.event.y - (d.rect.y+35)] + ")"
-    });
+    d3.select("#label-" + d.id).text(null);
     
     d3.select("#text-" + d.id).attr("transform", function(d,i){
-      return "translate(" + [d3.event.x - (d.rect.x+25) , d3.event.y - (d.rect.y+35)] + ")"
+      return "translate(" + [d3.event.x - (initX + 25) , d3.event.y - (initY + 35)] + ")"
     });
+    
+    d.rect.x = d3.event.x;
+    d.rect.y = d3.event.y;
   }
   
   function dragend(d) {
@@ -349,9 +357,5 @@ var SquareObject = function(id, x, y, text, rectClass, textClass){
         return "translate([0,0])";
       });
     }
-  }
-  
-  function isValidDestination(){
-    return false;
   }
 }
