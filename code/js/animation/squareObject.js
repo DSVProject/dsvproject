@@ -16,8 +16,6 @@ var SquareObject = function(id, x, y, text, rectClass, textClass){
   var propObj = {
     "id": null,
     
-    "label": null,
-    
     "rect": {
       "class": null,
       "x": null,
@@ -42,6 +40,8 @@ var SquareObject = function(id, x, y, text, rectClass, textClass){
       "text": null
     }
   }
+  
+  var edges = {};
   
   initArrayObj();
 
@@ -218,7 +218,8 @@ var SquareObject = function(id, x, y, text, rectClass, textClass){
       
     shape.enter().append(SVG_RECT)        
         .attr("id", function (d) {return "shape-" + d.id;})
-        .attr("class", function (d) {return d.rect.class});
+        .attr("class", function (d) {return d.rect.class})
+        .call(drag);
     shape.transition()
         .duration(dur)
         .attr("x", function (d) {return d.rect.x;})
@@ -234,6 +235,7 @@ var SquareObject = function(id, x, y, text, rectClass, textClass){
         .data(json, function (d) {return d.id;});
         
     label.enter().append("text")
+        .attr("id", function (d) {return "label-" + d.id;})
         .attr("class", "label")
         .attr("x", function (d) {return d.rect.x + 25;})
         .attr("y", function (d) {return d.rect.y + 80;})
@@ -298,6 +300,58 @@ var SquareObject = function(id, x, y, text, rectClass, textClass){
     * @param {propObj} prop : a propObj from the Object to be cloned.
     */
   this.cloneProperties = function(prop){
-      propObj = clone(prop);
+    propObj = clone(prop);
+  }
+  
+  // This functions are used for the learning mode
+  
+  var drag = d3.behavior.drag()
+      .on("drag", dragmove)
+      .on("dragstart", dragstart)
+      .on("dragend", dragend);
+  
+  this.toggleDrag = function(){
+    d3.select("shape-" + propObj["id"]).call(drag); 
+  }
+  
+  function dragstart(d) {
+    d.rect.x = Number(d3.select(this).attr("x"));
+    d.rect.y = Number(d3.select(this).attr("y"));
+  }
+  
+  function dragmove(d) {
+    d3.select("#shape-" + d.id).attr("transform", function(d,i){
+      return "translate(" + [d3.event.x - (d.rect.x+25) , d3.event.y - (d.rect.y+35)] + ")"
+    });
+    
+    d3.select("#label-" + d.id).text(null).attr("transform", function(d,i){
+      return "translate(" + [d3.event.x - (d.rect.x+25) , d3.event.y - (d.rect.y+35)] + ")"
+    });
+    
+    d3.select("#text-" + d.id).attr("transform", function(d,i){
+      return "translate(" + [d3.event.x - (d.rect.x+25) , d3.event.y - (d.rect.y+35)] + ")"
+    });
+  }
+  
+  function dragend(d) {
+    if(isValidDestination()){
+      
+    }else{
+      d3.select("#shape-" + d.id).attr("transform", function(d,i){
+        return "translate([0,0])";
+      });
+      
+      d3.select("#label-" + d.id).text(d.id).attr("transform", function(d,i){
+        return "translate([0,0])";
+      });
+      
+      d3.select("#text-" + d.id).attr("transform", function(d,i){
+        return "translate([0,0])";
+      });
+    }
+  }
+  
+  function isValidDestination(){
+    return false;
   }
 }

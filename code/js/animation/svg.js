@@ -13,10 +13,12 @@ var panGroup = svgContainer.append("g")
     .append("g")
     .attr("id", "g-main");
 
+/*
 panGroup.append("rect")
     .attr("width", MAIN_SVG_WIDTH)
     .attr("height", MAIN_SVG_HEIGHT)
     .attr("fill", "white");
+*/
   
 // reposition g
 function rescale() {

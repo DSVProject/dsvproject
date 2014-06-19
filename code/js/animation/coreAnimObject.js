@@ -1,9 +1,5 @@
 // All key methods related to animation are located in this file
-var CoreAnimObject = function(){
-  
-  // Json object that will be used to change the graphics on the screen
-  //var internalJson = [];
-  
+var CoreAnimObject = function(){  
   // Internal array that keeps an instance of all objects on the screen
   var objectList = {};
   
@@ -113,32 +109,6 @@ var CoreAnimObject = function(){
   }
   
   /**
-    * Create an initial graphic element, that will appear on the screen when the page is loaded.
-    * When calling this function all the animations will happen at once, and not step by step.
-    *
-    * @param {String || Number} id : the id of the item.
-    * @param {Number} x : the x coordinate of the item.
-    * @param {Number} y : the y coordinate of the item.
-    * @param {String} value : the value of the item.
-    */
-  this.createNewInitialItem = function(id, x, y, value){
-    objectList[id] = new SquareObject(id, x, y, value, "shape", "innerText");
-    
-    internalJson.push(objectList[id].getAttributes());
-    
-    return objectList[id];
-  }
-  
-  // Other Functions
-  this.createNewCell = function(id, x, y, value){
-    objectList[id] = new SquareObject(id, x, y, value, "shape", "innerText");
-    
-    internalJson.push(objectList[id].getAttributes());
-    
-    this.saveState("New cell created.");
-  }
-  
-  /**
     * Create a square graphic element.
     *
     * @param {String || Number} id : the id of the item.
@@ -208,5 +178,9 @@ var CoreAnimObject = function(){
   this.clearLog = function(){
     d3.select("#log").selectAll("div")
         .remove();
+  }
+  
+  this.isLearningMode = function(){
+    return $("#chk-learn").is(":checked");
   }
 }

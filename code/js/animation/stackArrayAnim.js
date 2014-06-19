@@ -4,6 +4,11 @@
 var StackArrayAnim = function(){
   var coreAnim = new CoreAnimObject();
   var array = {};
+  
+  //var drag = d3.behavior.drag()
+      //.on("drag", dragmove);
+      //.on("dragstart", dragstart);
+      //.on("dragend", dragend);
 
   this.init = function(type){
     coreAnim.init();
@@ -18,7 +23,6 @@ var StackArrayAnim = function(){
     coreAnim.play(0);
   }
 
-  // Structure Control Functions
   this.empty = function(){
     coreAnim.clearLog();
     coreAnim.newStateList();
@@ -31,8 +35,36 @@ var StackArrayAnim = function(){
     coreAnim.saveState();
     coreAnim.play();
   }
+
+  this.push = function(insertedValue, insertedIndex, newTop){
+    coreAnim.clearLog();
+    coreAnim.newStateList();
+    
+    if (coreAnim.isLearningMode()){
+      var newValue = coreAnim.newSquareObject("newValue", 500, 50, insertedValue);
+      
+      //test.toggleDrag();
+      coreAnim.saveState("Move the new value to its right position.");
+    } else {
+      //coreAnim.createArrayHighlight("top");
+      //coreAnim.moveHighlight(insertedIndex);
+      
+      array[insertedIndex].setText(insertedValue);
+      array[insertedIndex].setRectClass("highlight");
+      coreAnim.saveState("Inserting the new value");
   
-  // Stack Functions
+      //coreAnim.deleteHighlight();
+      
+      array["top"].setFill(CELL_FILL_INCREMENT);
+      coreAnim.saveState();
+      
+      array["top"].setText(newTop);
+      array["top"].setFill(CELL_FILL_DEFAULT);
+      coreAnim.saveState("Change the top pointer.")
+    }
+    
+    coreAnim.play();
+  }
   
   this.pop = function(removedIndex){
     coreAnim.clearLog();
@@ -49,29 +81,6 @@ var StackArrayAnim = function(){
     coreAnim.saveState();
     
     array["top"].setText(removedIndex);
-    array["top"].setFill(CELL_FILL_DEFAULT);
-    coreAnim.saveState("Change the top pointer.")
-    
-    coreAnim.play();
-  }
-  
-  this.push = function(insertedValue, insertedIndex, newTop){
-    coreAnim.clearLog();
-    coreAnim.newStateList();
-    
-    //coreAnim.createArrayHighlight("top");
-    //coreAnim.moveHighlight(insertedIndex);
-    
-    array[insertedIndex].setText(insertedValue);
-    array[insertedIndex].setRectClass("highlight");
-    coreAnim.saveState("Inserting the new value");
-
-    //coreAnim.deleteHighlight();
-    
-    array["top"].setFill(CELL_FILL_INCREMENT);
-    coreAnim.saveState();
-    
-    array["top"].setText(newTop);
     array["top"].setFill(CELL_FILL_DEFAULT);
     coreAnim.saveState("Change the top pointer.")
     
