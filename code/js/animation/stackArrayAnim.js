@@ -8,11 +8,13 @@ var StackArrayAnim = function(){
   this.init = function(type){
     coreAnim.init();
     
-    array["top"] = coreAnim.createNewInitialItem("top",50,50,0);
+    array["top"] = coreAnim.newSquareObject("top",50,50,0);
     for(var i=0; i<16; i++){
-      array[i] = coreAnim.createNewInitialItem(i, (i+1)*50, 300, null);    
+      array[i] = coreAnim.newSquareObject(i, (i+1)*50, 300, null);    
     }
+    
     coreAnim.saveState();
+
     coreAnim.play(0);
   }
 
@@ -57,14 +59,14 @@ var StackArrayAnim = function(){
     coreAnim.clearLog();
     coreAnim.newStateList();
     
-    coreAnim.createArrayHighlight("top");
-    coreAnim.moveHighlight(insertedIndex);
+    //coreAnim.createArrayHighlight("top");
+    //coreAnim.moveHighlight(insertedIndex);
     
     array[insertedIndex].setText(insertedValue);
     array[insertedIndex].setRectClass("highlight");
     coreAnim.saveState("Inserting the new value");
 
-    coreAnim.deleteHighlight();
+    //coreAnim.deleteHighlight();
     
     array["top"].setFill(CELL_FILL_INCREMENT);
     coreAnim.saveState();

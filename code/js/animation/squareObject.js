@@ -13,10 +13,8 @@
   * @param {String} textClass : the CSS class of the text svg element.
   */
 var SquareObject = function(id, x, y, text, rectClass, textClass){
-  var arrayObj = {
+  var propObj = {
     "id": null,
-    
-    "shape": "rect",
     
     "label": null,
     
@@ -45,49 +43,54 @@ var SquareObject = function(id, x, y, text, rectClass, textClass){
     }
   }
   
-  var edgeList = {};
-  
   initArrayObj();
 
   /**
     * Initialise the element, with the provided parameters and other default properties.
     */
   function initArrayObj(){
-    arrayObj["id"] = id;
+    propObj["id"] = id;
     
-    arrayObj["rect"]["class"] = rectClass;
-    arrayObj["rect"]["x"] = x;
-    arrayObj["rect"]["y"] = y;
-    arrayObj["rect"]["width"] = CELL_WIDTH_DEFAULT;
-    arrayObj["rect"]["height"] = CELL_HEIGHT_DEFAULT;
-    arrayObj["rect"]["fill"] = CELL_FILL_DEFAULT;
-    arrayObj["rect"]["fillOpacity"] = animProperties["cell"]["default"]["fill-opacity"];
-    arrayObj["rect"]["stroke"] = animProperties["cell"]["default"]["stroke"];
-    arrayObj["rect"]["strokeWidth"] = animProperties["cell"]["default"]["stroke-width"];
+    propObj["rect"]["class"] = rectClass;
+    propObj["rect"]["x"] = x;
+    propObj["rect"]["y"] = y;
+    propObj["rect"]["width"] = CELL_WIDTH_DEFAULT;
+    propObj["rect"]["height"] = CELL_HEIGHT_DEFAULT;
+    propObj["rect"]["fill"] = CELL_FILL_DEFAULT;
+    propObj["rect"]["fillOpacity"] = animProperties["cell"]["default"]["fill-opacity"];
+    propObj["rect"]["stroke"] = animProperties["cell"]["default"]["stroke"];
+    propObj["rect"]["strokeWidth"] = animProperties["cell"]["default"]["stroke-width"];
     
-    arrayObj["text"]["class"] = textClass;
-    arrayObj["text"]["x"] = x + 25;
-    arrayObj["text"]["y"] = y + 30;
-    arrayObj["text"]["fill"] = animProperties["text"]["fill"];
-    arrayObj["text"]["fontFamily"] = animProperties["text"]["font-family"];
-    arrayObj["text"]["fontWeight"] = animProperties["text"]["font-weight"];
-    arrayObj["text"]["fontSize"] = animProperties["text"]["font-size"];
-    arrayObj["text"]["textAnchor"] = animProperties["text"]["text-anchor"];
-    arrayObj["text"]["text"] = text;
+    propObj["text"]["class"] = textClass;
+    propObj["text"]["x"] = x + 25;
+    propObj["text"]["y"] = y + 30;
+    propObj["text"]["fill"] = animProperties["text"]["fill"];
+    propObj["text"]["fontFamily"] = animProperties["text"]["font-family"];
+    propObj["text"]["fontWeight"] = animProperties["text"]["font-weight"];
+    propObj["text"]["fontSize"] = animProperties["text"]["font-size"];
+    propObj["text"]["textAnchor"] = animProperties["text"]["text-anchor"];
+    propObj["text"]["text"] = text;
   }
   
   /**
     * @return {arrayObj} : the content of this object property map.
     */
   this.getAttributes = function(){
-    return arrayObj;
+    return propObj;
   }
   
   /**
     * @return {String || Number} : the id of this object.
     */
   this.getID = function(){
-    return arrayObj["id"];
+    return propObj["id"];
+  }
+  
+  /**
+    * @return {String} : the type of this object.
+    */
+  this.getType = function(){
+    return "SquareObject";
   }
   
   /**
@@ -96,21 +99,21 @@ var SquareObject = function(id, x, y, text, rectClass, textClass){
     * @param {String} newClass : the new CSS class.
     */
   this.setRectClass = function(newClass){
-    arrayObj["rect"]["class"] = newClass;
+    propObj["rect"]["class"] = newClass;
   }
   
   /**
     * @return {Number} : the x coordinate of the rect svg element.
     */
   this.getCoordinateX = function(){
-    return arrayObj["rect"]["x"];
+    return propObj["rect"]["x"];
   }
   
   /**
     * @return {Number} : the y coordinate of the rect svg element.
     */
   this.getCoordinateY = function(){
-    return arrayObj["rect"]["y"];
+    return propObj["rect"]["y"];
   }
   
   /**
@@ -120,7 +123,7 @@ var SquareObject = function(id, x, y, text, rectClass, textClass){
     */
   this.setFill = function(newFill){
     if(newFill == null) return;
-    arrayObj["rect"]["fill"] = newFill;
+    propObj["rect"]["fill"] = newFill;
   }
   
   /**
@@ -132,7 +135,7 @@ var SquareObject = function(id, x, y, text, rectClass, textClass){
     if(newOpacity == null|| isNaN(newOpacity)) return;
     if(newOpacity < 0) newOpacity = 0.0;
     
-    arrayObj["rect"]["fillOpacity"] = newOpacity;
+    propObj["rect"]["fillOpacity"] = newOpacity;
   }
   
   /**
@@ -141,7 +144,7 @@ var SquareObject = function(id, x, y, text, rectClass, textClass){
     * @param {String} newStroke : the new CSS or svg stroke color.
     */
   this.setStroke = function(newStroke){
-    arrayObj["rect"]["stroke"] = newStroke;
+    propObj["rect"]["stroke"] = newStroke;
   }
   
   /**
@@ -153,7 +156,7 @@ var SquareObject = function(id, x, y, text, rectClass, textClass){
     if(newStrokeWidth == null || isNaN(newStrokeWidth)) return;
     if(newStrokeWidth < 0) newStrokeWidth = 0;
     
-    arrayObj["rect"]["strokeWidth"] = newStrokeWidth;
+    propObj["rect"]["strokeWidth"] = newStrokeWidth;
   }
   
   /**
@@ -165,11 +168,11 @@ var SquareObject = function(id, x, y, text, rectClass, textClass){
   this.moveShape = function(x, y){
     if(x == null || y == null || isNaN(x) || isNaN(y)) return;
   
-    arrayObj["rect"]["x"] = x;
-    arrayObj["rect"]["y"] = y;
+    propObj["rect"]["x"] = x;
+    propObj["rect"]["y"] = y;
 
-    arrayObj["text"]["x"] = x + 25;
-    arrayObj["text"]["y"] = y + 30;
+    propObj["text"]["x"] = x + 25;
+    propObj["text"]["y"] = y + 30;
     
     for(key in edgeList){
       edgeList[key].refreshPath();
@@ -182,7 +185,11 @@ var SquareObject = function(id, x, y, text, rectClass, textClass){
     * @param {String} newText : the new text.
     */
   this.setText = function(newText){
-    arrayObj["text"]["text"] = newText;
+    propObj["text"]["text"] = newText;
+  }
+  
+  this.getText = function(){
+    return propObj["text"]["text"];
   }
   
   /**
@@ -191,27 +198,106 @@ var SquareObject = function(id, x, y, text, rectClass, textClass){
     * @param {String} newColor : the new CSS or svg color.
     */
   this.setFontColor = function(newColor){
-    arrayObj["text"]["fill"] = newColor;
+    propObj["text"]["fill"] = newColor;
   }
   
-  this.addEdge = function(graphEdge){
-    edgeList[graphEdge.getAttributes()["id"]] = graphEdge;
+  /**
+    * Draw this object properties on the screen.
+    * If the object is new, it will appear; if any property has changed, it will be updated.
+    *
+    * @param {Number} dur : the duration in miliseconds of this animation.
+    */
+  this.draw = function(dur){
+    if(dur == null || isNaN(dur) || dur < 0) dur = DEFAULT_ANIMATION_DURATION;
+    
+    var json = [];
+    json.push(propObj);
+  
+    var shape = d3.select("#g-shape").selectAll(".shape")
+        .data(json, function (d) {return d.id;});
+      
+    shape.enter().append(SVG_RECT)        
+        .attr("id", function (d) {return "shape-" + d.id;})
+        .attr("class", function (d) {return d.rect.class});
+    shape.transition()
+        .duration(dur)
+        .attr("x", function (d) {return d.rect.x;})
+        .attr("y", function (d) {return d.rect.y;})
+        .attr("height", function (d) {return d.rect.height;})
+        .attr("width", function (d) {return d.rect.width;})
+        .style("fill", function (d) {return d.rect.fill;})
+        .style("fill-opacity", function (d) {return d.rect.fillOpacity;})
+        .style("stroke", function (d) {return d.rect.stroke;})
+        .style("stroke-width", function (d) {return d.rect.strokeWidth;});
+     
+    var label = d3.select("#g-label").selectAll("text")
+        .data(json, function (d) {return d.id;});
+        
+    label.enter().append("text")
+        .attr("class", "label")
+        .attr("x", function (d) {return d.rect.x + 25;})
+        .attr("y", function (d) {return d.rect.y + 80;})
+        .text(function (d) { return d.id; });
+      
+    var text = d3.select("#g-text").selectAll("text")
+        .data(json, function (d) {return d.id;});
+        
+    text.enter().append("text")
+        .attr("id", function (d) {return "text-" + d.id; })
+        .attr("class", function (d) {return d.text.class});
+    text.transition()
+        .duration(dur)
+        .attr("x", function (d) {return d.text.x;})
+        .attr("y", function (d) {return d.text.y;})
+        .style("fill", function (d) {return d.text.fill;})
+        .style("font-family", function (d) {return d.text.fontFamily;})
+        .style("font-weigh", function (d) {return d.text.fontWeight;})
+        .style("font-size", function (d) {return d.text.fontSize;})
+        .style("text-anchor", function (d) {return d.text.textAnchor;})   
+        .text(function (d) {return d.text.text;});
   }
-
-  this.removeEdge = function(graphEdge){
-    if(edgeList[graphEdge.getAttributes()["id"]] == null || edgeList[graphEdge.getAttributes()["id"]] == undefined) return;
-
-    delete edgeList[graphEdge.getAttributes()["id"]];
+  
+  /**
+    * Remove this object from the screen.
+    *
+    * @param {Number} dur : the duration in miliseconds of this animation.
+    */
+  this.remove = function(dur){
+    if(dur == null || isNaN(dur) || dur < 0) dur = DEFAULT_ANIMATION_DURATION;
+    
+    var json = [];
+    json.push(propObj);
+    
+    var shape = d3.select("#g-shape").selectAll(".shape")
+        .data(json, function (d) {return d.id;});
+    
+    shape.transition()
+        .duration(dur)
+        .remove();
+    
+    var label = d3.select("#g-label").selectAll("text")
+        .data(json, function (d) {return d.id;});
+        
+    label.transition()
+        .duration(dur)
+        .remove();
+    
+    var text = d3.select("#g-text").selectAll("text")
+        .data(json, function (d) {return d.id;});
+        
+    text.transition()
+        .duration(dur)
+        .remove();
+    
   }
-
-  this.getEdge = function(){
-    var reply = [];
-    var key;
-
-    for(key in edgeList){
-      reply.push(edgeList[key]);
-    }
-
-    return reply;
+  
+  /**
+    * This function should be called when creating a new state. This function will clone the properties
+    * from the orignal object, without the reference, allowing the animationg to happen step by step.
+    *
+    * @param {propObj} prop : a propObj from the Object to be cloned.
+    */
+  this.cloneProperties = function(prop){
+      propObj = clone(prop);
   }
 }

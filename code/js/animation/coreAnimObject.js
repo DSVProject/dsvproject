@@ -2,7 +2,7 @@
 var CoreAnimObject = function(){
   
   // Json object that will be used to change the graphics on the screen
-  var internalJson = [];
+  //var internalJson = [];
   
   // Internal array that keeps an instance of all objects on the screen
   var objectList = {};
@@ -41,9 +41,23 @@ var CoreAnimObject = function(){
     * @param {String} status : an optional message about the changes, that will appear on the screen log.
     */
   this.saveState = function(status){
-    var state = {};
+    var state = {}; // The current state being created
+    var newList = {}; // The copy of the current objectList
+    var clone;  // The instance for the cloned Object
     
-    state["data"] = deepCopy(internalJson);
+    for(var key in objectList){
+      switch(objectList[key].getType()) {
+        case "SquareObject":
+          clone = new SquareObject();
+          break;
+      }
+      
+      clone.cloneProperties(objectList[key].getAttributes())
+      newList[key] = clone; 
+    }
+    
+    // Each state will hold the "data" which is a copy of objectList, and a "status" which will appear on the log.
+    state["data"] = newList;
     state["status"] = status;
   
     stateList[iterationNumber] = state;
@@ -58,7 +72,7 @@ var CoreAnimObject = function(){
     stateList = {};
     iterationNumber = 0;
     
-    this.saveState("Initial state.");
+    //this.saveState("Initial state.");
   }
   
   /**
@@ -98,24 +112,6 @@ var CoreAnimObject = function(){
 	  }
   }
   
-  // Structure Control Functions
-  
-  /**
-    * Set the text element of one graphic unit.
-    *
-    * @param {String || Number} id : the id of the item.
-    * @param {String} newValue : the new value that will be set.
-    */
-  this.setValue = function(id, newValue){
-    objectList[id].setText(newValue);
-    this.saveState(id + " value set to " + newValue);
-  }
-  
-  this.setCellColor = function(id, color){
-    objectList[id].setFill(color);
-    this.saveState();
-  }
-  
   /**
     * Create an initial graphic element, that will appear on the screen when the page is loaded.
     * When calling this function all the animations will happen at once, and not step by step.
@@ -142,7 +138,21 @@ var CoreAnimObject = function(){
     this.saveState("New cell created.");
   }
   
+  /**
+    * Create a square graphic element.
+    *
+    * @param {String || Number} id : the id of the item.
+    * @param {Number} x : the x coordinate of the item.
+    * @param {Number} y : the y coordinate of the item.
+    * @param {String} value : the value of the item.
+    */
+  this.newSquareObject = function(id, x, y, value){
+    objectList[id] = new SquareObject(id, x, y, value, "shape", "innerText");
+    
+    return objectList[id];
+  }
   
+  /*
   this.createArrayHighlight = function(id){
     objectList["highlight"] = new SquareObject("highlight", objectList[id].getCoordinateX(), objectList[id].getCoordinateY(), null, "shape", "innerText");
     
@@ -150,7 +160,7 @@ var CoreAnimObject = function(){
     objectList["highlight"].setStroke(animProperties["cell"]["highlight"]["stroke"]);
     objectList["highlight"].setStrokeWidth(animProperties["cell"]["highlight"]["stroke-width"]);
   
-    internalJson.push(objectList["highlight"].getAttributes());
+    //internalJson.push(objectList["highlight"].getAttributes());
     
     this.saveState("The current " + id + " index.");
   };
@@ -170,66 +180,28 @@ var CoreAnimObject = function(){
     
     this.saveState();
   }
+  */
   
-  function draw(currentData, dur){
-    if(dur == null || isNaN(dur) || dur < 0) dur = DEFAULT_ANIMATION_DURATION;
-  
-    var cells = d3.select("#g-shape").selectAll(".shape")
-        .data(currentData["data"], function (d) {return d.id;});
-      
-    cells.enter().append(SVG_RECT) 
-        .filter(function (d) {return d.shape == SVG_RECT;})           
-        .attr("id", function (d) {return "array-" + d.id;})
-        .attr("class", function (d) {return d.rect.class});
-    cells.transition()
-        .duration(dur)
-        .attr("x", function (d) {return d.rect.x;})
-        .attr("y", function (d) {return d.rect.y;})
-        .attr("height", function (d) {return d.rect.height;})
-        .attr("width", function (d) {return d.rect.width;})
-        .style("fill", function (d) {return d.rect.fill;})
-        .style("fill-opacity", function (d) {return d.rect.fillOpacity;})
-        .style("stroke", function (d) {return d.rect.stroke;})
-        .style("stroke-width", function (d) {return d.rect.strokeWidth;});
-    cells.exit()
-        .remove();
-     
-    var labels = d3.select("#g-label").selectAll("text")
-        .data(currentData["data"], function (d) {return d.id;});
-        
-    labels.enter().append("text")
-        .attr("class", "label")
-        .attr("x", function (d) {return d.rect.x + 25;})
-        .attr("y", function (d) {return d.rect.y + 80;})
-        .text(function (d) { return d.id; });
-    labels.exit()
-        .remove();
-      
-    var texts = d3.select("#g-text").selectAll("text")
-        .data(currentData["data"], function (d) {return d.id;});
-        
-    texts.enter().append("text")
-        .attr("id", function (d) {return "text-" + d.id; })
-        .attr("class", function (d) {return d.text.class});
-    texts.transition()
-        .duration(dur)
-        .attr("x", function (d) {return d.text.x;})
-        .attr("y", function (d) {return d.text.y;})
-        .style("fill", function (d) {return d.text.fill;})
-        .style("font-family", function (d) {return d.text.fontFamily;})
-        .style("font-weigh", function (d) {return d.text.fontWeight;})
-        .style("font-size", function (d) {return d.text.fontSize;})
-        .style("text-anchor", function (d) {return d.text.textAnchor;})   
-        .text(function (d) {return d.text.text;});
-    texts.exit()
-        .remove();
+  /**
+    * Iterate through all items of objectList, drawing the changes on the screen.
+    *
+    * @param {state} currentState : a state containing the ["data"], which is a copy of objectList and a ["status"] to be printed on the log.
+    * @param {Number} dur : the duration in miliseconds of the total animation.
+    */
+  function draw(currentState, dur){
+    var currentObjectList = currentState["data"];
 
-    if(typeof currentData["status"] != 'undefined'){
+    for(var key in currentObjectList){
+      currentObjectList[key].draw(dur);
+    }
+
+
+    if(typeof currentState["status"] != 'undefined'){
       d3.select("#log")
           .append("div")
           .transition()
           .duration(dur)
-          .text(currentData["status"]);
+          .text(currentState["status"]);
     }
   }
   
