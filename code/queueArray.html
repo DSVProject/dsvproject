@@ -58,15 +58,17 @@
     <script src="js/util.js"></script>
     <script src="js/animation/constant.js"></script>
     <script src="js/animation/svg.js"></script>
-    <script src="js/animation/arrayObject.js"></script>
-    <script src="js/animation/arrayCellObject.js"></script>
+    <script src="js/animation/coreAnimObject.js"></script>
+    <script src="js/animation/squareObject.js"></script>
+    <script src="js/animation/edgeObject.js"></script>
+    <script src="js/animation/queueArrayAnim.js"></script>
     <script src="js/algorithms/queueArray.js"></script>
     
     <script type="text/javascript">
       var queue = new QueueArray();
       var anim = queue.getAnim();
       
-      anim.init("queue");
+      anim.init();
 
       function enqueue(){
         var input = $("#txt-input");

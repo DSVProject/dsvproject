@@ -4,11 +4,7 @@
 var StackArrayAnim = function(){
   var coreAnim = new CoreAnimObject();
   var array = {};
-  
-  //var drag = d3.behavior.drag()
-      //.on("drag", dragmove);
-      //.on("dragstart", dragstart);
-      //.on("dragend", dragend);
+  var edges = {};
 
   this.init = function(type){
     coreAnim.init();
@@ -17,6 +13,8 @@ var StackArrayAnim = function(){
     for(var i=0; i<16; i++){
       array[i] = coreAnim.newSquareObject(i, (i+1)*50, 300, null);    
     }
+    
+    edges["top"] = coreAnim.newEdgeObject("top", array["top"].getID(), array[0].getID());
     
     coreAnim.saveState();
 
@@ -28,6 +26,7 @@ var StackArrayAnim = function(){
     coreAnim.newStateList();
     
     array["top"].setText(0);
+    edges["top"].moveEdge(array[0].getCoordinateX(), array[0].getCoordinateY());
     for(var i=0; i<16; i++){
       array[i].setText(null);
     }
@@ -50,7 +49,7 @@ var StackArrayAnim = function(){
       //coreAnim.moveHighlight(insertedIndex);
       
       array[insertedIndex].setText(insertedValue);
-      array[insertedIndex].setRectClass("highlight");
+      //array[insertedIndex].setRectClass("highlight");
       coreAnim.saveState("Inserting the new value");
   
       //coreAnim.deleteHighlight();
@@ -58,9 +57,11 @@ var StackArrayAnim = function(){
       array["top"].setFill(CELL_FILL_INCREMENT);
       coreAnim.saveState();
       
+      edges["top"].moveEdge(array[newTop].getCoordinateX(), array[newTop].getCoordinateY());
+      
       array["top"].setText(newTop);
       array["top"].setFill(CELL_FILL_DEFAULT);
-      coreAnim.saveState("Change the top pointer.")
+      coreAnim.saveState("Update the top pointer.")
     }
     
     coreAnim.play();
@@ -80,55 +81,12 @@ var StackArrayAnim = function(){
     array["top"].setFill(CELL_FILL_INCREMENT);
     coreAnim.saveState();
     
+    edges["top"].moveEdge(array[removedIndex].getCoordinateX(), array[removedIndex].getCoordinateY());
+    
     array["top"].setText(removedIndex);
     array["top"].setFill(CELL_FILL_DEFAULT);
-    coreAnim.saveState("Change the top pointer.")
+    coreAnim.saveState("Update the top pointer.")
     
     coreAnim.play();
-  }
-  
-  // Queue Functions
-  
-  this.enqueue = function(insertedValue, insertedIndex, newTail){
-    clearLog();
-    
-    this.newStateList();
-    saveState(internalArray, "The current queue.");
-    
-    if ($("#chk-learn").is(":checked")){
-      createNewValue(insertedValue);
-    } else {
-      createArrayHighlight("tail");
-      moveHighlight(insertedIndex);
-      cellList[insertedIndex].setText(insertedValue);
-      saveState(internalArray, "Inserting value.");
-      deleteHighlight();
-      
-      blinkContainer("tail", CELL_FILL_INCREMENT);
-      cellList["tail"].setText(newTail);
-      saveState(internalArray, "Update the tail index.");
-      blinkContainer("tail", CELL_FILL_DEFAULT);
-    }
-    
-    play();
-  }
-  
-  this.dequeue = function(removedValue, newHead){
-    clearLog();
-    
-    this.newStateList();
-    saveState(internalArray, "The current queue.");
-    
-    blinkContainer(cellList[removedValue].getID(), CELL_FILL_DECREMENT);
-    cellList[removedValue].setText(null);
-    saveState(internalArray, "Dequeue the first used position.");
-    blinkContainer(cellList[removedValue].getID(), CELL_FILL_DEFAULT);
-    
-    
-    blinkContainer("head", "palegreen");
-    updatePointer("head", newHead);
-    blinkContainer("head", "white");
-    
-    play();
   }
 }

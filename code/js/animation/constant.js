@@ -4,6 +4,7 @@ const MAIN_SVG_HEIGHT = 500;
 const SVG_CIRCLE = "circle";
 const SVG_RECT = "rect";
 const SVG_TEXT = "text";
+const SVG_LINE = "line";
 
 //Values in miliseconds
 const DEFAULT_ANIMATION_DURATION = 500;
@@ -46,6 +47,6 @@ const animProperties = {
   },
   "edge": {
     "stroke":"black",
-    "strokeWidth":2
+    "strokeWidth":3
   }
 };

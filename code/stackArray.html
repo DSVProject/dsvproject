@@ -68,6 +68,7 @@
     <script src="js/animation/svg.js"></script>
     <script src="js/animation/coreAnimObject.js"></script>
     <script src="js/animation/squareObject.js"></script>
+    <script src="js/animation/edgeObject.js"></script>
     <script src="js/animation/stackArrayAnim.js"></script>
     <script src="js/algorithms/stackArray.js"></script>
     
@@ -75,7 +76,7 @@
       var stack = new StackArray();
       var anim = stack.getAnim();
       
-      anim.init("stack");
+      anim.init();
 
       function push(){
         var input = $("#txt-input");

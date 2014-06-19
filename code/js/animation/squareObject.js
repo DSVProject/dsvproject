@@ -41,14 +41,14 @@ var SquareObject = function(id, x, y, text, rectClass, textClass){
     }
   }
   
-  var edges = {};
+  var edgeList = {};
   
-  initArrayObj();
+  initPropObj();
 
   /**
     * Initialise the element, with the provided parameters and other default properties.
     */
-  function initArrayObj(){
+  function initPropObj(){
     propObj["id"] = id;
     
     propObj["rect"]["class"] = rectClass;
@@ -70,13 +70,22 @@ var SquareObject = function(id, x, y, text, rectClass, textClass){
     propObj["text"]["fontSize"] = animProperties["text"]["font-size"];
     propObj["text"]["textAnchor"] = animProperties["text"]["text-anchor"];
     propObj["text"]["text"] = text;
+    
+    edgeList = {};
   }
   
   /**
-    * @return {arrayObj} : the content of this object property map.
+    * @return {propObj} : the content of this object property map.
     */
   this.getAttributes = function(){
     return propObj;
+  }
+  
+  /**
+    * @return {Array} : the edges of the current object.
+    */
+  this.getEdges = function(){
+    return edgeList;
   }
   
   /**
@@ -173,10 +182,6 @@ var SquareObject = function(id, x, y, text, rectClass, textClass){
 
     propObj["text"]["x"] = x + 25;
     propObj["text"]["y"] = y + 30;
-    
-    for(key in edgeList){
-      edgeList[key].refreshPath();
-    }
   }
   
   /**
@@ -190,6 +195,16 @@ var SquareObject = function(id, x, y, text, rectClass, textClass){
   
   this.getText = function(){
     return propObj["text"]["text"];
+  }
+  
+  this.addEdge = function(edgeObj){
+    edgeList[edgeObj.getID()] = edgeObj;
+  }
+  
+  this.newEdge = function(id, destObj){
+    var edgeID = propObj["id"] + "-" + Object.keys(edgeList).length;
+    
+    edgeList[edgeID] = new EdgeObject(edgeID, propObj["rect"]["x"], propObj["rect"]["y"], destObj["rect"]["x"], destObj["rect"]["y"])
   }
   
   /**
@@ -257,6 +272,10 @@ var SquareObject = function(id, x, y, text, rectClass, textClass){
         .style("font-size", function (d) {return d.text.fontSize;})
         .style("text-anchor", function (d) {return d.text.textAnchor;})   
         .text(function (d) {return d.text.text;});
+    
+    for(var key in edgeList){
+      edgeList[key].draw(dur);
+    }
   }
   
   /**
@@ -301,6 +320,16 @@ var SquareObject = function(id, x, y, text, rectClass, textClass){
     */
   this.cloneProperties = function(prop){
     propObj = clone(prop);
+  }
+  
+  /**
+    * This function should be called when creating a new state. This function will clone the edges
+    * from the orignal object, without the reference, allowing the animationg to happen step by step.
+    *
+    * @param {edgeList} edges : the edgeList{} from the Object to be cloned.
+    */
+  this.cloneEdges = function(edges){
+    edgeList = clone(edges);
   }
   
   // This functions are used for the learning mode

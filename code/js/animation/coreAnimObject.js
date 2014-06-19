@@ -1,7 +1,8 @@
 // All key methods related to animation are located in this file
-var CoreAnimObject = function(){  
-  // Internal array that keeps an instance of all objects on the screen
+var CoreAnimObject = function(){
+  // Internal arrays that keeps an instance of all objects on the screen
   var objectList = {};
+  var edgeList = {};
   
   // Array to control the steps of the current animation
   var stateList = {};
@@ -48,7 +49,8 @@ var CoreAnimObject = function(){
           break;
       }
       
-      clone.cloneProperties(objectList[key].getAttributes())
+      clone.cloneProperties(objectList[key].getAttributes());
+      clone.cloneEdges(objectList[key].getEdges());
       newList[key] = clone; 
     }
     
@@ -67,8 +69,6 @@ var CoreAnimObject = function(){
   this.newStateList = function(){
     stateList = {};
     iterationNumber = 0;
-    
-    //this.saveState("Initial state.");
   }
   
   /**
@@ -115,11 +115,30 @@ var CoreAnimObject = function(){
     * @param {Number} x : the x coordinate of the item.
     * @param {Number} y : the y coordinate of the item.
     * @param {String} value : the value of the item.
+    *
+    * @return {SquareObject} : the new object.
     */
   this.newSquareObject = function(id, x, y, value){
     objectList[id] = new SquareObject(id, x, y, value, "shape", "innerText");
     
     return objectList[id];
+  }
+  
+  /**
+    * Create an edge graphic element, that will be owned by the origin object.
+    *
+    * @param {String || Number} id : the id of the item.
+    * @param {String || Number} idObjectA : the id of the origin object of the edge.
+    * @param {String || Number} idObjectB : the id of the destination object of the edge.
+    *
+    * @return {EdgeObject} : the new object.
+    */
+  this.newEdgeObject = function(id, idObjectA, idObjectB){
+    edgeList[id] = new EdgeObject(id, objectList[idObjectA].getCoordinateX(), objectList[idObjectA].getCoordinateY(), objectList[idObjectB].getCoordinateX(), objectList[idObjectB].getCoordinateY(), "edge");
+    
+    objectList[idObjectA].addEdge(edgeList[id]);
+    
+    return edgeList[id];
   }
   
   /*

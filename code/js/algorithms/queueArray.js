@@ -1,7 +1,7 @@
 // Defines a Queue object (Array Implementation). Used to keep track of the object internally and to interact with the animations
 
 var QueueArray = function(){
-  var anim = new ArrayObject();
+  var anim = new QueueArrayAnim();
 
   var internalQueue = [];
   var cap = 16;
