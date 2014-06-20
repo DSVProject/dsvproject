@@ -9,10 +9,10 @@ var QueueArrayAnim = function(){
   this.init = function(type){
     coreAnim.init();
     
-    array["head"] = coreAnim.newSquareObject("head",50,50,0);
-    array["tail"] = coreAnim.newSquareObject("tail",150,50,0);
+    array["head"] = coreAnim.newSquareObject("head",50,50,0,"head");
+    array["tail"] = coreAnim.newSquareObject("tail",150,50,0,"tail");
     for(var i=0; i<16; i++){
-      array[i] = coreAnim.newSquareObject(i, (i+1)*50, 300, null);    
+      array[i] = coreAnim.newSquareObject(i, (i+1)*50, 300, null, i);    
     }
     
     edges["head"] = coreAnim.newEdgeObject("head", array["head"].getID(), array[0].getID());

@@ -1,33 +1,33 @@
 // All key methods related to animation are located in this file
 var CoreAnimObject = function(){
   // Internal arrays that keeps an instance of all objects on the screen
-  var objectList = {};
-  var edgeList = {};
+  var objectList = [];
+  var edgeList = [];
   
   // Array to control the steps of the current animation
-  var stateList = {};
+  var stateList = [];
   
   // Number of iterations of the current animation
   var iterationNumber = 0;
   
   // Initiliase the graphic objects related to this implementation
   this.init = function(){
-    // This groups will hold the graphic elements          
+    // This groups will hold the graphic elements 
+    var edgeGroup = d3.select("#g-main")
+        .append("g")
+        .attr("id", "g-edge");
+        
+    var labelGroup = d3.select("#g-main")
+        .append("g")
+        .attr("id", "g-label");
+             
     var shapeGroup = d3.select("#g-main")
         .append("g")
         .attr("id", "g-shape");
       
-    var labelGroup = d3.select("#g-main")
-        .append("g")
-        .attr("id", "g-label");
-      
     var textGroup = d3.select("#g-main")
         .append("g")
         .attr("id", "g-text");
-        
-    var edgeGroup = d3.select("#g-main")
-        .append("g")
-        .attr("id", "g-edge");
   }
   
   // Animation Control Functions
@@ -39,7 +39,7 @@ var CoreAnimObject = function(){
     */
   this.saveState = function(status){
     var state = {}; // The current state being created
-    var newList = {}; // The copy of the current objectList
+    var newList = []; // The copy of the current objectList
     var clone;  // The instance for the cloned Object
     
     for(var key in objectList){
@@ -114,12 +114,13 @@ var CoreAnimObject = function(){
     * @param {String || Number} id : the id of the item.
     * @param {Number} x : the x coordinate of the item.
     * @param {Number} y : the y coordinate of the item.
-    * @param {String} value : the value of the item.
+    * @param {String} value : the value to be displayed inside the item.
+    * @param {String} label : the label which will appear beneath the item.
     *
     * @return {SquareObject} : the new object.
     */
-  this.newSquareObject = function(id, x, y, value){
-    objectList[id] = new SquareObject(id, x, y, value, "shape", "innerText");
+  this.newSquareObject = function(id, x, y, value, label){
+    objectList[id] = new SquareObject(id, x, y, value, label, "shape", "innerText", "label");
     
     return objectList[id];
   }

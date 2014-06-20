@@ -9,9 +9,9 @@ var StackArrayAnim = function(){
   this.init = function(type){
     coreAnim.init();
     
-    array["top"] = coreAnim.newSquareObject("top",50,50,0);
+    array["top"] = coreAnim.newSquareObject("top",50,50,0,"top");
     for(var i=0; i<16; i++){
-      array[i] = coreAnim.newSquareObject(i, (i+1)*50, 300, null);    
+      array[i] = coreAnim.newSquareObject(i, (i+1)*50, 300, null, i);    
     }
     
     edges["top"] = coreAnim.newEdgeObject("top", array["top"].getID(), array[0].getID());
@@ -40,7 +40,7 @@ var StackArrayAnim = function(){
     coreAnim.newStateList();
     
     if (coreAnim.isLearningMode()){
-      var newValue = coreAnim.newSquareObject("newValue", 500, 50, insertedValue);
+      var newValue = coreAnim.newSquareObject("newValue", 500, 50, insertedValue, "New value");
       
       //test.toggleDrag();
       coreAnim.saveState("Move the new value to its right position.");

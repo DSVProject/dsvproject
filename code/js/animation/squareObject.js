@@ -12,7 +12,7 @@
   * @param {String} rectClass : the CSS class of the rect svg element.
   * @param {String} textClass : the CSS class of the text svg element.
   */
-var SquareObject = function(id, x, y, text, rectClass, textClass){
+var SquareObject = function(id, x, y, text, label, rectClass, textClass, labelClass){
   var propObj = {
     "id": null,
     
@@ -37,6 +37,13 @@ var SquareObject = function(id, x, y, text, rectClass, textClass){
       "fontWeight": null,
       "fontSize": null,
       "textAnchor": null,
+      "text": null
+    },
+    
+    "label": {
+      "class": null,
+      "x": null,
+      "y": null,
       "text": null
     }
   }
@@ -70,6 +77,11 @@ var SquareObject = function(id, x, y, text, rectClass, textClass){
     propObj["text"]["fontSize"] = animProperties["text"]["font-size"];
     propObj["text"]["textAnchor"] = animProperties["text"]["text-anchor"];
     propObj["text"]["text"] = text;
+    
+    propObj["label"]["class"] = labelClass;
+    propObj["label"]["x"] = x + 25;
+    propObj["label"]["y"] = y + 80;
+    propObj["label"]["text"] = label;
     
     edgeList = {};
   }
@@ -182,6 +194,9 @@ var SquareObject = function(id, x, y, text, rectClass, textClass){
 
     propObj["text"]["x"] = x + 25;
     propObj["text"]["y"] = y + 30;
+    
+    propObj["label"]["x"] = x + 25;
+    propObj["label"]["y"] = y + 80;
   }
   
   /**
@@ -251,10 +266,10 @@ var SquareObject = function(id, x, y, text, rectClass, textClass){
         
     label.enter().append("text")
         .attr("id", function (d) {return "label-" + d.id;})
-        .attr("class", "label")
-        .attr("x", function (d) {return d.rect.x + 25;})
-        .attr("y", function (d) {return d.rect.y + 80;})
-        .text(function (d) { return d.id; });
+        .attr("class", function (d) {return d.label.class;})
+        .attr("x", function (d) {return d.label.x;})
+        .attr("y", function (d) {return d.label.y;})
+        .text(function (d) { return d.label.text; });
       
     var text = d3.select("#g-text").selectAll("text")
         .data(json, function (d) {return d.id;});
@@ -339,10 +354,6 @@ var SquareObject = function(id, x, y, text, rectClass, textClass){
       .on("dragstart", dragstart)
       .on("dragend", dragend);
   
-  this.toggleDrag = function(){
-    d3.select("shape-" + propObj["id"]).call(drag); 
-  }
-  
   function isValidDestination(){
     return false;
   }
@@ -378,7 +389,7 @@ var SquareObject = function(id, x, y, text, rectClass, textClass){
         return "translate([0,0])";
       });
       
-      d3.select("#label-" + d.id).text(d.id).attr("transform", function(d,i){
+      d3.select("#label-" + d.id).text(d.label.text).attr("transform", function(d,i){
         return "translate([0,0])";
       });
       
