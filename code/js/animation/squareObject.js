@@ -12,7 +12,7 @@
   * @param {String} rectClass : the CSS class of the rect svg element.
   * @param {String} textClass : the CSS class of the text svg element.
   */
-var SquareObject = function(id, x, y, text, label, rectClass, textClass, labelClass){
+var SquareObject = function (id, x, y, text, label, rectClass, textClass, labelClass) {
   var propObj = {
     "id": null,
     
@@ -23,7 +23,7 @@ var SquareObject = function(id, x, y, text, label, rectClass, textClass, labelCl
       "width": null,
       "height": null,
       "fill": null,
-      "fillOpacity":null,
+      "fillOpacity": null,
       "stroke": null,
       "strokeWidth": null
     },
@@ -50,38 +50,42 @@ var SquareObject = function(id, x, y, text, label, rectClass, textClass, labelCl
   
   var edgeList = {};
   
+  // This variables are used for the learning mode.
+  var initialTransformX = 0;
+  var initialTransformY = 0;
+  
   initPropObj();
 
   /**
     * Initialise the element, with the provided parameters and other default properties.
     */
-  function initPropObj(){
-    propObj["id"] = id;
+  function initPropObj() {
+    propObj.id = id;
     
-    propObj["rect"]["class"] = rectClass;
-    propObj["rect"]["x"] = x;
-    propObj["rect"]["y"] = y;
-    propObj["rect"]["width"] = CELL_WIDTH_DEFAULT;
-    propObj["rect"]["height"] = CELL_HEIGHT_DEFAULT;
-    propObj["rect"]["fill"] = CELL_FILL_DEFAULT;
-    propObj["rect"]["fillOpacity"] = animProperties["cell"]["default"]["fill-opacity"];
-    propObj["rect"]["stroke"] = animProperties["cell"]["default"]["stroke"];
-    propObj["rect"]["strokeWidth"] = animProperties["cell"]["default"]["stroke-width"];
+    propObj.rect.class = rectClass;
+    propObj.rect.x = x;
+    propObj.rect.y = y;
+    propObj.rect.width = CELL_WIDTH_DEFAULT;
+    propObj.rect.height = CELL_HEIGHT_DEFAULT;
+    propObj.rect.fill = CELL_FILL_DEFAULT;
+    propObj.rect.fillOpacity = animProperties["cell"]["default"]["fill-opacity"];
+    propObj.rect.stroke = animProperties["cell"]["default"]["stroke"];
+    propObj.rect.strokeWidth = animProperties["cell"]["default"]["stroke-width"];
     
-    propObj["text"]["class"] = textClass;
-    propObj["text"]["x"] = x + 25;
-    propObj["text"]["y"] = y + 30;
-    propObj["text"]["fill"] = animProperties["text"]["fill"];
-    propObj["text"]["fontFamily"] = animProperties["text"]["font-family"];
-    propObj["text"]["fontWeight"] = animProperties["text"]["font-weight"];
-    propObj["text"]["fontSize"] = animProperties["text"]["font-size"];
-    propObj["text"]["textAnchor"] = animProperties["text"]["text-anchor"];
-    propObj["text"]["text"] = text;
+    propObj.text.class = textClass;
+    propObj.text.x = x + 25;
+    propObj.text.y = y + 30;
+    propObj.text.fill = animProperties["text"]["fill"];
+    propObj.text.fontFamily = animProperties["text"]["font-family"];
+    propObj.text.fontWeight = animProperties["text"]["font-weight"];
+    propObj.text.fontSize = animProperties["text"]["font-size"];
+    propObj.text.textAnchor = animProperties["text"]["text-anchor"];
+    propObj.text.text = text;
     
-    propObj["label"]["class"] = labelClass;
-    propObj["label"]["x"] = x + 25;
-    propObj["label"]["y"] = y + 80;
-    propObj["label"]["text"] = label;
+    propObj.label.class = labelClass;
+    propObj.label.x = x + 25;
+    propObj.label.y = y + 80;
+    propObj.label.text = label;
     
     edgeList = {};
   }
@@ -89,28 +93,27 @@ var SquareObject = function(id, x, y, text, label, rectClass, textClass, labelCl
   /**
     * @return {propObj} : the content of this object property map.
     */
-  this.getAttributes = function(){
+  this.getAttributes = function () {
     return propObj;
   }
   
   /**
     * @return {Array} : the edges of the current object.
     */
-  this.getEdges = function(){
-    return edgeList;
-  }
+  this.getEdges = function () {
+    return edgeList;}
   
   /**
     * @return {String || Number} : the id of this object.
     */
-  this.getID = function(){
-    return propObj["id"];
+  this.getID = function () {
+    return propObj.id;
   }
   
   /**
     * @return {String} : the type of this object.
     */
-  this.getType = function(){
+  this.getType = function () {
     return "SquareObject";
   }
   
@@ -120,21 +123,21 @@ var SquareObject = function(id, x, y, text, label, rectClass, textClass, labelCl
     * @param {String} newClass : the new CSS class.
     */
   this.setRectClass = function(newClass){
-    propObj["rect"]["class"] = newClass;
+    propObj.rect.class = newClass;
   }
   
   /**
     * @return {Number} : the x coordinate of the rect svg element.
     */
   this.getCoordinateX = function(){
-    return propObj["rect"]["x"];
+    return propObj.rect.x;
   }
   
   /**
     * @return {Number} : the y coordinate of the rect svg element.
     */
-  this.getCoordinateY = function(){
-    return propObj["rect"]["y"];
+  this.getCoordinateY = function () {
+    return propObj.rect.y;
   }
   
   /**
@@ -142,9 +145,9 @@ var SquareObject = function(id, x, y, text, label, rectClass, textClass, labelCl
     *
     * @param {String} newFill : the new CSS or svg color.
     */
-  this.setFill = function(newFill){
+  this.setFill = function (newFill) {
     if(newFill == null) return;
-    propObj["rect"]["fill"] = newFill;
+    propObj.rect.fill = newFill;
   }
   
   /**
@@ -152,11 +155,11 @@ var SquareObject = function(id, x, y, text, label, rectClass, textClass, labelCl
     *
     * @param {Number} newOpacity : the new opacity value.
     */
-  this.setFillOpacity = function(newOpacity){
-    if(newOpacity == null|| isNaN(newOpacity)) return;
+  this.setFillOpacity = function (newOpacity) {
+    if(newOpacity == null || isNaN(newOpacity)) return;
     if(newOpacity < 0) newOpacity = 0.0;
     
-    propObj["rect"]["fillOpacity"] = newOpacity;
+    propObj.rect.fillOpacity = newOpacity;
   }
   
   /**
@@ -164,8 +167,8 @@ var SquareObject = function(id, x, y, text, label, rectClass, textClass, labelCl
     *
     * @param {String} newStroke : the new CSS or svg stroke color.
     */
-  this.setStroke = function(newStroke){
-    propObj["rect"]["stroke"] = newStroke;
+  this.setStroke = function (newStroke) {
+    propObj.rect.stroke = newStroke;
   }
   
   /**
@@ -173,11 +176,11 @@ var SquareObject = function(id, x, y, text, label, rectClass, textClass, labelCl
     *
     * @param {Number} newOpacity : the new stroke width value.
     */
-  this.setStrokeWidth = function(newStrokeWidth){
+  this.setStrokeWidth = function (newStrokeWidth) {
     if(newStrokeWidth == null || isNaN(newStrokeWidth)) return;
     if(newStrokeWidth < 0) newStrokeWidth = 0;
     
-    propObj["rect"]["strokeWidth"] = newStrokeWidth;
+    propObj.rect.strokeWidth = newStrokeWidth;
   }
   
   /**
@@ -186,17 +189,17 @@ var SquareObject = function(id, x, y, text, label, rectClass, textClass, labelCl
     * @param {Number} x : the destination x coordinate.
     * @param {Number} y : the destination y coordinate.
     */
-  this.moveShape = function(x, y){
+  this.moveShape = function (x, y) {
     if(x == null || y == null || isNaN(x) || isNaN(y)) return;
   
-    propObj["rect"]["x"] = x;
-    propObj["rect"]["y"] = y;
+    propObj.rect.x = x;
+    propObj.rect.y = y;
 
-    propObj["text"]["x"] = x + 25;
-    propObj["text"]["y"] = y + 30;
+    propObj.text.x = x + 25;
+    propObj.text.y = y + 30;
     
-    propObj["label"]["x"] = x + 25;
-    propObj["label"]["y"] = y + 80;
+    propObj.label.x = x + 25;
+    propObj.label.y = y + 80;
   }
   
   /**
@@ -204,22 +207,8 @@ var SquareObject = function(id, x, y, text, label, rectClass, textClass, labelCl
     *
     * @param {String} newText : the new text.
     */
-  this.setText = function(newText){
-    propObj["text"]["text"] = newText;
-  }
-  
-  this.getText = function(){
-    return propObj["text"]["text"];
-  }
-  
-  this.addEdge = function(edgeObj){
-    edgeList[edgeObj.getID()] = edgeObj;
-  }
-  
-  this.newEdge = function(id, destObj){
-    var edgeID = propObj["id"] + "-" + Object.keys(edgeList).length;
-    
-    edgeList[edgeID] = new EdgeObject(edgeID, propObj["rect"]["x"], propObj["rect"]["y"], destObj["rect"]["x"], destObj["rect"]["y"])
+  this.setText = function (newText) {
+    propObj.text.text = newText;
   }
   
   /**
@@ -227,8 +216,22 @@ var SquareObject = function(id, x, y, text, label, rectClass, textClass, labelCl
     *
     * @param {String} newColor : the new CSS or svg color.
     */
-  this.setFontColor = function(newColor){
-    propObj["text"]["fill"] = newColor;
+  this.setFontColor = function (newColor) {
+    propObj.text.fill = newColor;
+  }
+  
+  this.getText = function () {
+    return propObj.text.text;
+  }
+  
+  this.addEdge = function (edgeObj) {
+    edgeList[edgeObj.getID()] = edgeObj;
+  }
+  
+  this.newEdge = function (id, destObj) {
+    var edgeID = propObj.id + "-" + Object.keys(edgeList).length;
+    
+    edgeList[edgeID] = new EdgeObject(edgeID, propObj.rect.x, propObj.rect.y, destObj.rect.x, destObj.rect.y)
   }
   
   /**
@@ -237,7 +240,7 @@ var SquareObject = function(id, x, y, text, label, rectClass, textClass, labelCl
     *
     * @param {Number} dur : the duration in miliseconds of this animation.
     */
-  this.draw = function(dur){
+  this.draw = function (dur) {
     if(dur == null || isNaN(dur) || dur < 0) dur = DEFAULT_ANIMATION_DURATION;
     
     var json = [];
@@ -248,8 +251,8 @@ var SquareObject = function(id, x, y, text, label, rectClass, textClass, labelCl
       
     shape.enter().append(SVG_RECT)        
         .attr("id", function (d) {return "shape-" + d.id;})
-        .attr("class", function (d) {return d.rect.class})
-        .call(drag);
+        .attr("class", function (d) {return d.rect.class});
+        //.call(drag);
     shape.transition()
         .duration(dur)
         .attr("x", function (d) {return d.rect.x;})
@@ -298,7 +301,7 @@ var SquareObject = function(id, x, y, text, label, rectClass, textClass, labelCl
     *
     * @param {Number} dur : the duration in miliseconds of this animation.
     */
-  this.remove = function(dur){
+  this.remove = function (dur) {
     if(dur == null || isNaN(dur) || dur < 0) dur = DEFAULT_ANIMATION_DURATION;
     
     var json = [];
@@ -324,7 +327,6 @@ var SquareObject = function(id, x, y, text, label, rectClass, textClass, labelCl
     text.transition()
         .duration(dur)
         .remove();
-    
   }
   
   /**
@@ -333,7 +335,7 @@ var SquareObject = function(id, x, y, text, label, rectClass, textClass, labelCl
     *
     * @param {propObj} prop : a propObj from the Object to be cloned.
     */
-  this.cloneProperties = function(prop){
+  this.cloneProperties = function (prop) {
     propObj = clone(prop);
   }
   
@@ -343,27 +345,55 @@ var SquareObject = function(id, x, y, text, label, rectClass, textClass, labelCl
     *
     * @param {edgeList} edges : the edgeList{} from the Object to be cloned.
     */
-  this.cloneEdges = function(edges){
+  this.cloneEdges = function (edges) {
     edgeList = clone(edges);
   }
   
   // This functions are used for the learning mode
+  
+  this.setTransform = function (x, y) {
+    d3.select("#shape-" + propObj.id)   
+        .attr("transform", "translate(" + [x , y] + ")");
+    d3.select("#text-" + propObj.id)        
+        .attr("transform", "translate(" + [x , y] + ")");
+  }
   
   var drag = d3.behavior.drag()
       .on("drag", dragmove)
       .on("dragstart", dragstart)
       .on("dragend", dragend);
   
-  function isValidDestination(){
+  function isValidDestination () {
     return false;
   }
   
-  function dragstart(d) {
+  this.toggleDrag = function () {
+    d3.select("#shape-" + propObj.id).
+    d3.select("#shape-" + propObj.id).call(drag);
+  }
+  
+  function dragstart (d) {
+    d3.select(this).moveToFront();
+  
     d.rect.x = Number(d3.select(this).attr("x"));
     d.rect.y = Number(d3.select(this).attr("y"));
   }
   
-  function dragmove(d) {
+  function dragmove (d) {
+    d.rect.x = d3.event.x-Number(d3.select(this).attr("x"))-25;
+    d.rect.y = d3.event.y-Number(d3.select(this).attr("y"))-40;
+  
+    d3.select("#shape-" + d.id).attr("transform", function(d){
+      return "translate(" + [d.rect.x, d.rect.y] + ")"
+    });
+    
+    d3.select("#text-" + d.id).attr("transform", function(d){
+      return "translate(" + [d.rect.x, d.rect.y] + ")"
+    });
+    
+    
+  
+    /*
     var initX = Number(d3.select(this).attr("x"));
     var initY = Number(d3.select(this).attr("y"))
 
@@ -371,7 +401,7 @@ var SquareObject = function(id, x, y, text, label, rectClass, textClass, labelCl
       return "translate(" + [d3.event.x - (initX + 25) , d3.event.y - (initY + 35)] + ")"
     });
     
-    d3.select("#label-" + d.id).text(null);
+    //d3.select("#label-" + d.id).text(null);
     
     d3.select("#text-" + d.id).attr("transform", function(d,i){
       return "translate(" + [d3.event.x - (initX + 25) , d3.event.y - (initY + 35)] + ")"
@@ -379,22 +409,41 @@ var SquareObject = function(id, x, y, text, label, rectClass, textClass, labelCl
     
     d.rect.x = d3.event.x;
     d.rect.y = d3.event.y;
+    */
   }
   
-  function dragend(d) {
-    if(isValidDestination()){
-      
+  function dragend (d) {
+    var x = d.rect.x;
+    var y = d.rect.y;
+  
+    if(y > -35 && y < 10 && x > -25 && x < 770){
+      if(y > -35 && y < 10 && x > -25 && x < 25){
+        d3.select("#shape-" + d.id)
+            .attr("transform", function(d,i){
+              return "translate([0,0])";
+              })            
+            .style("fill", "palegreen")
+            .transition()
+            .duration(2000)
+            .style("fill", "white");
+        
+        d3.select("#text-" + d.id)
+            .attr("transform", function(d,i){
+              return "translate([0,0])";
+              });
+        
+        d3.select("#shape-newValue")
+            .remove();
+      }else{
+        
+      }
     }else{
       d3.select("#shape-" + d.id).attr("transform", function(d,i){
-        return "translate([0,0])";
-      });
-      
-      d3.select("#label-" + d.id).text(d.label.text).attr("transform", function(d,i){
-        return "translate([0,0])";
+        return "translate(" + [500-(Number(d.id)*50),-250] + ")";
       });
       
       d3.select("#text-" + d.id).attr("transform", function(d,i){
-        return "translate([0,0])";
+        return "translate(" + [500-(Number(d.id)*50),-250] + ")";
       });
     }
   }

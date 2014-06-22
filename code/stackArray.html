@@ -59,6 +59,7 @@
       <input type="button" id="btn-clear" onclick="empty()" value="Clear">
       <input type="button" id="btn-resetPos" onclick="resetPos()" value="Reset Position">
       <input type="checkbox" id="chk-learn" value="learningMode" class="check">Learning Mode
+      <input type="button" id="btn_check" onclick="checkAns()" value="Check Answer">
     </div>
     <div id="viz"></div>
     <div id="log"></div>
@@ -75,7 +76,7 @@
     <script type="text/javascript">
       var stack = new StackArray();
       var anim = stack.getAnim();
-      
+
       anim.init();
 
       function push(){

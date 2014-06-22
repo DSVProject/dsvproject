@@ -1,17 +1,17 @@
 // Defines an Array of "Cells".
 // All the animations are controled from this file.
 
-var QueueArrayAnim = function(){
+var QueueArrayAnim = function () {
   var coreAnim = new CoreAnimObject();
   var array = {};
   var edges = {};
 
-  this.init = function(type){
+  this.init = function (type) {
     coreAnim.init();
     
-    array["head"] = coreAnim.newSquareObject("head",50,50,0,"head");
-    array["tail"] = coreAnim.newSquareObject("tail",150,50,0,"tail");
-    for(var i=0; i<16; i++){
+    array["head"] = coreAnim.newSquareObject("head", 50, 50, 0, "head");
+    array["tail"] = coreAnim.newSquareObject("tail", 150, 50, 0, "tail");
+    for (var i=0; i<16; i++){
       array[i] = coreAnim.newSquareObject(i, (i+1)*50, 300, null, i);    
     }
     

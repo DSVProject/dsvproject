@@ -1,16 +1,16 @@
 // Defines an Array of "Cells".
 // All the animations are controled from this file.
 
-var StackArrayAnim = function(){
+var StackArrayAnim = function () {
   var coreAnim = new CoreAnimObject();
   var array = {};
   var edges = {};
 
-  this.init = function(type){
+  this.init = function (type) {
     coreAnim.init();
     
-    array["top"] = coreAnim.newSquareObject("top",50,50,0,"top");
-    for(var i=0; i<16; i++){
+    array["top"] = coreAnim.newSquareObject("top", 50, 50, 0, "top");
+    for (var i=0; i<16; i++){
       array[i] = coreAnim.newSquareObject(i, (i+1)*50, 300, null, i);    
     }
     
@@ -27,7 +27,7 @@ var StackArrayAnim = function(){
     
     array["top"].setText(0);
     edges["top"].moveEdge(array[0].getCoordinateX(), array[0].getCoordinateY());
-    for(var i=0; i<16; i++){
+    for (var i=0; i<16; i++){
       array[i].setText(null);
     }
     
@@ -40,10 +40,17 @@ var StackArrayAnim = function(){
     coreAnim.newStateList();
     
     if (coreAnim.isLearningMode()){
-      var newValue = coreAnim.newSquareObject("newValue", 500, 50, insertedValue, "New value");
+      array[insertedIndex].setText(insertedValue);
+      array[insertedIndex].setFill("yellow");
+    
+      var newValue = coreAnim.newSquareObject("newValue", array[insertedIndex].getCoordinateX(), array[insertedIndex].getCoordinateY());
       
-      //test.toggleDrag();
       coreAnim.saveState("Move the new value to its right position.");
+      
+      coreAnim.play(0);
+      array[insertedIndex].setTransform(500-(insertedIndex*50) , -250);
+      //newValue.toggleDrag();
+      
     } else {
       //coreAnim.createArrayHighlight("top");
       //coreAnim.moveHighlight(insertedIndex);
@@ -61,10 +68,10 @@ var StackArrayAnim = function(){
       
       array["top"].setText(newTop);
       array["top"].setFill(CELL_FILL_DEFAULT);
-      coreAnim.saveState("Update the top pointer.")
+      coreAnim.saveState("Update the top pointer.");
+      
+      coreAnim.play();
     }
-    
-    coreAnim.play();
   }
   
   this.pop = function(removedIndex){

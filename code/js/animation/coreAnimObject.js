@@ -1,5 +1,15 @@
-// All key methods related to animation are located in this file
-var CoreAnimObject = function(){
+/**
+  * Defines the unit the will control the animation main actions.
+  *
+  * When initiated it will create the svg groups that will hold the graphic elements:
+  *   #g-shape: holds all the svg circles and squares
+  *   #g-text: holds all the svg texts, that will appear inside the shapes
+  *   #g-label: holds all the svg texts that are acting like labels, appearing beneath the shapes
+  *   #g-edge: holds all the svg lines and paths, used to conect the elements
+  *
+  * 
+  */
+var CoreAnimObject = function () {
   // Internal arrays that keeps an instance of all objects on the screen
   var objectList = [];
   var edgeList = [];
@@ -10,9 +20,7 @@ var CoreAnimObject = function(){
   // Number of iterations of the current animation
   var iterationNumber = 0;
   
-  // Initiliase the graphic objects related to this implementation
-  this.init = function(){
-    // This groups will hold the graphic elements 
+  this.init = function () {
     var edgeGroup = d3.select("#g-main")
         .append("g")
         .attr("id", "g-edge");
@@ -31,18 +39,19 @@ var CoreAnimObject = function(){
   }
   
   // Animation Control Functions
+  
   /**
     * Creates a snapshot of the current state of all the objects on the screen.
     * All other functions that change any property of a graphic element should call this function as a last instruction. 
     *
     * @param {String} status : an optional message about the changes, that will appear on the screen log.
     */
-  this.saveState = function(status){
+  this.saveState = function (status) {
     var state = {}; // The current state being created
     var newList = []; // The copy of the current objectList
     var clone;  // The instance for the cloned Object
     
-    for(var key in objectList){
+    for (var key in objectList){
       switch(objectList[key].getType()) {
         case "SquareObject":
           clone = new SquareObject();
@@ -55,8 +64,8 @@ var CoreAnimObject = function(){
     }
     
     // Each state will hold the "data" which is a copy of objectList, and a "status" which will appear on the log.
-    state["data"] = newList;
-    state["status"] = status;
+    state.data = newList;
+    state.status = status;
   
     stateList[iterationNumber] = state;
     iterationNumber++;
@@ -66,7 +75,7 @@ var CoreAnimObject = function(){
     * Reset the state list.
     * Called as the first instruction, before making changes on the graphic elements.
     */
-  this.newStateList = function(){
+  this.newStateList = function () {
     stateList = {};
     iterationNumber = 0;
   }
@@ -76,10 +85,10 @@ var CoreAnimObject = function(){
     * 
     * @param {Number} duration : optional, if null the default animation duration value will be used.
     */
-  this.play = function(duration){
-    if(duration == null || isNaN(duration) || duration < 0) duration = DEFAULT_ANIMATION_DURATION;
+  this.play = function (duration) {
+    if (duration == null || isNaN(duration) || duration < 0) duration = DEFAULT_ANIMATION_DURATION;
     
-    if(stateList == null) return;
+    if (stateList == null) return;
     iterationNumber = 0;
     
     draw(stateList[iterationNumber], duration);
@@ -119,7 +128,7 @@ var CoreAnimObject = function(){
     *
     * @return {SquareObject} : the new object.
     */
-  this.newSquareObject = function(id, x, y, value, label){
+  this.newSquareObject = function (id, x, y, value, label) {
     objectList[id] = new SquareObject(id, x, y, value, label, "shape", "innerText", "label");
     
     return objectList[id];
@@ -130,12 +139,26 @@ var CoreAnimObject = function(){
     *
     * @param {String || Number} id : the id of the item.
     * @param {String || Number} idObjectA : the id of the origin object of the edge.
-    * @param {String || Number} idObjectB : the id of the destination object of the edge.
+    * @param {String || Number} idObjectB : the id of the destination object of the edge. If this is null (for linked lists),
+    *                                       an horizontal line will be created to simulate the pointer.
     *
     * @return {EdgeObject} : the new object.
     */
-  this.newEdgeObject = function(id, idObjectA, idObjectB){
-    edgeList[id] = new EdgeObject(id, objectList[idObjectA].getCoordinateX(), objectList[idObjectA].getCoordinateY(), objectList[idObjectB].getCoordinateX(), objectList[idObjectB].getCoordinateY(), "edge");
+  this.newEdgeObject = function (id, idObjectA, idObjectB) {
+    var ax, ay, bx, by;
+    
+    ax = objectList[idObjectA].getCoordinateX();
+    ay = objectList[idObjectA].getCoordinateY();
+  
+    if(idObjectB != null){
+      bx = objectList[idObjectB].getCoordinateX();
+      by = objectList[idObjectB].getCoordinateY();
+    }else{
+      bx = ax + 50;
+      by = ay;
+    }
+  
+    edgeList[id] = new EdgeObject(id, ax, ay, bx, by, "edge");
     
     objectList[idObjectA].addEdge(edgeList[id]);
     
@@ -179,19 +202,18 @@ var CoreAnimObject = function(){
     * @param {Number} dur : the duration in miliseconds of the total animation.
     */
   function draw(currentState, dur){
-    var currentObjectList = currentState["data"];
+    var currentObjectList = currentState.data;
 
-    for(var key in currentObjectList){
+    for (var key in currentObjectList){
       currentObjectList[key].draw(dur);
     }
 
-
-    if(typeof currentState["status"] != 'undefined'){
+    if(typeof currentState.status != 'undefined'){
       d3.select("#log")
           .append("div")
           .transition()
           .duration(dur)
-          .text(currentState["status"]);
+          .text(currentState.status);
     }
   }
   
