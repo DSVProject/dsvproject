@@ -74,11 +74,20 @@ var QueueLinkedList = function(){
     coreAnim.newStateList();
     var item = first.item;
     
+    alert(first.drawing.getID());
     first.drawing.remove();
     coreAnim.saveState();
     first = first.next;
-    firstD.setText(first.drawing.getID());
-    coreAnim.saveState();
+    
+    var it = first;
+    while(it != null) {
+      it.drawing.moveShape((it.drawing.getCoordinateX()-100), it.drawing.getCoordinateY());
+      it.edge.moveEdge(it.edge.getCoordinateX1(), it.edge.getCoordinateY1());
+      coreAnim.saveState();
+      
+      it = it.next;
+    }
+    
     if(this.isEmpty())
       last = null;
     N--;
