@@ -307,21 +307,21 @@ var SquareObject = function (id, x, y, text, label, rectClass, textClass, labelC
     var json = [];
     json.push(propObj);
     
-    var shape = d3.select("#g-shape").selectAll(".shape")
+    var shape = d3.select("#g-shape").selectAll()
         .data(json, function (d) {return d.id;});
     
     shape.transition()
         .duration(dur)
         .remove();
     
-    var label = d3.select("#g-label").selectAll("text")
+    var label = d3.select("#g-label").selectAll()
         .data(json, function (d) {return d.id;});
         
     label.transition()
         .duration(dur)
         .remove();
     
-    var text = d3.select("#g-text").selectAll("text")
+    var text = d3.select("#g-text").selectAll()
         .data(json, function (d) {return d.id;});
         
     text.transition()
