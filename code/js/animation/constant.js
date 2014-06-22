@@ -17,6 +17,9 @@ const CELL_FILL_DEFAULT = "white";
 const CELL_FILL_INCREMENT = "palegreen";
 const CELL_FILL_DECREMENT = "tomato";
 
+const EDGE_STROKE_NULL = "tomato";
+const EDGE_STROKE_DEFAULT = "black";
+
 const animProperties = {
   "cell":{
     "width":50,

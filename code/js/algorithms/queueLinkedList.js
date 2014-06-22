@@ -43,17 +43,23 @@ var QueueLinkedList = function(){
     
     var oldlast = last;
     
+    if (oldlast != null) {
+      oldlast.edge.setStroke(EDGE_STROKE_DEFAULT);
+    }
+    
     last = new Node();
     last.item = item;
     last.next = null;
-    last.drawing = coreAnim.newSquareObject(N+1,(N+1)*80, 300, item, null);
-    last.edge = coreAnim.newEdgeObject(N+1, last.drawing.getID());
+    last.drawing = coreAnim.newSquareObject(N+1,(N+1)*100, 300, item, null);
+    last.edge = coreAnim.newEdgeObject(N+1, last.drawing.getID(), last.next);
+    last.edge.setStroke(EDGE_STROKE_NULL);
+    
     //lastD.setText(N+1);
     coreAnim.saveState();
     
     if(this.isEmpty()){
       first = last;
-      firstD.setText(lastD.getText());
+      //firstD.setText(lastD.getText());
     }
     else{
       oldlast.next = last;

@@ -145,9 +145,9 @@ var EdgeObject = function(id, x1, y1, x2, y2, edgeClass){
         .attr("class", function (d) {return d.edge.class})
     edge.transition()
         .duration(dur)
-        .attr("x1", function (d) {return d.edge.x1 + 25;})
-        .attr("y1", function (d) {return d.edge.y1 + 100;})
-        .attr("x2", function (d) {return d.edge.x2 + 25;})
+        .attr("x1", function (d) {return d.edge.x1;})
+        .attr("y1", function (d) {return d.edge.y1;})
+        .attr("x2", function (d) {return d.edge.x2;})
         .attr("y2", function (d) {return d.edge.y2;})
         .style("stroke", function (d) {return d.edge.stroke;})
         .style("stroke-width", function (d) {return d.edge.strokeWidth;});

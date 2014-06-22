@@ -147,8 +147,8 @@ var CoreAnimObject = function () {
   this.newEdgeObject = function (id, idObjectA, idObjectB) {
     var ax, ay, bx, by;
     
-    ax = objectList[idObjectA].getCoordinateX();
-    ay = objectList[idObjectA].getCoordinateY();
+    ax = objectList[idObjectA].getCoordinateX() + 50;
+    ay = objectList[idObjectA].getCoordinateY() + 25;
   
     if(idObjectB != null){
       bx = objectList[idObjectB].getCoordinateX();
