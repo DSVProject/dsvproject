@@ -65,7 +65,7 @@ var QueueArrayAnim = function () {
       
       array["tail"].setText(newTail);
       array["tail"].setFill(CELL_FILL_DEFAULT);
-      coreAnim.saveState("Update the tail pointer.")
+      coreAnim.saveState("Update the tail pointer.");
     }
     
     coreAnim.play();
@@ -90,7 +90,7 @@ var QueueArrayAnim = function () {
     
     array["head"].setText(removedValue);
     array["head"].setFill(CELL_FILL_DEFAULT);
-    coreAnim.saveState("Update the tail pointer.")
+    coreAnim.saveState("Update the tail pointer.");
     
     coreAnim.play();
 

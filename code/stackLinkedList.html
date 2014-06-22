@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>D3 Test - Stack</title>
+    <!-- js -->
+    <script type="text/javascript" src="js/d3.min.js"></script>
+    <script type="text/javascript" src="js/jquery-2.1.1.js"></script>
+    <!-- css -->
+    <link rel="stylesheet" href="css/animation.css">
+    
+    <style>
+      /*
+      .cell{
+        fill:white;
+        stroke:black;
+        stroke-width:2px;
+      }
+      */
+      
+      .cell-highlight{
+        stroke:gold;
+        stroke-width:7px;
+        fill-opacity:0.0;
+      }
+      
+      .label{
+        font-family:sans-serif;
+        font-size:18px;
+        text-anchor:middle;
+        fill:black;
+      }
+      
+      .innerText{
+        font-family:sans-serif;
+        font-size:18px;
+        text-anchor:middle;
+        fill:black;
+      }
+      
+      #txt-input{
+        font-family:sans-serif;
+        color:grey;
+        font-style:italic;
+      }
+      
+      .check{
+        font-family:sans-serif;
+        font-size:24px;
+      }
+      
+    </style>
+  </head>
+  <body>
+    <div>
+      <input type="text" id="txt-input" maxlength="4" placeholder="Enter new values here">
+      <input type="button" id="btn-push" onclick="push()" value="Push">
+      <input type="button" id="btn-pop" onclick="pop()" value="Pop">
+      <input type="button" id="btn-clear" onclick="empty()" value="Clear">
+      <input type="button" id="btn-resetPos" onclick="resetPos()" value="Reset Position">
+      <input type="checkbox" id="chk-learn" value="learningMode" class="check">Learning Mode
+    </div>
+    <div id="viz"></div>
+    <div id="log"></div>
+    
+    <script src="js/util.js"></script>
+    <script src="js/animation/constant.js"></script>
+    <script src="js/animation/svg.js"></script>
+    <script src="js/animation/coreAnimObject.js"></script>
+    <script src="js/animation/squareObject.js"></script>
+    <script src="js/animation/edgeObject.js"></script>
+    <script src="js/algorithms/stackLinkedList.js"></script>
+    
+    <script type="text/javascript">
+      var stack = new StackLinkedList();
+      //var anim = stack.getAnim();
+      
+      //anim.init();
+
+      function push(){
+        var input = $("#txt-input");
+        
+        stack.push(input.val());
+        input.val("");
+      }
+      
+      function pop(){
+        stack.pop();
+      }
+      
+      function empty(){
+        stack.init();
+      }
+    </script>
+  </body>
+</html>    
