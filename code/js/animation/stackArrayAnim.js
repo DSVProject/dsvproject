@@ -14,7 +14,7 @@ var StackArrayAnim = function () {
       array[i] = coreAnim.newSquareObject(i, (i+1)*50, 300, null, i);    
     }
     
-    edges["top"] = coreAnim.newEdgeObject("top", array["top"].getID(), array[0].getID());
+    edges["top"] = coreAnim.newEdgeObject("top", array["top"].getID(), array["top"].getCoordinateX() + 25, array["top"].getCoordinateY() + 100, array[0].getCoordinateX() + 25, array[0].getCoordinateY());
     
     coreAnim.saveState();
 
@@ -64,7 +64,7 @@ var StackArrayAnim = function () {
       array["top"].setFill(CELL_FILL_INCREMENT);
       coreAnim.saveState();
       
-      edges["top"].moveEdge(array[newTop].getCoordinateX(), array[newTop].getCoordinateY());
+      edges["top"].moveEdgeEnd(array[newTop].getCoordinateX() + 25, array[newTop].getCoordinateY());
       
       array["top"].setText(newTop);
       array["top"].setFill(CELL_FILL_DEFAULT);
@@ -88,7 +88,7 @@ var StackArrayAnim = function () {
     array["top"].setFill(CELL_FILL_INCREMENT);
     coreAnim.saveState();
     
-    edges["top"].moveEdge(array[removedIndex].getCoordinateX(), array[removedIndex].getCoordinateY());
+    edges["top"].moveEdgeEnd(array[removedIndex].getCoordinateX() + 25, array[removedIndex].getCoordinateY());
     
     array["top"].setText(removedIndex);
     array["top"].setFill(CELL_FILL_DEFAULT);

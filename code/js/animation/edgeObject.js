@@ -30,15 +30,15 @@ var EdgeObject = function(id, x1, y1, x2, y2, edgeClass){
   initPropObj();
 
   function initPropObj(){
-    propObj["id"] = id;
+    propObj.id = id;
     
-    propObj["edge"]["class"] = edgeClass;
-    propObj["edge"]["x1"] = x1;
-    propObj["edge"]["y1"] = y1;
-    propObj["edge"]["x2"] = x2;
-    propObj["edge"]["y2"] = y2;
-    propObj["edge"]["stroke"] = animProperties["edge"]["stroke"];
-    propObj["edge"]["strokeWidth"] = animProperties["edge"]["strokeWidth"];
+    propObj.edge.class = edgeClass;
+    propObj.edge.x1 = x1;
+    propObj.edge.y1 = y1;
+    propObj.edge.x2 = x2;
+    propObj.edge.y2 = y2;
+    propObj.edge.stroke = animProperties["edge"]["stroke"];
+    propObj.edge.strokeWidth = animProperties["edge"]["strokeWidth"];
   }
   
   /**
@@ -52,7 +52,7 @@ var EdgeObject = function(id, x1, y1, x2, y2, edgeClass){
     * @return {String || Number} : the id of this object.
     */
   this.getID = function(){
-    return propObj["id"];
+    return propObj.id;
   }
   
   /**
@@ -61,35 +61,35 @@ var EdgeObject = function(id, x1, y1, x2, y2, edgeClass){
     * @param {String} newClass : the new CSS class.
     */
   this.setEdgeClass = function(newClass){
-    propObj["edge"]["class"] = newClass;
+    propObj.edge.class = newClass;
   }
   
   /**
     * @return {Number} : the x1 coordinate of the line svg element.
     */
   this.getCoordinateX1 = function(){
-    return propObj["edge"]["x1"];
+    return propObj.edge.x1;
   }
   
   /**
     * @return {Number} : the y1 coordinate of the line svg element.
     */
   this.getCoordinateY1 = function(){
-    return propObj["edge"]["y1"];
+    return propObj.edge.y1;
   }  
   
   /**
     * @return {Number} : the x2 coordinate of the line svg element.
     */
   this.getCoordinateX2 = function(){
-    return propObj["edge"]["x2"];
+    return propObj.edge.x2;
   }
   
   /**
     * @return {Number} : the y2 coordinate of the line svg element.
     */
   this.getCoordinateY2 = function(){
-    return propObj["edge"]["y2"];
+    return propObj.edge.y2;
   }
 
   /**
@@ -98,7 +98,7 @@ var EdgeObject = function(id, x1, y1, x2, y2, edgeClass){
     * @param {String} newStroke : the new CSS or svg stroke color.
     */
   this.setStroke = function(newStroke){
-    propObj["edge"]["stroke"] = newStroke;
+    propObj.edge.stroke = newStroke;
   }
   
   /**
@@ -110,19 +110,31 @@ var EdgeObject = function(id, x1, y1, x2, y2, edgeClass){
     if(newStrokeWidth == null || isNaN(newStrokeWidth)) return;
     if(newStrokeWidth < 0) newStrokeWidth = 0;
     
-    propObj["edge"]["strokeWidth"] = newStrokeWidth;
+    propObj.edge.strokeWidth = newStrokeWidth;
+  }
+  
+  /**
+    * Change the start of the edge.
+    *
+    * @param {Number} x : the new x coordinate of the edge.
+    * @param {Number} y : the new y coordinate of the edge.
+    */
+  this.moveEdgeStart = function(x, y){
+    if(x == null || isNaN(x) || y == null || isNaN(y)) return;
+    propObj.edge.x1 = x;
+    propObj.edge.y1 = y;
   }
   
   /**
     * Change the destination of the edge.
     *
     * @param {Number} x : the new x coordinate of the edge.
-    * @param {Number} y : the new x coordinate of the edge.
+    * @param {Number} y : the new y coordinate of the edge.
     */
-  this.moveEdge = function(x, y){
+  this.moveEdgeEnd = function(x, y){
     if(x == null || isNaN(x) || y == null || isNaN(y)) return;
-    propObj["edge"]["x2"] = x;
-    propObj["edge"]["y2"] = y;
+    propObj.edge.x2 = x;
+    propObj.edge.y2 = y;
   }
   
   /**
@@ -151,5 +163,34 @@ var EdgeObject = function(id, x1, y1, x2, y2, edgeClass){
         .attr("y2", function (d) {return d.edge.y2;})
         .style("stroke", function (d) {return d.edge.stroke;})
         .style("stroke-width", function (d) {return d.edge.strokeWidth;});
+  }
+  
+  /**
+    * Remove this object from the screen.
+    *
+    * @param {Number} dur : the duration in miliseconds of this animation.
+    */
+  this.remove = function (dur) {
+    if(dur == null || isNaN(dur) || dur < 0) dur = DEFAULT_ANIMATION_DURATION;
+    
+    var json = [];
+    json.push(propObj);
+    
+    var edge = d3.select("#g-edge").selectAll(SVG_LINE)
+        .data(json, function (d) {return d.id;});
+    
+    edge.transition()
+        .duration(dur)
+        .remove();
+  }
+  
+  /**
+    * This function should be called when creating a new state. This function will clone the properties
+    * from the orignal object, without the reference, allowing the animation to happen step by step.
+    *
+    * @param {propObj} prop : a propObj from the Object to be cloned.
+    */
+  this.cloneProperties = function (prop) {
+    propObj = clone(prop);
   }
 }

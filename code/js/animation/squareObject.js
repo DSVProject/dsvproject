@@ -129,7 +129,7 @@ var SquareObject = function (id, x, y, text, label, rectClass, textClass, labelC
   /**
     * @return {Number} : the x coordinate of the rect svg element.
     */
-  this.getCoordinateX = function(){
+  this.getCoordinateX = function () {
     return propObj.rect.x;
   }
   
@@ -200,6 +200,11 @@ var SquareObject = function (id, x, y, text, label, rectClass, textClass, labelC
     
     propObj.label.x = x + 25;
     propObj.label.y = y + 80;
+    
+    for(var key in edgeList){
+      edgeList[key].moveEdgeStart(x + propObj.rect.width, y + 25);
+      edgeList[key].moveEdgeEnd(x + propObj.rect.width + 50, y + 25);
+    }
   }
   
   /**
@@ -226,12 +231,6 @@ var SquareObject = function (id, x, y, text, label, rectClass, textClass, labelC
   
   this.addEdge = function (edgeObj) {
     edgeList[edgeObj.getID()] = edgeObj;
-  }
-  
-  this.newEdge = function (id, destObj) {
-    var edgeID = propObj.id + "-" + Object.keys(edgeList).length;
-    
-    edgeList[edgeID] = new EdgeObject(edgeID, propObj.rect.x, propObj.rect.y, destObj.rect.x, destObj.rect.y)
   }
   
   /**
@@ -307,31 +306,35 @@ var SquareObject = function (id, x, y, text, label, rectClass, textClass, labelC
     var json = [];
     json.push(propObj);
     
-    var shape = d3.select("#g-shape").selectAll()
+    var shape = d3.select("#g-shape").selectAll(SVG_RECT)
         .data(json, function (d) {return d.id;});
     
     shape.transition()
         .duration(dur)
         .remove();
     
-    var label = d3.select("#g-label").selectAll()
+    var label = d3.select("#g-label").selectAll(SVG_TEXT)
         .data(json, function (d) {return d.id;});
         
     label.transition()
         .duration(dur)
         .remove();
     
-    var text = d3.select("#g-text").selectAll()
+    var text = d3.select("#g-text").selectAll(SVG_TEXT)
         .data(json, function (d) {return d.id;});
         
     text.transition()
         .duration(dur)
         .remove();
+    
+    for (var key in edgeList) {
+      edgeList[key].remove(); 
+    }
   }
   
   /**
     * This function should be called when creating a new state. This function will clone the properties
-    * from the orignal object, without the reference, allowing the animationg to happen step by step.
+    * from the orignal object, without the reference, allowing the animation to happen step by step.
     *
     * @param {propObj} prop : a propObj from the Object to be cloned.
     */
@@ -346,7 +349,17 @@ var SquareObject = function (id, x, y, text, label, rectClass, textClass, labelC
     * @param {edgeList} edges : the edgeList{} from the Object to be cloned.
     */
   this.cloneEdges = function (edges) {
-    edgeList = clone(edges);
+    var newList = [];
+    var clone;
+    
+    for (var key in edges) {
+      clone = new EdgeObject();
+      clone.cloneProperties(edges[key].getAttributes());
+      
+      newList[key] = clone;
+    }
+    
+    edgeList = newList;
   }
   
   // This functions are used for the learning mode

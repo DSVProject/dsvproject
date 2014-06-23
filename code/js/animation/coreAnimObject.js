@@ -12,7 +12,6 @@
 var CoreAnimObject = function () {
   // Internal arrays that keeps an instance of all objects on the screen
   var objectList = [];
-  var edgeList = [];
   
   // Array to control the steps of the current animation
   var stateList = [];
@@ -139,30 +138,38 @@ var CoreAnimObject = function () {
     *
     * @param {String || Number} id : the id of the item.
     * @param {String || Number} idObjectA : the id of the origin object of the edge.
-    * @param {String || Number} idObjectB : the id of the destination object of the edge. If this is null (for linked lists),
-    *                                       an horizontal line will be created to simulate the pointer.
+    * @param {Number} ax : the x coordinate of the start of the edge, with necessary adjustments.
+    * @param {Number} ay : the y coordinate of the start of the edge, with necessary adjustments.
+    * @param {Number} bx : the x coordinate of the end of the edge, with necessary adjustments.
+    * @param {Number} by : the y coordinate of the end of the edge, with necessary adjustments.
+    * @param {String} direction : if there's yet no current target for edge (with bx and by equal to null),
+    *                             an edge will be created in this direction, using ax and ay as base.
     *
     * @return {EdgeObject} : the new object.
     */
-  this.newEdgeObject = function (id, idObjectA, idObjectB) {
-    var ax, ay, bx, by;
-    
-    ax = objectList[idObjectA].getCoordinateX() + 50;
-    ay = objectList[idObjectA].getCoordinateY() + 25;
-  
-    if(idObjectB != null){
-      bx = objectList[idObjectB].getCoordinateX();
-      by = objectList[idObjectB].getCoordinateY();
-    }else{
-      bx = ax + 50;
-      by = ay;
+  this.newEdgeObject = function (id, idObjectA, ax, ay, bx, by, direction) {
+    if (bx == null || by == null) {
+      if (direction === "right") {
+          bx = ax + 50;
+          by = ay;
+      } else if (direction === "down") {
+        bx = ax;
+        by = ay + 50;
+      }
     }
   
-    edgeList[id] = new EdgeObject(id, ax, ay, bx, by, "edge");
+    var newEdge = new EdgeObject(id, ax, ay, bx, by, "edge");
     
-    objectList[idObjectA].addEdge(edgeList[id]);
+    objectList[idObjectA].addEdge(newEdge);
     
-    return edgeList[id];
+    return newEdge;
+  }
+  
+  this.removeShape = function (id) {
+    objectList[id].remove();
+    
+    delete objectList[id];
+    //objectList.splice(id, 1);
   }
   
   /*
@@ -203,17 +210,17 @@ var CoreAnimObject = function () {
     */
   function draw(currentState, dur){
     var currentObjectList = currentState.data;
-
-    for (var key in currentObjectList){
-      currentObjectList[key].draw(dur);
-    }
-
+    
     if(typeof currentState.status != 'undefined'){
       d3.select("#log")
           .append("div")
           .transition()
           .duration(dur)
           .text(currentState.status);
+    }
+
+    for (var key in currentObjectList){
+      currentObjectList[key].draw(dur);
     }
   }
   
