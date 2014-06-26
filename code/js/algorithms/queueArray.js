@@ -1,15 +1,20 @@
 // Defines a Queue object (Array Implementation). Used to keep track of the object internally and to interact with the animations
 
 var QueueArray = function () {
-  var anim = new QueueArrayAnim();
+  var coreAnim = new CoreAnimObject();
+  coreAnim.init();
+  
+  //var anim = new QueueArrayAnim();
 
   var internalQueue = [];
   var cap = 16;
   var head = 0;
   var tail = 0;
+  
+  var edges = [];
 
   this.getAnim = function () {
-    return anim;
+    return coreAnim;
   }
 
   this.init = function () {

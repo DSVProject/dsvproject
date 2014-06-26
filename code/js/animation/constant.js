@@ -6,6 +6,10 @@ const SVG_RECT = "rect";
 const SVG_TEXT = "text";
 const SVG_LINE = "line";
 
+const ANIMATION_PAUSE = 0;
+const ANIMATION_PLAY = 1;
+const ANIMATION_STOP = -1;
+
 //Values in miliseconds
 const DEFAULT_ANIMATION_DURATION = 500;
 const DEFAULT_ANIMATION_DELAY = 500;

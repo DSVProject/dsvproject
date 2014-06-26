@@ -5,12 +5,12 @@ var svgContainer = d3.select("#viz").append("svg")
     .attr("width", MAIN_SVG_WIDTH)
     .attr("height", MAIN_SVG_HEIGHT)
     .attr("pointer-events", "all")
-    .style("border", "1px solid black"); 
+    .style("border", "1px solid black")
+    .call(zoom.on("zoom", rescale)); 
 
 // this code enables panning and zooming
 var panGroup = svgContainer.append("g")
     .attr("id", "g-holder")
-    //.call(zoom.on("zoom", rescale))
     .append("g")
     .attr("id", "g-main");
 

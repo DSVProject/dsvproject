@@ -10,14 +10,16 @@ var Node = function () {
 var QueueLinkedList = function(){
   var coreAnim = new CoreAnimObject();
   coreAnim.init();
+  coreAnim.newStateList();
+  coreAnim.saveState();
 
   var first = null;
   var last = null;
   var N = 0;
   var counterID = 0;
   
-  var firstD = coreAnim.newSquareObject("first", 50, 50, "First");
-  var lastD = coreAnim.newSquareObject("last", 150, 50, "Last");
+  var firstD = coreAnim.newSquareObject("first", 50, 50, "First", null, "pointer");
+  var lastD = coreAnim.newSquareObject("last", 150, 50, "Last", null, "pointer");
   var edgeFirstD = coreAnim.newEdgeObject("first", firstD.getID(), firstD.getCoordinateX() + 25, firstD.getCoordinateY() + 50, null, null, "down");
   var edgeLastD = coreAnim.newEdgeObject("last", lastD.getID(), lastD.getCoordinateX() + 25, lastD.getCoordinateY() + 50, null, null, "down");
   
@@ -26,29 +28,61 @@ var QueueLinkedList = function(){
   
   coreAnim.saveState();
   coreAnim.play(0);
+  
+  this.init = function () {
+    coreAnim.clearLog();
+    coreAnim.newStateList();
+    coreAnim.saveState();
+    
+    first = null;
+    last = null;
+    N = 0;
+    counterID = 0;
+    
+    edgeFirstD.moveEdgeEnd(firstD.getCoordinateX() + 25, firstD.getCoordinateY() + 100);
+    edgeFirstD.setStroke(EDGE_STROKE_NULL);
+    edgeLastD.moveEdgeEnd(lastD.getCoordinateX() + 25, lastD.getCoordinateY() + 100);
+    edgeLastD.setStroke(EDGE_STROKE_NULL);
+    
+    coreAnim.removeAll("node");
+    
+    coreAnim.saveState();
+    coreAnim.play();
+  }
+  
+  this.getAnim = function () {
+    return coreAnim;
+  }
 
   this.isEmpty = function () { return first == null; }
   
   this.size = function () { return N; }
           
-  this.enqueue = function(item) { 
+  this.enqueue = function(item) {
+    if (item == "") {
+      return false;
+    }
+    
     coreAnim.clearLog();
     coreAnim.newStateList();
     
-    var oldlast = last;
+    coreAnim.saveState();
     
-    if (oldlast != null) {
-      oldlast.edge.setStroke(EDGE_STROKE_DEFAULT);
-    }
+    var oldlast = last;
     
     last = new Node();
     last.item = item;
     last.next = null;
-    last.drawing = coreAnim.newSquareObject(++counterID, (N+1)*100, 300, item, null);
+    last.drawing = coreAnim.newSquareObject(++counterID, (N+1)*100, 300, item, null, "node");
     last.edge = coreAnim.newEdgeObject(counterID, last.drawing.getID(), last.drawing.getCoordinateX() + 50, last.drawing.getCoordinateY() + 25, null, null, "right");
     last.edge.setStroke(EDGE_STROKE_NULL);
     
     coreAnim.saveState("Inserting new node.");
+    
+    if (oldlast != null) {
+      oldlast.edge.setStroke(EDGE_STROKE_DEFAULT);
+      coreAnim.saveState("Update the pointer of the previous node.")
+    }
     
     edgeLastD.moveEdgeEnd(last.drawing.getCoordinateX() + 25, last.drawing.getCoordinateY());
     edgeLastD.setStroke(EDGE_STROKE_DEFAULT);
@@ -71,8 +105,14 @@ var QueueLinkedList = function(){
   }
   
   this.dequeue = function() {
+    if (this.isEmpty()) {
+      return false;
+    }
+    
     coreAnim.clearLog();
     coreAnim.newStateList();
+    
+    coreAnim.saveState();
     
     var item = first.item;
     

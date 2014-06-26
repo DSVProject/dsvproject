@@ -93,6 +93,5 @@ var QueueArrayAnim = function () {
     coreAnim.saveState("Update the tail pointer.");
     
     coreAnim.play();
-
   }
 }

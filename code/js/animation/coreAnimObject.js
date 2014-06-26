@@ -10,6 +10,8 @@
   * 
   */
 var CoreAnimObject = function () {
+  var self = this;
+  
   // Internal arrays that keeps an instance of all objects on the screen
   var objectList = [];
   
@@ -18,23 +20,28 @@ var CoreAnimObject = function () {
   
   // Number of iterations of the current animation
   var iterationNumber = 0;
+  var animationStatus = ANIMATION_STOP;
   
   this.init = function () {
     var edgeGroup = d3.select("#g-main")
         .append("g")
-        .attr("id", "g-edge");
+        .attr("id", "g-edge")
+        .attr("class", "edge");
         
     var labelGroup = d3.select("#g-main")
         .append("g")
-        .attr("id", "g-label");
+        .attr("id", "g-label")
+        .attr("class", "label");
              
     var shapeGroup = d3.select("#g-main")
         .append("g")
-        .attr("id", "g-shape");
+        .attr("id", "g-shape")
+        .attr("class", "shape");
       
     var textGroup = d3.select("#g-main")
         .append("g")
-        .attr("id", "g-text");
+        .attr("id", "g-text")
+        .attr("class", "innerText");
   }
   
   // Animation Control Functions
@@ -51,14 +58,7 @@ var CoreAnimObject = function () {
     var clone;  // The instance for the cloned Object
     
     for (var key in objectList){
-      switch(objectList[key].getType()) {
-        case "SquareObject":
-          clone = new SquareObject();
-          break;
-      }
-      
-      clone.cloneProperties(objectList[key].getAttributes());
-      clone.cloneEdges(objectList[key].getEdges());
+      clone = objectList[key].cloneObject();
       newList[key] = clone; 
     }
     
@@ -78,6 +78,48 @@ var CoreAnimObject = function () {
     stateList = {};
     iterationNumber = 0;
   }
+
+  /**
+    * Pause the current animation.
+    */
+  this.pause = function () {
+    animationStatus = ANIMATION_PAUSE;
+  }
+  
+  /**
+    * Call the next item from StateList
+    *
+    * @param {Number} duration : optional, if null the default animation duration value will be used.
+    */
+  this.next = function (duration) {
+    if (iterationNumber < 0) iterationNumber = 0;
+    
+    iterationNumber++;
+
+    if (iterationNumber >= Object.keys(stateList).length) animationStatus = ANIMATION_STOP;
+
+    if (animationStatus !== ANIMATION_STOP) {
+    //if (iterationNumber < Object.keys(stateList).length) {
+      draw(stateList[iterationNumber], duration);	
+      if (animationStatus === ANIMATION_PLAY) {
+        setTimeout(function(){
+          self.next(duration);
+        }, duration);
+      }
+    }
+  }
+  
+  this.previous = function () {
+    if (iterationNumber >= Object.keys(stateList).length) iterationNumber = Object.keys(stateList).length - 1;
+    
+    iterationNumber--;
+    
+    if (iterationNumber < 0) iterationNumber = 0;
+    
+    if (iterationNumber < Object.keys(stateList).length) {
+      draw(stateList[iterationNumber], 0, true);  
+    }
+  }
   
   /**
     * Start playing all the states saved in StateList.
@@ -86,34 +128,15 @@ var CoreAnimObject = function () {
     */
   this.play = function (duration) {
     if (duration == null || isNaN(duration) || duration < 0) duration = DEFAULT_ANIMATION_DURATION;
-    
     if (stateList == null) return;
-    iterationNumber = 0;
-    
+    if (animationStatus === ANIMATION_STOP) iterationNumber = 1;
+    if (animationStatus != ANIMATION_PLAY) animationStatus = ANIMATION_PLAY;
+
     draw(stateList[iterationNumber], duration);
     
     setTimeout(function(){
-      next(duration);
+      self.next(duration);
     }, duration);
-  }
-  
-  /**
-    * Call the next item from StateList
-    *
-    * @param {Number} duration : optional, if null the default animation duration value will be used.
-    */
-  function next(duration){
-    if(iterationNumber < 0) iterationNumber = 0;
-    
-    iterationNumber++;
-    
-    if(iterationNumber < Object.keys(stateList).length) {
-		  draw(stateList[iterationNumber], duration);
-		  
-		  setTimeout(function(){
-        next(duration);
-      }, duration);
-	  }
   }
   
   /**
@@ -124,11 +147,12 @@ var CoreAnimObject = function () {
     * @param {Number} y : the y coordinate of the item.
     * @param {String} value : the value to be displayed inside the item.
     * @param {String} label : the label which will appear beneath the item.
+    * @param {String} shapeClass : the class of the svg rect element, used for styling and functionality.
     *
     * @return {SquareObject} : the new object.
     */
-  this.newSquareObject = function (id, x, y, value, label) {
-    objectList[id] = new SquareObject(id, x, y, value, label, "shape", "innerText", "label");
+  this.newSquareObject = function (id, x, y, value, label, shapeClass) {
+    objectList[id] = new SquareObject(id, x, y, value, label, shapeClass, "innerText", "label");
     
     return objectList[id];
   }
@@ -166,10 +190,19 @@ var CoreAnimObject = function () {
   }
   
   this.removeShape = function (id) {
-    objectList[id].remove();
-    
-    delete objectList[id];
-    //objectList.splice(id, 1);
+    objectList[id].setToRemove(true);
+  }
+  
+  this.removeAll = function (selectedClass, duration) {
+    for (var key in objectList) { 
+      if (objectList[key].getRectClass() == selectedClass) {
+        
+        //alert("entrei");
+        objectList[key].remove(duration);
+        
+        delete objectList[key];
+      }
+    }
   }
   
   /*
@@ -207,8 +240,9 @@ var CoreAnimObject = function () {
     *
     * @param {state} currentState : a state containing the ["data"], which is a copy of objectList and a ["status"] to be printed on the log.
     * @param {Number} dur : the duration in miliseconds of the total animation.
+    * @param {Boolean} withRemove : boolean flag to be used when reverting any changes with the media controls (Previous action).
     */
-  function draw(currentState, dur){
+  function draw(currentState, dur, withRemove){
     var currentObjectList = currentState.data;
     
     if(typeof currentState.status != 'undefined'){
@@ -218,9 +252,23 @@ var CoreAnimObject = function () {
           .duration(dur)
           .text(currentState.status);
     }
+    
+    if (withRemove === true) {
+      for (var key in objectList) {
+        if (typeof currentObjectList[key] == 'undefined') {
+          objectList[key].remove(0);
+          delete objectList[key];
+        }
+      }
+    }
 
     for (var key in currentObjectList){
-      currentObjectList[key].draw(dur);
+      if (currentObjectList[key].getToRemove()){
+        currentObjectList[key].remove(0);
+        delete objectList[key];
+      } else {
+        currentObjectList[key].draw(dur);
+      }
     }
   }
   

@@ -45,14 +45,12 @@ var SquareObject = function (id, x, y, text, label, rectClass, textClass, labelC
       "x": null,
       "y": null,
       "text": null
-    }
+    },
+    
+    "toRemove": false
   }
   
   var edgeList = {};
-  
-  // This variables are used for the learning mode.
-  var initialTransformX = 0;
-  var initialTransformY = 0;
   
   initPropObj();
 
@@ -111,19 +109,19 @@ var SquareObject = function (id, x, y, text, label, rectClass, textClass, labelC
   }
   
   /**
-    * @return {String} : the type of this object.
-    */
-  this.getType = function () {
-    return "SquareObject";
-  }
-  
-  /**
     * Set the CSS class of the rect svg element.
     *
     * @param {String} newClass : the new CSS class.
     */
   this.setRectClass = function(newClass){
     propObj.rect.class = newClass;
+  }
+  
+  /**
+    * @return {String} : the class of the rect svg element.
+    */
+  this.getRectClass = function () {
+    return propObj.rect.class;
   }
   
   /**
@@ -217,6 +215,13 @@ var SquareObject = function (id, x, y, text, label, rectClass, textClass, labelC
   }
   
   /**
+    * @return {String} : the text of the text svg element (located inside the shape).
+    */ 
+  this.getText = function () {
+    return propObj.text.text;
+  }
+  
+  /**
     * Set the text color of the text svg element.
     *
     * @param {String} newColor : the new CSS or svg color.
@@ -225,8 +230,20 @@ var SquareObject = function (id, x, y, text, label, rectClass, textClass, labelC
     propObj.text.fill = newColor;
   }
   
-  this.getText = function () {
-    return propObj.text.text;
+  /**
+    * Set this object to be removed on the next iteration.
+    *
+    * @param {Boolean} bool : if true, the object will be removed.
+    */
+  this.setToRemove = function (bool) {
+    propObj.toRemove = bool;
+  }
+  
+  /**
+    * @return {Boolean} : the toRemove property.
+    */ 
+  this.getToRemove = function () {
+    return propObj.toRemove;
   }
   
   this.addEdge = function (edgeObj) {
@@ -250,8 +267,8 @@ var SquareObject = function (id, x, y, text, label, rectClass, textClass, labelC
       
     shape.enter().append(SVG_RECT)        
         .attr("id", function (d) {return "shape-" + d.id;})
-        .attr("class", function (d) {return d.rect.class});
-        //.call(drag);
+        .attr("class", function (d) {return d.rect.class})
+        .call(drag);
     shape.transition()
         .duration(dur)
         .attr("x", function (d) {return d.rect.x;})
@@ -328,13 +345,26 @@ var SquareObject = function (id, x, y, text, label, rectClass, textClass, labelC
         .remove();
     
     for (var key in edgeList) {
-      edgeList[key].remove(); 
+      edgeList[key].remove(dur); 
     }
+  }
+  
+  
+  /**
+    * This function should be called when creating a new state. This function will clone this entire object,
+    * returning a new instance, without the references, allowing the animation to happen step by step.
+    */
+  this.cloneObject = function () {
+    var clone = new SquareObject();
+    clone.cloneProperties(propObj);
+    clone.cloneEdges(edgeList);
+    
+    return clone;
   }
   
   /**
     * This function should be called when creating a new state. This function will clone the properties
-    * from the orignal object, without the reference, allowing the animation to happen step by step.
+    * from the orignal object, without the references, allowing the animation to happen step by step.
     *
     * @param {propObj} prop : a propObj from the Object to be cloned.
     */
@@ -344,7 +374,7 @@ var SquareObject = function (id, x, y, text, label, rectClass, textClass, labelC
   
   /**
     * This function should be called when creating a new state. This function will clone the edges
-    * from the orignal object, without the reference, allowing the animationg to happen step by step.
+    * from the orignal object, without the references, allowing the animationg to happen step by step.
     *
     * @param {edgeList} edges : the edgeList{} from the Object to be cloned.
     */
