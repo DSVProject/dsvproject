@@ -8,6 +8,7 @@ var Node = function () {
 }
 
 var QueueLinkedList = function(){
+  var selfie = this;
   var coreAnim = new CoreAnimObject();
   coreAnim.init();
   coreAnim.newStateList();
@@ -29,6 +30,10 @@ var QueueLinkedList = function(){
   coreAnim.saveState();
   coreAnim.play(0);
   
+  this.getAnim = function () {
+    return coreAnim;
+  }
+  
   this.init = function () {
     coreAnim.clearLog();
     coreAnim.newStateList();
@@ -48,10 +53,6 @@ var QueueLinkedList = function(){
     
     coreAnim.saveState();
     coreAnim.play();
-  }
-  
-  this.getAnim = function () {
-    return coreAnim;
   }
 
   this.isEmpty = function () { return first == null; }
