@@ -10,7 +10,7 @@
   * 
   */
 var CoreAnimObject = function () {
-  var self = this;
+  var selfie = this;
   
   // Internal arrays that keeps an instance of all objects on the screen
   var objectList = [];
@@ -103,7 +103,7 @@ var CoreAnimObject = function () {
       draw(stateList[iterationNumber], duration);	
       if (animationStatus === ANIMATION_PLAY) {
         setTimeout(function(){
-          self.next(duration);
+          selfie.next(duration);
         }, duration);
       }
     }
@@ -135,7 +135,7 @@ var CoreAnimObject = function () {
     draw(stateList[iterationNumber], duration);
     
     setTimeout(function(){
-      self.next(duration);
+      selfie.next(duration);
     }, duration);
   }
   
