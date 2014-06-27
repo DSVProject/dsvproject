@@ -139,6 +139,40 @@ var SquareObject = function (id, x, y, text, label, rectClass, textClass, labelC
   }
   
   /**
+    * Set the width of the rect svg element.
+    *
+    * @param {Number} newWidth : the new width.
+    */
+  this.setWidth = function (newWidth) {
+    if(newWidth == null || isNaN(newWidth)) return;
+    propObj.rect.width = newWidth;
+  }
+  
+  /**
+    * @return {Number} : the width of the rect svg element.
+    */
+  this.getWidth = function () {
+    return propObj.rect.width;
+  }
+  
+  /**
+    * Set the height of the rect svg element.
+    *
+    * @param {Number} newHeight : the new height.
+    */
+  this.setHeight = function (newHeight) {
+    if(newHeight == null || isNaN(newHeight)) return;
+    propObj.rect.height = newHeight;
+  }
+  
+  /**
+    * @return {Number} : the height of the rect svg element.
+    */
+  this.getHeight = function () {
+    return propObj.rect.height;
+  }
+  
+  /**
     * Set the fill color of the rect svg element.
     *
     * @param {String} newFill : the new CSS or svg color.
@@ -179,30 +213,6 @@ var SquareObject = function (id, x, y, text, label, rectClass, textClass, labelC
     if(newStrokeWidth < 0) newStrokeWidth = 0;
     
     propObj.rect.strokeWidth = newStrokeWidth;
-  }
-  
-  /**
-    * Move this object from its current position to a new position.
-    *
-    * @param {Number} x : the destination x coordinate.
-    * @param {Number} y : the destination y coordinate.
-    */
-  this.moveShape = function (x, y) {
-    if(x == null || y == null || isNaN(x) || isNaN(y)) return;
-  
-    propObj.rect.x = x;
-    propObj.rect.y = y;
-
-    propObj.text.x = x + 25;
-    propObj.text.y = y + 30;
-    
-    propObj.label.x = x + 25;
-    propObj.label.y = y + 80;
-    
-    for(var key in edgeList){
-      edgeList[key].moveEdgeStart(x + propObj.rect.width, y + 25);
-      edgeList[key].moveEdgeEnd(x + propObj.rect.width + 50, y + 25);
-    }
   }
   
   /**
@@ -248,6 +258,30 @@ var SquareObject = function (id, x, y, text, label, rectClass, textClass, labelC
   
   this.addEdge = function (edgeObj) {
     edgeList[edgeObj.getID()] = edgeObj;
+  }
+  
+  /**
+    * Move this object from its current position to a new position.
+    *
+    * @param {Number} x : the destination x coordinate.
+    * @param {Number} y : the destination y coordinate.
+    */
+  this.moveShape = function (x, y) {
+    if(x == null || y == null || isNaN(x) || isNaN(y)) return;
+  
+    propObj.rect.x = x;
+    propObj.rect.y = y;
+
+    propObj.text.x = x + 25;
+    propObj.text.y = y + 30;
+    
+    propObj.label.x = x + 25;
+    propObj.label.y = y + 80;
+    
+    for(var key in edgeList){
+      edgeList[key].moveEdgeStart(x + propObj.rect.width, y + 25);
+      edgeList[key].moveEdgeEnd(x + propObj.rect.width + 50, y + 25);
+    }
   }
   
   /**

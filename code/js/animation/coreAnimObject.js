@@ -157,6 +157,25 @@ var CoreAnimObject = function () {
     return objectList[id];
   }
   
+   /**
+    * Create a double square graphic element.
+    *
+    * @param {String || Number} id : the id of the item.
+    * @param {Number} x : the x coordinate of the item.
+    * @param {Number} y : the y coordinate of the item.
+    * @param {String} value1 : the value to be displayed inside the first square.
+    * @param {String} value1 : the value to be displayed inside the second square.
+    * @param {String} label : the label which will appear beneath the item.
+    * @param {String} shapeClass : the class of the svg element, used for styling and functionality.
+    *
+    * @return {SquareObject} : the new object.
+    */
+  this.newDoubleSquareObject = function (id, x, y, value1, value2, label, shapeClass) {
+    objectList[id] = new DoubleSquareObject(id, x, y, value1, value2, label, shapeClass, "innerText", "label");
+    
+    return objectList[id];
+  }
+  
   /**
     * Create an edge graphic element, that will be owned by the origin object.
     *
