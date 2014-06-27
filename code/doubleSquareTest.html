@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>D3 Test - Queue</title>
+    <script type="text/javascript" src="js/d3.min.js"></script>
+    <script type="text/javascript" src="js/jquery-2.1.1.js"></script>
+    
+    <style>
+      /*
+      .cell{
+        fill:white;
+        stroke:black;
+        stroke-width:2px;
+      }
+      */
+      
+      .cell-highlight{
+        stroke:gold;
+        stroke-width:7px;
+        fill-opacity:0.0;
+      }
+      
+      .label{
+        font-family:sans-serif;
+        font-size:18px;
+        text-anchor:middle;
+        fill:black;
+      }
+      
+      .innerText{
+        font-family:sans-serif;
+        font-size:18px;
+        text-anchor:middle;
+        fill:black;
+      }
+      
+      #txt-input{
+        font-family:sans-serif;
+        color:grey;
+        font-style:italic;
+      }
+      
+    </style>
+  </head>
+  <body>
+    <div>
+      <input type="text" id="txt-input-x" maxlength="4" placeholder="X">
+      <input type="text" id="txt-input-y" maxlength="4" placeholder="Y">
+      <input type="button" id="btn-move" onclick="moveObject()" value="Move">
+    </div>
+    <div id="viz"></div>
+    <div id="log"></div>
+    
+    <script src="js/util.js"></script>
+    <script src="js/animation/constant.js"></script>
+    <script src="js/animation/svg.js"></script>
+    <script src="js/animation/coreAnimObject.js"></script>
+    <script src="js/animation/squareObject.js"></script>
+    <script src="js/animation/doubleSquareObject.js"></script>
+    <script src="js/animation/edgeObject.js"></script>
+    
+    <script type="text/javascript">
+      var coreAnim = new CoreAnimObject();
+      coreAnim.init();
+      coreAnim.newStateList();
+      coreAnim.saveState();
+
+      var ds = coreAnim.newDoubleSquareObject("ds", 200, 200, "1", "2", null, "test");
+      
+      coreAnim.saveState();
+      coreAnim.play(0);
+      
+      function moveObject(){
+        var x = $("#txt-input-x");
+        var y = $("#txt-input-y");
+        
+        var xx = Number(x.val());
+        var yy = Number(y.val());
+        
+        coreAnim.clearLog();
+        coreAnim.newStateList();
+        coreAnim.saveState();
+
+        ds.moveShape(xx,yy);
+        coreAnim.saveState();
+        coreAnim.play();
+        
+        x.val("");
+        y.val("");
+      }
+    </script>
+  </body>
+</html>    

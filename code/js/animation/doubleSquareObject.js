@@ -1,6 +1,6 @@
 var DoubleSquareObject = function (id, x, y, text1, text2, label, rectClass, textClass, labelClass) {
   var firstSquare = new SquareObject(id + "-0", x, y, text1, label, rectClass, textClass, labelClass);
-  var secondSquare = new SquareObject(id + "-1", x + firstSquare.getWidth(), y, text2, label, rectClass, textClass, labelClass);
+  var secondSquare = new SquareObject(id + "-1", x + firstSquare.getWidth(), y, text2, null, rectClass, textClass, labelClass);
   
   this.draw = function (dur) {
     firstSquare.draw();
