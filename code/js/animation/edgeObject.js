@@ -37,8 +37,8 @@ var EdgeObject = function(id, x1, y1, x2, y2, edgeClass){
     propObj.edge.y1 = y1;
     propObj.edge.x2 = x2;
     propObj.edge.y2 = y2;
-    propObj.edge.stroke = animProperties["edge"]["stroke"];
-    propObj.edge.strokeWidth = animProperties["edge"]["strokeWidth"];
+    propObj.edge.stroke = defaultProperties["edge"]["default"]["stroke"];
+    propObj.edge.strokeWidth = defaultProperties["edge"]["default"]["stroke-width"];
   }
   
   /**
@@ -153,10 +153,10 @@ var EdgeObject = function(id, x1, y1, x2, y2, edgeClass){
         .data(json, function (d) {return d.id;});
       
     edge.enter().append(SVG_LINE)        
-        .attr("id", function (d) {return "edge-" + d.id;})
-        .attr("class", function (d) {return d.edge.class})
+        .attr("id", function (d) {return "edge-" + d.id;});
     edge.transition()
         .duration(dur)
+        .attr("class", function (d) {return d.edge.class;})
         .attr("x1", function (d) {return d.edge.x1;})
         .attr("y1", function (d) {return d.edge.y1;})
         .attr("x2", function (d) {return d.edge.x2;})

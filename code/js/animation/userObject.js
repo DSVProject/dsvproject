@@ -44,6 +44,8 @@ var UserObject = function (id, cx, cy, radius, text, circleClass, textClass) {
   
   var edgeList = {};
   
+  var textAdjust = defaultProperties["font-size"]/3;
+  
   initPropObj();
 
   /**
@@ -56,19 +58,19 @@ var UserObject = function (id, cx, cy, radius, text, circleClass, textClass) {
     propObj.circle.cx = cx;
     propObj.circle.cy = cy;
     propObj.circle.r = radius;
-    propObj.circle.fill = CELL_FILL_DEFAULT;
-    propObj.circle.fillOpacity = animProperties["cell"]["default"]["fill-opacity"];
-    propObj.circle.stroke = animProperties["cell"]["default"]["stroke"];
-    propObj.circle.strokeWidth = animProperties["cell"]["default"]["stroke-width"];
+    propObj.circle.fill = defaultProperties["shape"]["default"]["fill"];
+    propObj.circle.fillOpacity = defaultProperties["shape"]["default"]["fill-opacity"];
+    propObj.circle.stroke = defaultProperties["shape"]["default"]["stroke"];
+    propObj.circle.strokeWidth = defaultProperties["shape"]["default"]["stroke-width"];
     
     propObj.text.class = textClass;
-    propObj.text.x = x + 25;
-    propObj.text.y = y + 30;
-    propObj.text.fill = animProperties["text"]["fill"];
-    propObj.text.fontFamily = animProperties["text"]["font-family"];
-    propObj.text.fontWeight = animProperties["text"]["font-weight"];
-    propObj.text.fontSize = animProperties["text"]["font-size"];
-    propObj.text.textAnchor = animProperties["text"]["text-anchor"];
+    propObj.text.x = cx;
+    propObj.text.y = cy + textAdjust;
+    propObj.text.fill = defaultProperties["text"]["default"]["stroke"];
+    propObj.text.fontFamily = defaultProperties["font-family"];
+    propObj.text.fontWeight = defaultProperties["font-weight"];
+    propObj.text.fontSize = defaultProperties["font-size"];
+    propObj.text.textAnchor = defaultProperties["text-anchor"];
     propObj.text.text = text;
     
     edgeList = {};
@@ -268,33 +270,33 @@ var UserObject = function (id, cx, cy, radius, text, circleClass, textClass) {
       
     shape.enter().append(SVG_CIRCLE)        
         .attr("id", function (d) {return "u-shape-" + d.id;})
-        .attr("class", function (d) {return d.circle.class})
         .call(drag);
     shape.transition()
         .duration(dur)
+        .attr("class", function (d) {return d.circle.class;})
         .attr("cx", function (d) {return d.circle.cx;})
         .attr("cy", function (d) {return d.circle.cy;})
         .attr("r", function (d) {return d.circle.r;})
-        .style("fill", function (d) {return d.circle.fill;})
-        .style("fill-opacity", function (d) {return d.circle.fillOpacity;})
-        .style("stroke", function (d) {return d.circle.stroke;})
-        .style("stroke-width", function (d) {return d.circle.strokeWidth;});
+        .attr("fill", function (d) {return d.circle.fill;})
+        .attr("fill-opacity", function (d) {return d.circle.fillOpacity;})
+        .attr("stroke", function (d) {return d.circle.stroke;})
+        .attr("stroke-width", function (d) {return d.circle.strokeWidth;});
       
     var text = d3.select("#g-text").selectAll("text")
         .data(json, function (d) {return d.id;});
         
     text.enter().append("text")
-        .attr("id", function (d) {return "u-text-" + d.id; })
-        .attr("class", function (d) {return d.text.class});
+        .attr("id", function (d) {return "u-text-" + d.id; });
     text.transition()
         .duration(dur)
+        .attr("class", function (d) {return d.text.class})
         .attr("x", function (d) {return d.text.x;})
         .attr("y", function (d) {return d.text.y;})
-        .style("fill", function (d) {return d.text.fill;})
-        .style("font-family", function (d) {return d.text.fontFamily;})
-        .style("font-weigh", function (d) {return d.text.fontWeight;})
-        .style("font-size", function (d) {return d.text.fontSize;})
-        .style("text-anchor", function (d) {return d.text.textAnchor;})   
+        .attr("fill", function (d) {return d.text.fill;})
+        .attr("font-family", function (d) {return d.text.fontFamily;})
+        .attr("font-weigh", function (d) {return d.text.fontWeight;})
+        .attr("font-size", function (d) {return d.text.fontSize;})
+        .attr("text-anchor", function (d) {return d.text.textAnchor;})   
         .text(function (d) {return d.text.text;});
     
     for(var key in edgeList){
@@ -393,28 +395,26 @@ var UserObject = function (id, cx, cy, radius, text, circleClass, textClass) {
     return false;
   }
   
-  this.toggleDrag = function () {
-    d3.select("#shape-" + propObj.id).
-    d3.select("#shape-" + propObj.id).call(drag);
-  }
-  
   function dragstart (d) {
     d3.select(this).moveToFront();
-  
-    d.rect.x = Number(d3.select(this).attr("x"));
-    d.rect.y = Number(d3.select(this).attr("y"));
+    
+    d.circle.cx = Number(d3.select(this).attr("cx"));
+    d.circle.cy = Number(d3.select(this).attr("cy"));
   }
   
   function dragmove (d) {
-    d.rect.x = d3.event.x-Number(d3.select(this).attr("x"))-25;
-    d.rect.y = d3.event.y-Number(d3.select(this).attr("y"))-40;
+    var initX = Number(d3.select(this).attr("cx"));
+    var initY = Number(d3.select(this).attr("cy"));
+    
+    d.circle.cx += d3.event.dx;
+    d.circle.cy += d3.event.dy;
   
-    d3.select("#shape-" + d.id).attr("transform", function(d){
-      return "translate(" + [d.rect.x, d.rect.y] + ")"
+    d3.select("#u-shape-" + d.id).attr("transform", function(d){
+      return "translate(" + [d.circle.cx - initX, d.circle.cy - initY] + ")"
     });
     
-    d3.select("#text-" + d.id).attr("transform", function(d){
-      return "translate(" + [d.rect.x, d.rect.y] + ")"
+    d3.select("#u-text-" + d.id).attr("transform", function(d){
+      return "translate(" + [d.circle.cx - initX, d.circle.cy - initY] + ")"
     });
     
     
@@ -439,6 +439,24 @@ var UserObject = function (id, cx, cy, radius, text, circleClass, textClass) {
   }
   
   function dragend (d) {
+    var data, obj;
+    
+    $('.validTarget').hover(function () {
+      data = $(this).data("id");
+      alert(data);
+      
+      //$(this).text(d.text.text);
+    });
+    
+    d3.select("#u-shape-" + d.id).attr("transform", function(d,i){
+      return "translate(0,0)";
+    });
+
+    d3.select("#u-text-" + d.id).attr("transform", function(d,i){
+      return "translate(0,0)";
+    });
+    
+    /*
     var x = d.rect.x;
     var y = d.rect.y;
   
@@ -472,5 +490,6 @@ var UserObject = function (id, cx, cy, radius, text, circleClass, textClass) {
         return "translate(" + [500-(Number(d.id)*50),-250] + ")";
       });
     }
+    */
   }
 }

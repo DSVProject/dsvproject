@@ -20,13 +20,15 @@ var StackArray = function(){
   
   coreAnim.newStateList();
   coreAnim.saveState();
+  
+  var learnObj = [];
 
   var cap = 16;
   var top = new Pointer();
   var mArray = [];
   
   for (var i=0; i<16; i++){
-    mArray[i] = coreAnim.newSquareObject(i, (i+1)*50, 300, null, i);    
+    mArray[i] = coreAnim.newSquareObject(i, (i+1)*50, 300, null, i, "position");    
   }
   
   top.value = 0;
@@ -69,6 +71,17 @@ var StackArray = function(){
     coreAnim.saveState();
     
     if (coreAnim.isLearningMode()){
+      learnObj["newValue"] = coreAnim.newUserObject("newValue", 500, 75, 25, item, "draggable");
+      
+      for (var key in mArray) {
+        mArray[key].setRectClass("validTarget");
+        coreAnim.saveState();
+      }
+      
+      coreAnim.saveState("Use the grey circles to create the final state.");
+      coreAnim.play(0);
+      
+      /*
       mArray[insertedIndex].setText(insertedValue);
       mArray[insertedIndex].setFill("yellow");
     
@@ -79,19 +92,20 @@ var StackArray = function(){
       coreAnim.play(0);
       array[insertedIndex].setTransform(500-(insertedIndex*50) , -250);
       //newValue.toggleDrag();
+      */
       
     } else {
       mArray[top.value].setText(item);
       coreAnim.saveState("Inserting the new value");
   
       top.value++;
-      top.drawing.setFill(CELL_FILL_INCREMENT);
+      top.drawing.setFill(defaultProperties["shape"]["update"]["fill"]);
       coreAnim.saveState();
       
       top.edge.moveEdgeEnd(mArray[top.value].getCoordinateX() + 25, mArray[top.value].getCoordinateY());
       
       top.drawing.setText(top.value);
-      top.drawing.setFill(CELL_FILL_DEFAULT);
+      top.drawing.setFill(defaultProperties["shape"]["default"]["fill"]);
       coreAnim.saveState("Update the top pointer.");
       
       coreAnim.play();
@@ -110,20 +124,20 @@ var StackArray = function(){
     coreAnim.saveState();
     
     top.value--;
-    mArray[top.value].setFill(CELL_FILL_DECREMENT);
+    mArray[top.value].setFill(defaultProperties["shape"]["delete"]["fill"]);
     coreAnim.saveState();
     
     mArray[top.value].setText(null);
-    mArray[top.value].setFill(CELL_FILL_DEFAULT);
+    mArray[top.value].setFill(defaultProperties["shape"]["default"]["fill"]);
     coreAnim.saveState("Pop the top position.");
     
-    top.drawing.setFill(CELL_FILL_INCREMENT);
+    top.drawing.setFill(defaultProperties["shape"]["update"]["fill"]);
     coreAnim.saveState();
     
     top.edge.moveEdgeEnd(mArray[top.value].getCoordinateX() + 25, mArray[top.value].getCoordinateY());
     
     top.drawing.setText(top.value);
-    top.drawing.setFill(CELL_FILL_DEFAULT);
+    top.drawing.setFill(defaultProperties["shape"]["default"]["fill"]);
     coreAnim.saveState("Update the top pointer.")
     
     coreAnim.play();

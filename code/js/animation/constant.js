@@ -12,48 +12,74 @@ const ANIMATION_STOP = -1;
 
 //Values in miliseconds
 const DEFAULT_ANIMATION_DURATION = 500;
-const DEFAULT_ANIMATION_DELAY = 500;
 
-const CELL_WIDTH_DEFAULT = 50;
-const CELL_HEIGHT_DEFAULT = 50;
-
-const CELL_FILL_DEFAULT = "white";
-const CELL_FILL_INCREMENT = "palegreen";
-const CELL_FILL_DECREMENT = "tomato";
-
-const EDGE_STROKE_NULL = "tomato";
-const EDGE_STROKE_DEFAULT = "black";
-
-const animProperties = {
-  "cell":{
-    "width":50,
-    "height":50,
+const defaultProperties = {
+  "width":50,
+  "height":50,
+  "font-family":"sans-serif",
+  "font-size":18,
+  "text-anchor":"middle",
+  
+  /*
+  "shape":{
+    "stroke":{
+      "default":"black",
+      "draggable":"tomato"
+    },
+    "stroke-width":{
+      "default":2,
+      "draggable":2
+    },
+    "fill":{
+      "default":"white",
+      "draggable":"grey"
+    },
+    "fill-opacity":{
+      "default":1.0,
+      "draggable":0.2
+    }
+  }
+  */
+  
+  "shape":{
     "default":{
       "stroke":"black",
       "stroke-width":2,
       "fill":"white",
-      "fill-opacity":100.0
+      "fill-opacity":1.0
     },
-    "highlight":{
-      "stroke":"gold",
-      "stroke-width":7,
-      "fill-opacity":0.0
+    "draggable":{
+      "stroke":"tomato",
+      "stroke-width":2,
+      "fill":"grey",
+      "fill-opacity":0.2
     },
-    "increment":{
-      "fill":"palegreen"
+    "update":{
+      "fill":"lightskyblue"
     },
-    "decrement":{
+    "delete":{
       "fill":"tomato"
     }
   },
   "text":{
-    "fill":"black",
-    "font-family":"sans-serif",
-    "font-size":18,
-    "text-anchor":"middle"
+    "default":{
+      "stroke":"black"
+    },
+    "innerTextBlack":{
+      "stroke":"black"
+    },
+    "innerTextWhite":{
+      "stroke":"ivory"
+    }
   },
-  "edge": {
-    "stroke":"black",
-    "strokeWidth":3
+  "edge":{
+    "default":{
+      "stroke":"black",
+      "stroke-width":3
+    },
+    "null":{
+      "stroke":"tomato",
+      "stroke-width":5
+    }
   }
-};
+}

@@ -176,6 +176,12 @@ var CoreAnimObject = function () {
     return objectList[id];
   }
   
+  this.newUserObject = function (id, cx, cy, radius, text, circleClass) {
+    objectList[id] = new UserObject(id, cx, cy, radius, text, circleClass, "innerText");
+    
+    return objectList[id];
+  }
+  
   /**
     * Create an edge graphic element, that will be owned by the origin object.
     *

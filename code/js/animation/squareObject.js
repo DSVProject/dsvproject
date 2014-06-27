@@ -50,7 +50,10 @@ var SquareObject = function (id, x, y, text, label, rectClass, textClass, labelC
     "toRemove": false
   }
   
-  var edgeList = {};
+  var edgeList = [];
+  
+  var textAdjustX = defaultProperties.width/2;
+  var textAdjustY = defaultProperties.height/1.75;
   
   initPropObj();
 
@@ -63,21 +66,21 @@ var SquareObject = function (id, x, y, text, label, rectClass, textClass, labelC
     propObj.rect.class = rectClass;
     propObj.rect.x = x;
     propObj.rect.y = y;
-    propObj.rect.width = CELL_WIDTH_DEFAULT;
-    propObj.rect.height = CELL_HEIGHT_DEFAULT;
-    propObj.rect.fill = CELL_FILL_DEFAULT;
-    propObj.rect.fillOpacity = animProperties["cell"]["default"]["fill-opacity"];
-    propObj.rect.stroke = animProperties["cell"]["default"]["stroke"];
-    propObj.rect.strokeWidth = animProperties["cell"]["default"]["stroke-width"];
+    propObj.rect.width = defaultProperties.width;
+    propObj.rect.height = defaultProperties.height;
+    propObj.rect.fill = defaultProperties["shape"]["default"]["fill"]
+    propObj.rect.fillOpacity = defaultProperties["shape"]["default"]["fill-opacity"];
+    propObj.rect.stroke = defaultProperties["shape"]["default"]["stroke"];
+    propObj.rect.strokeWidth = defaultProperties["shape"]["default"]["stroke-width"];
     
     propObj.text.class = textClass;
-    propObj.text.x = x + 25;
-    propObj.text.y = y + 30;
-    propObj.text.fill = animProperties["text"]["fill"];
-    propObj.text.fontFamily = animProperties["text"]["font-family"];
-    propObj.text.fontWeight = animProperties["text"]["font-weight"];
-    propObj.text.fontSize = animProperties["text"]["font-size"];
-    propObj.text.textAnchor = animProperties["text"]["text-anchor"];
+    propObj.text.x = x + textAdjustX;
+    propObj.text.y = y + textAdjustY;
+    propObj.text.fill = defaultProperties["text"]["default"]["stroke"];
+    propObj.text.fontFamily = defaultProperties["font-family"];
+    propObj.text.fontWeight = defaultProperties["font-weight"];
+    propObj.text.fontSize = defaultProperties["font-size"];
+    propObj.text.textAnchor = defaultProperties["text-anchor"];
     propObj.text.text = text;
     
     propObj.label.class = labelClass;
@@ -272,8 +275,8 @@ var SquareObject = function (id, x, y, text, label, rectClass, textClass, labelC
     propObj.rect.x = x;
     propObj.rect.y = y;
 
-    propObj.text.x = x + 25;
-    propObj.text.y = y + 30;
+    propObj.text.x = x + textAdjustX;
+    propObj.text.y = y + textAdjustY;
     
     propObj.label.x = x + 25;
     propObj.label.y = y + 80;
@@ -301,18 +304,18 @@ var SquareObject = function (id, x, y, text, label, rectClass, textClass, labelC
       
     shape.enter().append(SVG_RECT)        
         .attr("id", function (d) {return "shape-" + d.id;})
-        .attr("class", function (d) {return d.rect.class})
         .call(drag);
     shape.transition()
         .duration(dur)
+        .attr("class", function (d) {return d.rect.class})
         .attr("x", function (d) {return d.rect.x;})
         .attr("y", function (d) {return d.rect.y;})
         .attr("height", function (d) {return d.rect.height;})
         .attr("width", function (d) {return d.rect.width;})
-        .style("fill", function (d) {return d.rect.fill;})
-        .style("fill-opacity", function (d) {return d.rect.fillOpacity;})
-        .style("stroke", function (d) {return d.rect.stroke;})
-        .style("stroke-width", function (d) {return d.rect.strokeWidth;});
+        .attr("fill", function (d) {return d.rect.fill;})
+        .attr("fill-opacity", function (d) {return d.rect.fillOpacity;})
+        .attr("stroke", function (d) {return d.rect.stroke;})
+        .attr("stroke-width", function (d) {return d.rect.strokeWidth;});
      
     var label = d3.select("#g-label").selectAll("text")
         .data(json, function (d) {return d.id;});
@@ -328,17 +331,17 @@ var SquareObject = function (id, x, y, text, label, rectClass, textClass, labelC
         .data(json, function (d) {return d.id;});
         
     text.enter().append("text")
-        .attr("id", function (d) {return "text-" + d.id; })
-        .attr("class", function (d) {return d.text.class});
+        .attr("id", function (d) {return "text-" + d.id; });
     text.transition()
         .duration(dur)
+        .attr("class", function (d) {return d.text.class})
         .attr("x", function (d) {return d.text.x;})
         .attr("y", function (d) {return d.text.y;})
-        .style("fill", function (d) {return d.text.fill;})
-        .style("font-family", function (d) {return d.text.fontFamily;})
-        .style("font-weigh", function (d) {return d.text.fontWeight;})
-        .style("font-size", function (d) {return d.text.fontSize;})
-        .style("text-anchor", function (d) {return d.text.textAnchor;})   
+        .attr("fill", function (d) {return d.text.fill;})
+        .attr("font-family", function (d) {return d.text.fontFamily;})
+        .attr("font-weigh", function (d) {return d.text.fontWeight;})
+        .attr("font-size", function (d) {return d.text.fontSize;})
+        .attr("text-anchor", function (d) {return d.text.textAnchor;})   
         .text(function (d) {return d.text.text;});
     
     for(var key in edgeList){

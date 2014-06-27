@@ -88,13 +88,13 @@ var QueueArray = function () {
       coreAnim.saveState("Inserting the new value");
       
       tail.value++;
-      tail.drawing.setFill(CELL_FILL_INCREMENT);
+      tail.drawing.setFill(defaultProperties["shape"]["update"]["fill"]);
       coreAnim.saveState();
       
       tail.edge.moveEdgeEnd(mArray[tail.value].getCoordinateX() + 25, mArray[tail.value].getCoordinateY());
       
       tail.drawing.setText(tail.value);
-      tail.drawing.setFill(CELL_FILL_DEFAULT);
+      tail.drawing.setFill(defaultProperties["shape"]["default"]["fill"]);
       coreAnim.saveState("Update the tail pointer.");
     }
     
@@ -111,21 +111,21 @@ var QueueArray = function () {
     
     coreAnim.saveState();
     
-    mArray[head.value].setFill(CELL_FILL_DECREMENT);
+    mArray[head.value].setFill(defaultProperties["shape"]["delete"]["fill"]);
     coreAnim.saveState();
     
     mArray[head.value].setText(null);
-    mArray[head.value].setFill(CELL_FILL_DEFAULT);
+    mArray[head.value].setFill(defaultProperties["shape"]["default"]["fill"]);
     coreAnim.saveState("Dequeue the head position.");
     
     head.value++;
-    head.drawing.setFill(CELL_FILL_INCREMENT);
+    head.drawing.setFill(defaultProperties["shape"]["update"]["fill"]);
     coreAnim.saveState();
     
     head.edge.moveEdgeEnd(mArray[head.value].getCoordinateX() + 25, mArray[head.value].getCoordinateY());
     
     head.drawing.setText(head.value);
-    head.drawing.setFill(CELL_FILL_DEFAULT);
+    head.drawing.setFill(defaultProperties["shape"]["default"]["fill"]);
     coreAnim.saveState("Update the tail pointer.");
     
     if (head.value == tail.value) {
