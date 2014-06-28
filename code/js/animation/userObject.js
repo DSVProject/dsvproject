@@ -442,8 +442,10 @@ var UserObject = function (id, cx, cy, radius, text, circleClass, textClass) {
     var data, obj;
     
     $('.validTarget').hover(function () {
-      data = $(this).data("id");
-      alert(data);
+      //data = $(this).data();
+      
+      alert($(this).data());
+      //alert(data);
       
       //$(this).text(d.text.text);
     });

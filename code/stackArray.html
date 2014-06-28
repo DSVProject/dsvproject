@@ -69,6 +69,12 @@
       <input type="button" id="btn_check" onclick="checkAns()" value="Check Answer">
     </div>
     <div id="viz"></div>
+    <div id="control">
+      <input type="button" id="btn-prev" onclick="previous()" value="Previous">
+      <input type="button" id="btn-play" onclick="play()" value="Play">
+      <input type="button" id="btn-pause" onclick="pause()" value="Pause">
+      <input type="button" id="btn-next" onclick="next()" value="Next">
+    </div>
     <div id="log"></div>
     
     <script src="js/util.js"></script>
@@ -97,6 +103,22 @@
       
       function empty(){
         stack.init();
+      }
+      
+      function previous(){
+        anim.previous();
+      }
+      
+      function play(){
+        anim.play();
+      }
+      
+      function pause(){
+        anim.pause();
+      }
+      
+      function next(){
+        anim.next();
       }
     </script>
   </body>
