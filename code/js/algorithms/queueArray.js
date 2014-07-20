@@ -47,7 +47,7 @@ var QueueArray = function () {
 
   this.init = function () {
     coreAnim.clearLog();
-    coreAnim.newStateList();
+    //coreAnim.newStateList();
     coreAnim.saveState();
     
     head.value = 0;

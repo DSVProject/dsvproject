@@ -33,8 +33,9 @@ var StackArray = function(){
   
   top.value = 0;
   top.drawing = coreAnim.newSquareObject("top", 50, 50, 0, "top");
-  top.edge = coreAnim.newEdgeObject("top", top.drawing.getID(), top.drawing.getCoordinateX() + 25, top.drawing.getCoordinateY() + 100, mArray[0].getCoordinateX() + 25, mArray[0].getCoordinateY());
-
+  top.edge = coreAnim.newEdgeObject("top", top.drawing.getID(), top.drawing.getCoordinateX() + 25, top.drawing.getCoordinateY() + 100, mArray[0].getCoordinateX() + 25, mArray[0].getCoordinateY(), EDGE_UNIDIRECTIONAL);
+  top.edge.setMarkerEnd(defaultProperties.marker.default.end);
+  
   coreAnim.saveState();
   coreAnim.play(0);
 
@@ -44,7 +45,6 @@ var StackArray = function(){
   
   this.init = function() {
     coreAnim.clearLog();
-    coreAnim.newStateList();
     coreAnim.saveState();
     
     top.value = 0;
@@ -67,11 +67,11 @@ var StackArray = function(){
     }
     
     coreAnim.clearLog();
-    coreAnim.newStateList();
     coreAnim.saveState();
     
     if (coreAnim.isLearningMode()){
       learnObj["newValue"] = coreAnim.newUserObject("newValue", 500, 75, 25, item, "draggable");
+      //learnObj["newTopPointer"] = coreAnim.newUserObject("newTopPointer", top.edge.getCoordinateX2(), top.edge.getCoordinateY2(), 10, null, "draggable");
       
       for (var key in mArray) {
         mArray[key].setRectClass("validTarget");
@@ -120,7 +120,6 @@ var StackArray = function(){
     }
     
     coreAnim.clearLog();
-    coreAnim.newStateList();
     coreAnim.saveState();
     
     top.value--;

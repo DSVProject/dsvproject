@@ -13,6 +13,10 @@ const ANIMATION_STOP = -1;
 //Values in miliseconds
 const DEFAULT_ANIMATION_DURATION = 500;
 
+const EDGE_UNDIRECTED = 0;
+const EDGE_UNIDIRECTIONAL = 1;
+const EDGE_BIDIRECTIONAL = 2;
+
 const defaultProperties = {
   "width":50,
   "height":50,
@@ -80,6 +84,16 @@ const defaultProperties = {
     "null":{
       "stroke":"tomato",
       "stroke-width":5
+    }
+  },
+  "marker":{
+    "null":{
+      "start": "url(#reverseArrowNull)",
+      "end": "url(#arrowNull)"
+    },
+    "default":{
+      "start": "url(#reverseArrowDefault)",
+      "end": "url(#arrowDefault)"
     }
   }
 }

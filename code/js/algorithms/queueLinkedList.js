@@ -21,12 +21,12 @@ var QueueLinkedList = function(){
   
   var firstD = coreAnim.newSquareObject("first", 50, 50, "First", null, "pointer");
   var lastD = coreAnim.newSquareObject("last", 150, 50, "Last", null, "pointer");
-  var edgeFirstD = coreAnim.newEdgeObject("first", firstD.getID(), firstD.getCoordinateX() + 25, firstD.getCoordinateY() + 50, null, null, "down");
-  var edgeLastD = coreAnim.newEdgeObject("last", lastD.getID(), lastD.getCoordinateX() + 25, lastD.getCoordinateY() + 50, null, null, "down");
+  var edgeFirstD = coreAnim.newEdgeObject("first", firstD.getID(), firstD.getCoordinateX() + 25, firstD.getCoordinateY() + 50, null, null, EDGE_UNIDIRECTIONAL, "down");
+  var edgeLastD = coreAnim.newEdgeObject("last", lastD.getID(), lastD.getCoordinateX() + 25, lastD.getCoordinateY() + 50, null, null, EDGE_UNIDIRECTIONAL, "down");
   
-  edgeFirstD.setStroke(defaultProperties["edge"]["null"]["stroke"]);
-  edgeLastD.setStroke(defaultProperties["edge"]["null"]["stroke"]);
-  
+  edgeFirstD.setStroke(defaultProperties.edge.null.stroke);
+  edgeLastD.setStroke(defaultProperties.edge.null.stroke);
+
   coreAnim.saveState();
   coreAnim.play(0);
   
@@ -37,7 +37,6 @@ var QueueLinkedList = function(){
   this.init = function () {
     coreAnim.clearLog();
     coreAnim.newStateList();
-    coreAnim.saveState();
     
     first = null;
     last = null;
@@ -45,9 +44,11 @@ var QueueLinkedList = function(){
     counterID = 0;
     
     edgeFirstD.moveEdgeEnd(firstD.getCoordinateX() + 25, firstD.getCoordinateY() + 100);
-    edgeFirstD.setStroke(defaultProperties["edge"]["null"]["stroke"]);
+    edgeFirstD.setStroke(defaultProperties.edge.null.stroke);
+    edgeFirstD.setMarkerEnd(defaultProperties.marker.null.end);
     edgeLastD.moveEdgeEnd(lastD.getCoordinateX() + 25, lastD.getCoordinateY() + 100);
-    edgeLastD.setStroke(defaultProperties["edge"]["null"]["stroke"]);
+    edgeLastD.setStroke(defaultProperties.edge.null.stroke);
+    edgeLastD.setMarkerEnd(defaultProperties.marker.null.end);
     
     coreAnim.removeAll("node");
     
@@ -65,7 +66,7 @@ var QueueLinkedList = function(){
     }
     
     coreAnim.clearLog();
-    coreAnim.newStateList();
+    //coreAnim.newStateList();
     
     coreAnim.saveState();
     
@@ -75,18 +76,20 @@ var QueueLinkedList = function(){
     last.item = item;
     last.next = null;
     last.drawing = coreAnim.newSquareObject(++counterID, (N+1)*100, 300, item, null, "node");
-    last.edge = coreAnim.newEdgeObject(counterID, last.drawing.getID(), last.drawing.getCoordinateX() + 50, last.drawing.getCoordinateY() + 25, null, null, "right");
-    last.edge.setStroke(defaultProperties["edge"]["null"]["stroke"]);
+    last.edge = coreAnim.newEdgeObject(counterID, last.drawing.getID(), last.drawing.getCoordinateX() + 50, last.drawing.getCoordinateY() + 25, null, null, EDGE_UNIDIRECTIONAL, "right");
+    last.edge.setStroke(defaultProperties.edge.null.stroke);
     
     coreAnim.saveState("Inserting new node.");
     
     if (oldlast != null) {
-      oldlast.edge.setStroke(defaultProperties["edge"]["default"]["stroke"]);
+      oldlast.edge.setStroke(defaultProperties.edge.default.stroke);
+      oldlast.edge.setMarkerEnd(defaultProperties.marker.default.end);
       coreAnim.saveState("Update the pointer of the previous node.")
     }
     
     edgeLastD.moveEdgeEnd(last.drawing.getCoordinateX() + 25, last.drawing.getCoordinateY());
-    edgeLastD.setStroke(defaultProperties["edge"]["default"]["stroke"]);
+    edgeLastD.setStroke(defaultProperties.edge.default.stroke);
+    edgeLastD.setMarkerEnd(defaultProperties.marker.default.end);
 
     coreAnim.saveState("Update the last pointer.");
     
@@ -94,7 +97,8 @@ var QueueLinkedList = function(){
       first = last;
       
       edgeFirstD.moveEdgeEnd(last.drawing.getCoordinateX() + 25, last.drawing.getCoordinateY());
-      edgeFirstD.setStroke(defaultProperties["edge"]["default"]["stroke"]);
+      edgeFirstD.setStroke(defaultProperties.edge.default.stroke);
+      edgeFirstD.setMarkerEnd(defaultProperties.marker.default.end);
       
       coreAnim.saveState("If the list was empty, update the first pointer too.");
     } else {
@@ -111,7 +115,7 @@ var QueueLinkedList = function(){
     }
     
     coreAnim.clearLog();
-    coreAnim.newStateList();
+    //coreAnim.newStateList();
     
     coreAnim.saveState();
     
@@ -139,9 +143,11 @@ var QueueLinkedList = function(){
       last = null;
       
       edgeFirstD.moveEdgeEnd(firstD.getCoordinateX() + 25, firstD.getCoordinateY() + 100);
-      edgeFirstD.setStroke(defaultProperties["edge"]["null"]["stroke"]);
+      edgeFirstD.setStroke(defaultProperties.edge.null.stroke);
+      edgeFirstD.setMarkerEnd(defaultProperties.marker.null.end);
       edgeLastD.moveEdgeEnd(lastD.getCoordinateX() + 25, lastD.getCoordinateY() + 100);
-      edgeLastD.setStroke(defaultProperties["edge"]["null"]["stroke"]);
+      edgeLastD.setStroke(defaultProperties.edge.null.stroke);
+      edgeLastD.setMarkerEnd(defaultProperties.marker.null.end);
     } else {
       edgeFirstD.moveEdgeEnd(first.drawing.getCoordinateX() + 25, first.drawing.getCoordinateY());
       edgeLastD.moveEdgeEnd(last.drawing.getCoordinateX() + 25, last.drawing.getCoordinateY());

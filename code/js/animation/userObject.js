@@ -270,7 +270,10 @@ var UserObject = function (id, cx, cy, radius, text, circleClass, textClass) {
       
     shape.enter().append(SVG_CIRCLE)        
         .attr("id", function (d) {return "u-shape-" + d.id;})
-        .call(drag);
+        .on("click", function (d) {
+          d3.select(this).classed("selected", true);
+        })
+        //.call(drag);
     shape.transition()
         .duration(dur)
         .attr("class", function (d) {return d.circle.class;})
@@ -439,16 +442,15 @@ var UserObject = function (id, cx, cy, radius, text, circleClass, textClass) {
   }
   
   function dragend (d) {
-    var data, obj;
+    var targetData;
     
+    /*
     $('.validTarget').hover(function () {
-      //data = $(this).data();
+      targetData = $(this).prop("__data__");
       
-      alert($(this).data());
-      //alert(data);
-      
-      //$(this).text(d.text.text);
+      d3.select("#text-" + targetData.id).text(d.text.text);
     });
+    */
     
     d3.select("#u-shape-" + d.id).attr("transform", function(d,i){
       return "translate(0,0)";

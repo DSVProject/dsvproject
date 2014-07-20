@@ -6,8 +6,10 @@
     <!-- js -->
     <script type="text/javascript" src="js/d3.min.js"></script>
     <script type="text/javascript" src="js/jquery-2.1.1.js"></script>
+    <script type="text/javascript" src="js/jquery-ui.min.js"></script>
     <!-- css -->
     <link rel="stylesheet" href="css/animation.css">
+    <link rel="stylesheet" href="css/jquery-ui.min.css">
     
     <style>
       /*
@@ -56,6 +58,10 @@
         stroke-width:2px;
       }
       
+      .shape .draggable.selected{
+        stroke-dasharray: 10 5;
+      }
+      
     </style>
   </head>
   <body>
@@ -75,7 +81,9 @@
       <input type="button" id="btn-pause" onclick="pause()" value="Pause">
       <input type="button" id="btn-next" onclick="next()" value="Next">
     </div>
-    <div id="log"></div>
+    <div>
+      <li id="log"></li>
+    </div>
     
     <script src="js/util.js"></script>
     <script src="js/animation/constant.js"></script>

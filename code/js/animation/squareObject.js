@@ -303,8 +303,8 @@ var SquareObject = function (id, x, y, text, label, rectClass, textClass, labelC
         .data(json, function (d) {return d.id;});
       
     shape.enter().append(SVG_RECT)        
-        .attr("id", function (d) {return "shape-" + d.id;})
-        .call(drag);
+        .attr("id", function (d) {return "shape-" + d.id;});
+        //.call(drag);
     shape.transition()
         .duration(dur)
         .attr("class", function (d) {return d.rect.class})
