@@ -37,3 +37,8 @@ body > .container {
 code {
   font-size: 80%;
 }
+
+.panel-body {
+   height: 200px;
+   overflow: auto;
+  }
