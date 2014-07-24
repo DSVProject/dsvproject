@@ -43,12 +43,9 @@ var QueueLinkedList = function(){
     
     switch (command) {
         case ENQUEUE:
-          coreAnim.addPseudocodeLine(0, "If newNode != null");
-          coreAnim.addPseudocodeLine(1, "&nbspnode temp = value");
-          coreAnim.addPseudocodeLine(2, "&nbspnode temp = value");
-          coreAnim.addPseudocodeLine(3, "&nbspnode temp = value");
-          coreAnim.addPseudocodeLine(4, "&nbspnode temp = value");
-          coreAnim.addPseudocodeLine(5, "&nbspnode temp = value");
+          coreAnim.addPseudocodeLine(0, "Node temp = value;");
+          coreAnim.addPseudocodeLine(1, "Tail.next = temp;");
+          coreAnim.addPseudocodeLine(2, "Tail = temp;");
           break;
         case DEQUEUE:
           coreAnim.addPseudocodeLine(0, "Test 0");
@@ -103,19 +100,19 @@ var QueueLinkedList = function(){
     last.edge = coreAnim.newEdgeObject(counterID, last.drawing.getID(), last.drawing.getCoordinateX() + 50, last.drawing.getCoordinateY() + 25, null, null, EDGE_UNIDIRECTIONAL, "right");
     last.edge.setStroke(defaultProperties.edge.null.stroke);
     
-    coreAnim.saveState("Inserting new node.");
+    coreAnim.saveState("Inserting new node.", 0);
     
     if (oldlast != null) {
       oldlast.edge.setStroke(defaultProperties.edge.default.stroke);
       oldlast.edge.setMarkerEnd(defaultProperties.marker.default.end);
-      coreAnim.saveState("Update the pointer of the previous node.")
+      coreAnim.saveState("Update the pointer of the previous node.", 1)
     }
     
     edgeLastD.moveEdgeEnd(last.drawing.getCoordinateX() + 25, last.drawing.getCoordinateY());
     edgeLastD.setStroke(defaultProperties.edge.default.stroke);
     edgeLastD.setMarkerEnd(defaultProperties.marker.default.end);
 
-    coreAnim.saveState("Update the last pointer.");
+    coreAnim.saveState("Update the last pointer.", 2);
     
     if (this.isEmpty()) {
       first = last;
@@ -140,6 +137,7 @@ var QueueLinkedList = function(){
     
     coreAnim.clearLog();
     //coreAnim.newStateList();
+    this.generatePseudocode(DEQUEUE);
     
     coreAnim.saveState();
     

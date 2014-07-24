@@ -1,12 +1,3 @@
-li{
-  list-style-type: none;
-}
-
-ul{
-  margin:0;
-  padding:0;
-}
-
 .shape{
   fill:white;
   stroke:black;
@@ -17,4 +8,55 @@ ul{
   fill-opacity:0.0;
   stroke:gold;
   stroke-width:7px;
+}
+
+.pseudocodeHighlight{
+  font-weight: bold;
+  background-color: lightgreen;
+  color: ivory;
+}
+
+.label{
+  font-family:sans-serif;
+  font-size:18px;
+  text-anchor:middle;
+  fill:black;
+}
+
+.innerText{
+  font-family:sans-serif;
+  font-size:18px;
+  text-anchor:middle;
+  fill:black;
+}
+
+#txt-input{
+  font-family:sans-serif;
+  color:grey;
+  font-style:italic;
+}
+
+.shape .draggable{
+  fill:grey;
+  fill-opacity:0.2;
+  stroke:tomato;
+  stroke-width:2px;
+  cursor: pointer;
+}
+
+.shape .draggable.selected{
+  stroke-dasharray: 10 5;
+}
+
+.shape .placeHolder{
+  fill:grey;
+  fill-opacity:0.2;
+  stroke:black;
+  stroke-width:2px;
+  stroke-dasharray: 5 5;
+  cursor: pointer;
+}
+
+#pseudocode p {
+  line-height: normal;
 }

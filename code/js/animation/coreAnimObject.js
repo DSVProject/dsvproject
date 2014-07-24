@@ -25,10 +25,6 @@ var CoreAnimObject = function () {
   
   var animationStatus = ANIMATION_STOP;
   
-  this.tryAlert = function () {
-    alert("funcionou");
-  }
-  
   this.init = function () {
     createGroups();
     createMarkers();
@@ -115,7 +111,7 @@ var CoreAnimObject = function () {
     *
     * @param {String} status : an optional message about the changes, that will appear on the screen log.
     */
-  this.saveState = function (status) {
+  this.saveState = function (status, pseudocodeLine) {
     var state = {}; // The current state being created
     var newList = []; // The copy of the current objectList
     var clone;  // The instance for the cloned Object
@@ -125,9 +121,11 @@ var CoreAnimObject = function () {
       newList[key] = clone; 
     }
     
-    // Each state will hold the "data" which is a copy of objectList, and a "status" which will appear on the log.
+    // Each state will hold the "data" which is a copy of objectList, a "status" which will appear on the log
+    // and a "pseudocodeLine" that will be highlighted on running time.
     state.data = newList;
     state.status = status;
+    state.pseudocodeLine = pseudocodeLine;
     
     // When assigning a state for a position in this array you should use parseInt, otherwise when using other
     // variables (such as iterationAnimation) to access the content, the function will return undefined.
@@ -356,43 +354,54 @@ var CoreAnimObject = function () {
   /**
     * Clear the message log.
     */
-  this.clearLog = function () {
-    d3.select("#log").selectAll("ul")
+  this.clearLog = function(){
+    d3.select("#log").selectAll("p")
         .remove();
   }
   
   /**
-    * Clear the pseudocode.
+    * Print a message on the log panel.
+    *
+    * @param {String} message : the message to be printed.
+    */
+  this.printLog = function (message) {
+    d3.select("#log")
+        .append("p")
+        .text(message);
+  }
+  
+  /**
+    * Clear the pseudocode panel.
     */
   this.clearPseudocode = function () {
-    d3.select("#pseudocode").selectAll("ul")
+    d3.select("#pseudocode").selectAll("p")
         .remove();
   }
   
   /**
-    * Insert a code line in the Pseudocode pannel.
+    * Add an instruction on the pseudocode panel.
     *
-    * @param {Integer} id : a numeric id of the instruction, used to highlight the right line.
-    * @param {String} instruction : the description of the instruction.
+    * @param {Integer} id : the id o the html element that will hold the line.
+    * @param {String} instruction : the instruction to be added.
     */
   this.addPseudocodeLine = function (id, instruction) {
     d3.select("#pseudocode")
-        .append("ul")
+        .append("p")
         .attr("id", "line" + id)
         .text(instruction);
   }
   
   /**
-    * Highlight a line from the pseudocode pannel.
+    * Print a message on the log panel.
     *
-    * @param {Integer} lineNumber : the line number to be highlighted.
+    * @param {Integer} lineNumber : the line number to be highlighted (same used as id when the line was created).
     */
   this.highlightPseudocode = function (lineNumber) {
-    d3.select("#pseudocode").selectAll("ul")
-        .classed("pseudocodeHighlight", false);
+    d3.select("#pseudocode").selectAll("p")
+        .attr("class", "");
     
     d3.select("#line" + lineNumber)
-        .classe("pseudocodeHighlight", true);
+        .classed("pseudocodeHighlight", "true");
   }
   
   /**
@@ -405,16 +414,14 @@ var CoreAnimObject = function () {
     var currentObjectList = currentState.data;
     var allObjectsJson = [];
     
-    // Send the message to the log
-    if (typeof currentState.status != 'undefined'){
-      d3.select("#log")
-          .append("ul")
-          .transition()
-          .duration(dur)
-          .text(currentState.status);
+    if (typeof currentState.status != 'undefined') {
+      selfie.printLog(currentState.status);
     }
     
-    // Draw the objects on the screen
+    if (typeof currentState.pseudocodeLine != 'undefined') {
+      selfie.highlightPseudocode(currentState.pseudocodeLine);
+    }
+    
     for (var key in currentObjectList){
       if (currentObjectList[key].getToRemove()){
         currentObjectList[key].remove(0);
