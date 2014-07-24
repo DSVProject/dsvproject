@@ -25,6 +25,10 @@ var CoreAnimObject = function () {
   
   var animationStatus = ANIMATION_STOP;
   
+  this.tryAlert = function () {
+    alert("funcionou");
+  }
+  
   this.init = function () {
     createGroups();
     createMarkers();
@@ -350,6 +354,48 @@ var CoreAnimObject = function () {
   */
   
   /**
+    * Clear the message log.
+    */
+  this.clearLog = function () {
+    d3.select("#log").selectAll("ul")
+        .remove();
+  }
+  
+  /**
+    * Clear the pseudocode.
+    */
+  this.clearPseudocode = function () {
+    d3.select("#pseudocode").selectAll("ul")
+        .remove();
+  }
+  
+  /**
+    * Insert a code line in the Pseudocode pannel.
+    *
+    * @param {Integer} id : a numeric id of the instruction, used to highlight the right line.
+    * @param {String} instruction : the description of the instruction.
+    */
+  this.addPseudocodeLine = function (id, instruction) {
+    d3.select("#pseudocode")
+        .append("ul")
+        .attr("id", "line" + id)
+        .text(instruction);
+  }
+  
+  /**
+    * Highlight a line from the pseudocode pannel.
+    *
+    * @param {Integer} lineNumber : the line number to be highlighted.
+    */
+  this.highlightPseudocode = function (lineNumber) {
+    d3.select("#pseudocode").selectAll("ul")
+        .classed("pseudocodeHighlight", false);
+    
+    d3.select("#line" + lineNumber)
+        .classe("pseudocodeHighlight", true);
+  }
+  
+  /**
     * Iterate through all items of objectList, drawing the changes on the screen.
     *
     * @param {state} currentState : a state containing the ["data"], which is a copy of objectList and a ["status"] to be printed on the log.
@@ -388,14 +434,6 @@ var CoreAnimObject = function () {
         .each(function(d) {
           if (typeof objectList[d.id] != 'undefined') objectList[d.id].remove(0);
         });
-  }
-  
-  /**
-    * Clear the message log.
-    */
-  this.clearLog = function(){
-    d3.select("#log").selectAll("ul")
-        .remove();
   }
   
   this.isLearningMode = function(){

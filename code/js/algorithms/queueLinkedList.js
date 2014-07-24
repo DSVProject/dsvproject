@@ -10,6 +10,10 @@ var Node = function () {
 var QueueLinkedList = function(){
   var selfie = this;
   var coreAnim = new CoreAnimObject();
+  
+  const ENQUEUE = 0,
+        DEQUEUE = 1;
+  
   coreAnim.init();
   coreAnim.newStateList();
   coreAnim.saveState();
@@ -32,6 +36,25 @@ var QueueLinkedList = function(){
   
   this.getAnim = function () {
     return coreAnim;
+  }
+  
+  this.generatePseudocode = function (command) {
+    coreAnim.clearPseudocode();
+    
+    switch (command) {
+        case ENQUEUE:
+          coreAnim.addPseudocodeLine(0, "If newNode != null");
+          coreAnim.addPseudocodeLine(1, "&nbspnode temp = value");
+          coreAnim.addPseudocodeLine(2, "&nbspnode temp = value");
+          coreAnim.addPseudocodeLine(3, "&nbspnode temp = value");
+          coreAnim.addPseudocodeLine(4, "&nbspnode temp = value");
+          coreAnim.addPseudocodeLine(5, "&nbspnode temp = value");
+          break;
+        case DEQUEUE:
+          coreAnim.addPseudocodeLine(0, "Test 0");
+          coreAnim.addPseudocodeLine(1, "Test 1");
+          break;
+    }
   }
   
   this.init = function () {
@@ -67,6 +90,7 @@ var QueueLinkedList = function(){
     
     coreAnim.clearLog();
     //coreAnim.newStateList();
+    this.generatePseudocode(ENQUEUE);
     
     coreAnim.saveState();
     

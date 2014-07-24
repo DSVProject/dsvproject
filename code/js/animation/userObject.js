@@ -13,6 +13,8 @@
   * @param {String} textClass : the CSS class of the text svg element.
   */
 var UserObject = function (id, cx, cy, radius, text, circleClass, textClass) {
+  var selfie = this;
+  
   var propObj = {
     "id": null,
     
@@ -45,7 +47,7 @@ var UserObject = function (id, cx, cy, radius, text, circleClass, textClass) {
   var edgeList = {};
   
   var textAdjust = defaultProperties["font-size"]/3;
-  
+
   initPropObj();
 
   /**
@@ -271,7 +273,22 @@ var UserObject = function (id, cx, cy, radius, text, circleClass, textClass) {
     shape.enter().append(SVG_CIRCLE)        
         .attr("id", function (d) {return "u-shape-" + d.id;})
         .on("click", function (d) {
-          d3.select(this).classed("selected", true);
+          if(this.classList.contains("selected")) {
+            d3.select(this).classed("selected", false);
+            
+            d3.selectAll(".placeHolder")
+                .remove();
+          } else {
+            CoreAnimObject.tryAlert();
+            d3.select(this).classed("selected", true);
+            
+            $('.validTarget').each(function() {
+              var cx = parseInt(d3.select(this).attr("x")) + 25;
+              var cy = parseInt(d3.select(this).attr("y")) + 25;
+               
+              selfie.createPlaceHolder(cx, cy);
+            })
+          }
         })
         //.call(drag);
     shape.transition()
@@ -378,6 +395,15 @@ var UserObject = function (id, cx, cy, radius, text, circleClass, textClass) {
     }
     
     edgeList = newList;
+  }
+  
+  this.createPlaceHolder = function (cx, cy) {
+    d3.select("#g-shape")
+        .append(SVG_CIRCLE)
+        .attr("class", "placeHolder")
+        .attr("cx", cx)
+        .attr("cy", cy)
+        .attr("r", 10);
   }
   
   // This functions are used for the learning mode

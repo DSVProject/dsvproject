@@ -1,4 +1,4 @@
-const MAIN_SVG_WIDTH = 900;
+const MAIN_SVG_WIDTH = 1200;
 const MAIN_SVG_HEIGHT = 500;
 
 const SVG_CIRCLE = "circle";

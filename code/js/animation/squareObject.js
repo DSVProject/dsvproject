@@ -10,7 +10,8 @@
   * @param {Number} y : the y coordinate of this object on the screen.
   * @param {String} text : the inner text of this object, that will be displayed on the screen.
   * @param {String} rectClass : the CSS class of the rect svg element.
-  * @param {String} textClass : the CSS class of the text svg element.
+  * @param {String} textClass : the CSS class of the text svg element (inside the shape).
+  * @param {String} labelClass : the CSS class of the text svg element (beneath the shape).
   */
 var SquareObject = function (id, x, y, text, label, rectClass, textClass, labelClass) {
   var propObj = {
@@ -54,6 +55,7 @@ var SquareObject = function (id, x, y, text, label, rectClass, textClass, labelC
   
   var textAdjustX = defaultProperties.width/2;
   var textAdjustY = defaultProperties.height/1.75;
+  var labelAdjustY = defaultProperties.height + 30;
   
   initPropObj();
 
@@ -84,8 +86,8 @@ var SquareObject = function (id, x, y, text, label, rectClass, textClass, labelC
     propObj.text.text = text;
     
     propObj.label.class = labelClass;
-    propObj.label.x = x + 25;
-    propObj.label.y = y + 80;
+    propObj.label.x = x + textAdjustX;
+    propObj.label.y = y + labelAdjustY;
     propObj.label.text = label;
     
     edgeList = {};
@@ -102,7 +104,8 @@ var SquareObject = function (id, x, y, text, label, rectClass, textClass, labelC
     * @return {Array} : the edges of the current object.
     */
   this.getEdges = function () {
-    return edgeList;}
+    return edgeList;
+  }
   
   /**
     * @return {String || Number} : the id of this object.
@@ -278,8 +281,8 @@ var SquareObject = function (id, x, y, text, label, rectClass, textClass, labelC
     propObj.text.x = x + textAdjustX;
     propObj.text.y = y + textAdjustY;
     
-    propObj.label.x = x + 25;
-    propObj.label.y = y + 80;
+    propObj.label.x = x + textAdjustX;
+    propObj.label.y = y + labelAdjustY;
     
     for(var key in edgeList){
       edgeList[key].moveEdgeStart(x + propObj.rect.width, y + 25);
@@ -386,7 +389,6 @@ var SquareObject = function (id, x, y, text, label, rectClass, textClass, labelC
     }
   }
   
-  
   /**
     * This function should be called when creating a new state. This function will clone this entire object,
     * returning a new instance, without the references, allowing the animation to happen step by step.
@@ -429,102 +431,34 @@ var SquareObject = function (id, x, y, text, label, rectClass, textClass, labelC
     edgeList = newList;
   }
   
-  // This functions are used for the learning mode
-  
-  this.setTransform = function (x, y) {
-    d3.select("#shape-" + propObj.id)   
-        .attr("transform", "translate(" + [x , y] + ")");
-    d3.select("#text-" + propObj.id)        
-        .attr("transform", "translate(" + [x , y] + ")");
-  }
-  
-  var drag = d3.behavior.drag()
-      .on("drag", dragmove)
-      .on("dragstart", dragstart)
-      .on("dragend", dragend);
-  
-  function isValidDestination () {
-    return false;
-  }
-  
-  this.toggleDrag = function () {
-    d3.select("#shape-" + propObj.id).
-    d3.select("#shape-" + propObj.id).call(drag);
-  }
-  
-  function dragstart (d) {
-    d3.select(this).moveToFront();
-  
-    d.rect.x = Number(d3.select(this).attr("x"));
-    d.rect.y = Number(d3.select(this).attr("y"));
-  }
-  
-  function dragmove (d) {
-    d.rect.x = d3.event.x-Number(d3.select(this).attr("x"))-25;
-    d.rect.y = d3.event.y-Number(d3.select(this).attr("y"))-40;
-  
-    d3.select("#shape-" + d.id).attr("transform", function(d){
-      return "translate(" + [d.rect.x, d.rect.y] + ")"
-    });
-    
-    d3.select("#text-" + d.id).attr("transform", function(d){
-      return "translate(" + [d.rect.x, d.rect.y] + ")"
-    });
-    
-    
-  
-    /*
-    var initX = Number(d3.select(this).attr("x"));
-    var initY = Number(d3.select(this).attr("y"))
-
-    d3.select("#shape-" + d.id).attr("transform", function(d,i){
-      return "translate(" + [d3.event.x - (initX + 25) , d3.event.y - (initY + 35)] + ")"
-    });
-    
-    //d3.select("#label-" + d.id).text(null);
-    
-    d3.select("#text-" + d.id).attr("transform", function(d,i){
-      return "translate(" + [d3.event.x - (initX + 25) , d3.event.y - (initY + 35)] + ")"
-    });
-    
-    d.rect.x = d3.event.x;
-    d.rect.y = d3.event.y;
-    */
-  }
-  
-  function dragend (d) {
-    var x = d.rect.x;
-    var y = d.rect.y;
-  
-    if(y > -35 && y < 10 && x > -25 && x < 770){
-      if(y > -35 && y < 10 && x > -25 && x < 25){
-        d3.select("#shape-" + d.id)
-            .attr("transform", function(d,i){
-              return "translate([0,0])";
-              })            
-            .style("fill", "palegreen")
-            .transition()
-            .duration(2000)
-            .style("fill", "white");
-        
-        d3.select("#text-" + d.id)
-            .attr("transform", function(d,i){
-              return "translate([0,0])";
-              });
-        
-        d3.select("#shape-newValue")
-            .remove();
-      }else{
-        
-      }
-    }else{
-      d3.select("#shape-" + d.id).attr("transform", function(d,i){
-        return "translate(" + [500-(Number(d.id)*50),-250] + ")";
-      });
-      
-      d3.select("#text-" + d.id).attr("transform", function(d,i){
-        return "translate(" + [500-(Number(d.id)*50),-250] + ")";
-      });
-    }
+  this.createPlaceHolder = function () {
+    d3.select("#g-shape")
+        .append(SVG_CIRCLE)
+        .attr("class", "placeHolder")
+        .attr("cx", propObj.rect.x + textAdjustX)
+        .attr("cy", propObj.rect.y + textAdjustY)
+        .attr("r", 10)
+        .on("click", function (d) {
+          propObj.text.text = "";
+          d3.select("#text-" + propObj.id).text("test");
+          
+          /*
+          if(this.classList.contains("selected")) {
+            d3.select(this).classed("selected", false);
+            
+            d3.selectAll(".placeHolder")
+                .remove();
+          } else {
+            d3.select(this).classed("selected", true);
+            
+            $('.validTarget').each(function() {
+              var cx = parseInt(d3.select(this).attr("x")) + 25;
+              var cy = parseInt(d3.select(this).attr("y")) + 25;
+               
+              selfie.createPlaceHolder(cx, cy);
+            })
+          }
+          */
+        })
   }
 }

@@ -71,7 +71,7 @@ var StackArray = function(){
     
     if (coreAnim.isLearningMode()){
       learnObj["newValue"] = coreAnim.newUserObject("newValue", 500, 75, 25, item, "draggable");
-      //learnObj["newTopPointer"] = coreAnim.newUserObject("newTopPointer", top.edge.getCoordinateX2(), top.edge.getCoordinateY2(), 10, null, "draggable");
+      learnObj["newTopPointer"] = coreAnim.newUserObject("newTopPointer", top.edge.getCoordinateX2(), top.edge.getCoordinateY2(), 10, null, "draggable");
       
       for (var key in mArray) {
         mArray[key].setRectClass("validTarget");
@@ -80,19 +80,6 @@ var StackArray = function(){
       
       coreAnim.saveState("Use the grey circles to create the final state.");
       coreAnim.play(0);
-      
-      /*
-      mArray[insertedIndex].setText(insertedValue);
-      mArray[insertedIndex].setFill("yellow");
-    
-      var newValue = coreAnim.newSquareObject("newValue", mArray[insertedIndex].getCoordinateX(), array[insertedIndex].getCoordinateY());
-      
-      coreAnim.saveState("Move the new value to its right position.");
-      
-      coreAnim.play(0);
-      array[insertedIndex].setTransform(500-(insertedIndex*50) , -250);
-      //newValue.toggleDrag();
-      */
       
     } else {
       mArray[top.value].setText(item);
