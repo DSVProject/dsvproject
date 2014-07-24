@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Queue - Linked List Implementation</title>
+    <title>Stack - Array Implementation</title>
 
     <!-- Bootstrap -->
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -38,14 +38,14 @@
             <div class="btn-group">
               <div class="btn-group">
                 <button type="button" class="btn btn-default navbar-btn dropdown-toggle" data-toggle="dropdown">
-                  Enqueue <span class="caret"></span>
+                  Push <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" role="menu">
                   <form class="navbar-form" role="enqueue">
                     <div class="input-group">
                       <input id="txt-input" type="text" class="form-control">
                       <span class="input-group-btn">
-                        <button class="btn btn-default" type="button" onclick="enqueue()">
+                        <button class="btn btn-default" type="button" onclick="push()">
                           <span class="glyphicon glyphicon-plus"></span>
                         </button>
                       </span>
@@ -53,7 +53,7 @@
                   </form>
                 </ul>
               </div>
-              <button type="button" class="btn btn-default navbar-btn" onclick="dequeue()">Dequeue</button>
+              <button type="button" class="btn btn-default navbar-btn" onclick="pop()">Pop</button>
               <button type="button" class="btn btn-default navbar-btn" onclick="empty()">Clear</button>
               <button type="button" class="btn btn-default navbar-btn" onclick="resetPos()">Reset Position</button>
             </div>
@@ -70,7 +70,7 @@
           <div id="viz"></div>
         </div>
         <div class="col-md-4">
- 
+          
           <div class="row">
             <div class="panel panel-success">
               <div class="panel-heading">
@@ -137,27 +137,28 @@
     <script src="js/animation/constant.js"></script>
     <script src="js/animation/svg.js"></script>
     <script src="js/animation/coreAnimObject.js"></script>
+    <script src="js/animation/userObject.js"></script>
     <script src="js/animation/squareObject.js"></script>
     <script src="js/animation/edgeObject.js"></script>
-    <script src="js/algorithms/queueLinkedList.js"></script>
+    <script src="js/algorithms/stackArray.js"></script>
     
     <script type="text/javascript">
-      var queue = new QueueLinkedList();
-      var anim = queue.getAnim();
+      var stack = new StackArray();
+      var anim = stack.getAnim();
 
-      function enqueue(){
+      function push(){
         var input = $("#txt-input");
         
-        queue.enqueue(input.val());
+        stack.push(input.val());
         input.val("");
       }
       
-      function dequeue(){
-        queue.dequeue();
+      function pop(){
+        stack.pop();
       }
       
       function empty(){
-        queue.init();
+        stack.init();
       }
       
       function previous(){
@@ -175,7 +176,6 @@
       function next(){
         anim.next();
       }
-      
     </script>
     
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->

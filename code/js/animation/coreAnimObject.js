@@ -437,6 +437,6 @@ var CoreAnimObject = function () {
   }
   
   this.isLearningMode = function(){
-    return $("#chk-learn").is(":checked");
+    return $("#chk-learn").hasClass("active");
   }
 }
