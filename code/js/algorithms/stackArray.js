@@ -53,10 +53,6 @@ var StackArray = function(){
         case PUSH:
           coreAnim.addPseudocodeLine(0, "Array[top] = value;");
           coreAnim.addPseudocodeLine(1, "top++;");
-          coreAnim.addPseudocodeLine(2, "top++;");
-          coreAnim.addPseudocodeLine(3, "top++;");
-          coreAnim.addPseudocodeLine(4, "5");
-          coreAnim.addPseudocodeLine(5, "6");
           break;
         case POP:
           coreAnim.addPseudocodeLine(0, "top--;");
@@ -93,8 +89,8 @@ var StackArray = function(){
     coreAnim.saveState();
     
     if (coreAnim.isLearningMode()){
-      learnObj["newValue"] = coreAnim.newUserObject("newValue", 500, 75, 25, item, "draggable");
-      learnObj["newTopPointer"] = coreAnim.newUserObject("newTopPointer", top.edge.getCoordinateX2(), top.edge.getCoordinateY2(), 10, null, "draggable");
+      learnObj["newValue"] = coreAnim.newUserObject(coreAnim, "newValue", 500, 75, 25, item, "draggable");
+      learnObj["newTopPointer"] = coreAnim.newUserObject(coreAnim, "newTopPointer", top.edge.getCoordinateX2(), top.edge.getCoordinateY2(), 10, null, "draggable");
       
       for (var key in mArray) {
         mArray[key].setRectClass("validTarget");

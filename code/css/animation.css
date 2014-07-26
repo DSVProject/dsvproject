@@ -4,19 +4,7 @@
   stroke-width:2px;
 }
 
-.highlight{
-  fill-opacity:0.0;
-  stroke:gold;
-  stroke-width:7px;
-}
-
-.pseudocodeHighlight{
-  font-weight: bold;
-  background-color: lightgreen;
-  color: ivory;
-}
-
-.label{
+.labelText{
   font-family:sans-serif;
   font-size:18px;
   text-anchor:middle;
@@ -33,7 +21,6 @@
 #txt-input{
   font-family:sans-serif;
   color:grey;
-  font-style:italic;
 }
 
 .shape .draggable{

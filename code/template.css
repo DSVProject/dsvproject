@@ -44,6 +44,6 @@ code {
   padding: 0px;
 }
 
-.table tr, td {
-  padding: 0px;
+.table > tbody > tr > td {
+  padding: 2px;
 }

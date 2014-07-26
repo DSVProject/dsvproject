@@ -12,8 +12,9 @@
   * @param {String} rectClass : the CSS class of the rect svg element.
   * @param {String} textClass : the CSS class of the text svg element.
   */
-var UserObject = function (id, cx, cy, radius, text, circleClass, textClass) {
+var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textClass) {
   var selfie = this;
+  var core = coreObj;
   
   var propObj = {
     "id": null,
@@ -273,13 +274,14 @@ var UserObject = function (id, cx, cy, radius, text, circleClass, textClass) {
     shape.enter().append(SVG_CIRCLE)        
         .attr("id", function (d) {return "u-shape-" + d.id;})
         .on("click", function (d) {
+          core.coreAlertTest();
+          
           if(this.classList.contains("selected")) {
             d3.select(this).classed("selected", false);
             
             d3.selectAll(".placeHolder")
                 .remove();
           } else {
-            CoreAnimObject.tryAlert();
             d3.select(this).classed("selected", true);
             
             $('.validTarget').each(function() {

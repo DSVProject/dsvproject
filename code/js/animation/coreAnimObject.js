@@ -98,7 +98,7 @@ var CoreAnimObject = function () {
     var labelGroup = d3.select("#g-main")
         .append("g")
         .attr("id", "g-label")
-        .attr("class", "label");
+        .attr("class", "labelText");
              
     var shapeGroup = d3.select("#g-main")
         .append("g")
@@ -264,7 +264,7 @@ var CoreAnimObject = function () {
     
     if (iterationAnimation < 0) iterationAnimation = 0;
     
-    $('#log ul:last-child').remove()
+    $('#log tr:last-child').remove()
     
     if (iterationAnimation < Object.keys(stateList).length) {
       animationStatus = ANIMATION_PAUSE;
@@ -321,7 +321,7 @@ var CoreAnimObject = function () {
     * @return {SquareObject} : the new object.
     */
   this.newDoubleSquareObject = function (id, x, y, value1, value2, label, shapeClass) {
-    objectList[id] = new DoubleSquareObject(id, x, y, value1, value2, label, shapeClass, "innerText", "label");
+    objectList[id] = new DoubleSquareObject(id, x, y, value1, value2, label, shapeClass, "innerText", "labelText");
     
     return objectList[id];
   }
@@ -338,8 +338,8 @@ var CoreAnimObject = function () {
     *
     * @return {userObject} : the new object.
     */
-  this.newUserObject = function (id, cx, cy, radius, text, circleClass) {
-    objectList[id] = new UserObject(id, cx, cy, radius, text, circleClass, "innerText");
+  this.newUserObject = function (coreObj, id, cx, cy, radius, text, circleClass) {
+    objectList[id] = new UserObject(coreObj, id, cx, cy, radius, text, circleClass, "innerText");
     
     return objectList[id];
   }
@@ -436,7 +436,7 @@ var CoreAnimObject = function () {
     * Clear the message log.
     */
   this.clearLog = function(){
-    d3.select("#log").selectAll("p")
+    d3.select("#log").selectAll("tr")
         .remove();
   }
   
@@ -446,8 +446,11 @@ var CoreAnimObject = function () {
     * @param {String} message : the message to be printed.
     */
   this.printLog = function (message) {
+    if (message == "" || message == null) return;
+      
     d3.select("#log")
-        .append("p")
+        .append("tr")
+        .append("td")
         .text(message);
   }
   
@@ -529,5 +532,9 @@ var CoreAnimObject = function () {
   
   this.isLearningMode = function(){
     return $("#chk-learn").hasClass("active");
+  }
+  
+  this.coreAlertTest = function () {
+    alert("funcionou");
   }
 }
