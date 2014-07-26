@@ -21,9 +21,63 @@ var CoreAnimObject = function () {
   // Variables used to navigate through the stateList
   var iterationCount = 0;       // Total count of iterations
   var iterationAnimation = 0;   // Used for the media controls
-  var iterationCurrent = 0;     // Checkpoint of the last action performed by the user
+  
+  var iterationActions = {};
+  var iterationActCount = 0;     // Checkpoint of the last action performed by the user
   
   var animationStatus = ANIMATION_STOP;
+  
+  this.getIterationCount = function () {
+    return iterationCount;
+  }
+  
+  this.incrementIterationCount = function () {
+    iterationCount++;
+  }
+  
+  this.decrementIterationCount = function () {
+    iterationCount--;
+  }
+  
+  this.getIterationAnimation= function () {
+    return iterationAnimation;
+  }
+  
+  this.incrementIterationAnimation = function () {
+    iterationAnimation++;
+  }
+  
+  this.decrementIterationAnimation = function () {
+    iterationAnimation--;
+  }
+  
+  this.getIterationActions = function (pos) {
+    return iterationActions[pos];
+  }
+  
+  this.setIterationActions = function (pos, newValue) {
+    iterationActions[pos] = newValue;
+  }
+  
+  this.getIterationActCount = function () {
+    return iterationActCount;
+  }
+  
+  this.incrementIterationActCount = function () {
+    iterationActCount++;
+  }
+  
+  this.decrementIterationActCount = function () {
+    iterationActCounter--;
+  }
+  
+  this.getAnimationStatus = function () {
+    return animationStatus;
+  }
+  
+  this.setAnimationStatus = function (newValue) {
+    animationStatus = newValue;
+  }
   
   this.init = function () {
     createGroups();
@@ -141,6 +195,33 @@ var CoreAnimObject = function () {
     iterationCount = 0; 
     iterationAnimation = 0; 
   }
+  
+  this.newAction = function () {
+    selfie.setIterationActions(selfie.getIterationActCount(), selfie.getIterationCount());
+    selfie.incrementIterationActCount();
+    selfie.saveState();
+  }
+  
+  this.undo = function () {
+    iterationActCount--;
+    
+    if (iterationActCount < 0) iterationActCount = 0;
+    
+    iterationCount = iterationActions[iterationActCount];
+    
+    draw(stateList[parseInt(iterationCount)], 0);  
+  }
+  
+  this.redo = function (duration) {
+    if (iterationCurrent < 0) iterationCurrent = 0;
+    
+    iterationCurrent++;
+    
+    if (typeof iterationActions[iterationCurrent] != 'undefined') {
+      iterationCount = parseInt(iterationActions[iterationCurrent]);
+      draw(stateList[parseInt(iterationCount)], duration); 
+    }
+  }
 
   /**
     * Pause the current animation.
@@ -200,7 +281,7 @@ var CoreAnimObject = function () {
     if (duration == null || isNaN(duration) || duration < 0) duration = DEFAULT_ANIMATION_DURATION;
     if (stateList == null) return;
     if (animationStatus != ANIMATION_PLAY) animationStatus = ANIMATION_PLAY;
-
+    
     draw(stateList[parseInt(iterationAnimation)], duration);
     
     setTimeout(function(){
