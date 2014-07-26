@@ -374,7 +374,7 @@ var CoreAnimObject = function () {
     * Clear the pseudocode panel.
     */
   this.clearPseudocode = function () {
-    d3.select("#pseudocode").selectAll("p")
+    d3.select("#pseudocode").selectAll("tr")
         .remove();
   }
   
@@ -386,8 +386,9 @@ var CoreAnimObject = function () {
     */
   this.addPseudocodeLine = function (id, instruction) {
     d3.select("#pseudocode")
-        .append("p")
+        .append("tr")
         .attr("id", "line" + id)
+        .append("td")
         .text(instruction);
   }
   
@@ -397,11 +398,13 @@ var CoreAnimObject = function () {
     * @param {Integer} lineNumber : the line number to be highlighted (same used as id when the line was created).
     */
   this.highlightPseudocode = function (lineNumber) {
-    d3.select("#pseudocode").selectAll("p")
+    if(lineNumber == null || isNaN(lineNumber)) return;
+    
+    d3.select("#pseudocode").selectAll("tr")
         .attr("class", "");
     
     d3.select("#line" + lineNumber)
-        .classed("pseudocodeHighlight", "true");
+        .classed("warning", "true");
   }
   
   /**
