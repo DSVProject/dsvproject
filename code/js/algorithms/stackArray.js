@@ -53,11 +53,15 @@ var StackArray = function(){
         case PUSH:
           coreAnim.addPseudocodeLine(0, "Array[top] = value;");
           coreAnim.addPseudocodeLine(1, "top++;");
+          coreAnim.addPseudocodeLine(2, "top++;");
+          coreAnim.addPseudocodeLine(3, "top++;");
+          coreAnim.addPseudocodeLine(4, "5");
+          coreAnim.addPseudocodeLine(5, "6");
           break;
         case POP:
           coreAnim.addPseudocodeLine(0, "top--;");
           coreAnim.addPseudocodeLine(1, "Value = Array[top];");
-          coreAnim.addPseudocodeLine(1, "Array[top] = '';");
+          coreAnim.addPseudocodeLine(2, "Array[top] = '';");
           break;
     }
   }
@@ -101,6 +105,8 @@ var StackArray = function(){
       coreAnim.play(0);
       
     } else {
+      this.generatePseudocode(PUSH);
+      
       mArray[top.value].setText(item);
       coreAnim.saveState("Inserting the new value", 0);
   
@@ -126,6 +132,7 @@ var StackArray = function(){
     }
     
     coreAnim.clearLog();
+    this.generatePseudocode(POP);
     coreAnim.saveState();
     
     top.value--;

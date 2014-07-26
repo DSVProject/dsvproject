@@ -39,6 +39,11 @@ code {
 }
 
 .panel-body {
-   height: 200px;
-   overflow: auto;
-  }
+  height: 200px;
+  overflow: auto;
+  padding: 0px;
+}
+
+.table tr, td {
+  padding: 0px;
+}
