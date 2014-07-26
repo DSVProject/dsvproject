@@ -84,48 +84,48 @@ var QueueLinkedList = function(){
     if (item == "") {
       return false;
     }
-    
+
     coreAnim.clearLog();
     //coreAnim.newStateList();
     this.generatePseudocode(ENQUEUE);
-    
+
     coreAnim.saveState();
-    
+
     var oldlast = last;
-    
+
     last = new Node();
     last.item = item;
     last.next = null;
     last.drawing = coreAnim.newSquareObject(++counterID, (N+1)*100, 300, item, null, "node");
     last.edge = coreAnim.newEdgeObject(counterID, last.drawing.getID(), last.drawing.getCoordinateX() + 50, last.drawing.getCoordinateY() + 25, null, null, EDGE_UNIDIRECTIONAL, "right");
     last.edge.setStroke(defaultProperties.edge.null.stroke);
-    
+
     coreAnim.saveState("Inserting new node.", 0);
-    
+
     if (oldlast != null) {
       oldlast.edge.setStroke(defaultProperties.edge.default.stroke);
       oldlast.edge.setMarkerEnd(defaultProperties.marker.default.end);
       coreAnim.saveState("Update the pointer of the previous node.", 1)
     }
-    
+
     edgeLastD.moveEdgeEnd(last.drawing.getCoordinateX() + 25, last.drawing.getCoordinateY());
     edgeLastD.setStroke(defaultProperties.edge.default.stroke);
     edgeLastD.setMarkerEnd(defaultProperties.marker.default.end);
 
     coreAnim.saveState("Update the last pointer.", 2);
-    
+
     if (this.isEmpty()) {
       first = last;
-      
+
       edgeFirstD.moveEdgeEnd(last.drawing.getCoordinateX() + 25, last.drawing.getCoordinateY());
       edgeFirstD.setStroke(defaultProperties.edge.default.stroke);
       edgeFirstD.setMarkerEnd(defaultProperties.marker.default.end);
-      
+
       coreAnim.saveState("If the list was empty, update the first pointer too.");
     } else {
       oldlast.next = last;
     }
-      
+
     N++;
     coreAnim.play();
   }

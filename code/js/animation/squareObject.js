@@ -237,6 +237,15 @@ var SquareObject = function (id, x, y, text, label, rectClass, textClass, labelC
     return propObj.text.text;
   }
   
+    /**
+    * Set the label of the text svg element (beneath the object).
+    *
+    * @param {String} newLabel : the new label.
+    */
+  this.setLabel = function (newLabel) {
+    propObj.label.text = newLabel;
+  }
+  
   /**
     * Set the text color of the text svg element.
     *

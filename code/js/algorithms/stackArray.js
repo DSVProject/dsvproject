@@ -27,6 +27,9 @@ var StackArray = function(){
   var top = new Pointer();
   var mArray = [];
   
+  const PUSH = 0,
+        POP = 1;
+  
   for (var i=0; i<16; i++){
     mArray[i] = coreAnim.newSquareObject(i, (i+1)*50, 300, null, i, "position");    
   }
@@ -41,6 +44,22 @@ var StackArray = function(){
 
   this.getAnim = function () {
     return coreAnim;
+  }
+  
+  this.generatePseudocode = function (command) {
+    coreAnim.clearPseudocode();
+    
+    switch (command) {
+        case PUSH:
+          coreAnim.addPseudocodeLine(0, "Array[top] = value;");
+          coreAnim.addPseudocodeLine(1, "top++;");
+          break;
+        case POP:
+          coreAnim.addPseudocodeLine(0, "top--;");
+          coreAnim.addPseudocodeLine(1, "Value = Array[top];");
+          coreAnim.addPseudocodeLine(1, "Array[top] = '';");
+          break;
+    }
   }
   
   this.init = function() {
@@ -83,7 +102,7 @@ var StackArray = function(){
       
     } else {
       mArray[top.value].setText(item);
-      coreAnim.saveState("Inserting the new value");
+      coreAnim.saveState("Inserting the new value", 0);
   
       top.value++;
       top.drawing.setFill(defaultProperties["shape"]["update"]["fill"]);
@@ -93,7 +112,7 @@ var StackArray = function(){
       
       top.drawing.setText(top.value);
       top.drawing.setFill(defaultProperties["shape"]["default"]["fill"]);
-      coreAnim.saveState("Update the top pointer.");
+      coreAnim.saveState("Update the top pointer.", 1);
       
       coreAnim.play();
     }
@@ -110,12 +129,6 @@ var StackArray = function(){
     coreAnim.saveState();
     
     top.value--;
-    mArray[top.value].setFill(defaultProperties["shape"]["delete"]["fill"]);
-    coreAnim.saveState();
-    
-    mArray[top.value].setText(null);
-    mArray[top.value].setFill(defaultProperties["shape"]["default"]["fill"]);
-    coreAnim.saveState("Pop the top position.");
     
     top.drawing.setFill(defaultProperties["shape"]["update"]["fill"]);
     coreAnim.saveState();
@@ -124,7 +137,14 @@ var StackArray = function(){
     
     top.drawing.setText(top.value);
     top.drawing.setFill(defaultProperties["shape"]["default"]["fill"]);
-    coreAnim.saveState("Update the top pointer.")
+    coreAnim.saveState("Update the top pointer.", 0);
+    
+    mArray[top.value].setFill(defaultProperties["shape"]["delete"]["fill"]);
+    coreAnim.saveState(null, 1);
+    
+    mArray[top.value].setText(null);
+    mArray[top.value].setFill(defaultProperties["shape"]["default"]["fill"]);
+    coreAnim.saveState("Pop the top position.", 2);
     
     coreAnim.play();
     
