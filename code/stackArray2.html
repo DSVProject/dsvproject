@@ -189,6 +189,24 @@
       function next(){
         anim.next();
       }
+      
+      // Learning Mode Code
+      
+      $('#g-shape').on('click', '.draggable', function() {
+        if(this.classList.contains("selected")) {
+          d3.select(this).classed("selected", false);
+          
+          anim.removePlaceHolders();
+        } else {
+          d3.select(this).classed("selected", true);
+          
+          anim.createPlaceHolders();
+        }
+      });
+      
+      $('#g-shape').on('click', '.placeHolder', function() {
+        anim.removePlaceHolders();
+      });
     </script>
     
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->

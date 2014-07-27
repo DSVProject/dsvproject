@@ -338,8 +338,8 @@ var CoreAnimObject = function () {
     *
     * @return {userObject} : the new object.
     */
-  this.newUserObject = function (coreObj, id, cx, cy, radius, text, circleClass) {
-    objectList[id] = new UserObject(coreObj, id, cx, cy, radius, text, circleClass, "innerText");
+  this.newUserObject = function (id, cx, cy, radius, text, circleClass) {
+    objectList[id] = new UserObject(id, cx, cy, radius, text, circleClass, "innerText");
     
     return objectList[id];
   }
@@ -489,6 +489,19 @@ var CoreAnimObject = function () {
     
     d3.select("#line" + lineNumber)
         .classed("warning", "true");
+  }
+  
+  this.createPlaceHolders = function () {
+    for (var key in objectList) {
+      if (objectList[key].getRectClass() == "validTarget") {
+        objectList[key].createPlaceHolder();
+      }
+    }
+  }
+  
+  this.removePlaceHolders = function () {
+    d3.selectAll(".placeHolder")
+        .remove();
   }
   
   /**
