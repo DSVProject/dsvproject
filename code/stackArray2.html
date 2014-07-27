@@ -59,7 +59,7 @@
               <button type="button" class="btn btn-default navbar-btn" onclick="empty()">Clear</button>
             </div>
           </ul>
-          <button type="button" id="chk-learn" class="btn btn-default navbar-btn navbar-right" data-toggle="button">Learning Mode</button>
+          <button type="button" id="chk-learn" class="btn btn-default navbar-btn navbar-right popover-dismiss" data-toggle="button" data-popover="popover" data-placement="bottom" title="Popover title" data-content="And here's some amazing content. It's very engaging. Right?">Learning Mode</button>
         </div>
       </div>
     </div>
@@ -73,7 +73,7 @@
         <div class="col-md-3">
           
           <div class="row">
-            <div class="panel panel-success">
+            <div id="log-panel" class="panel panel-success">
               <div class="panel-heading">
                 <h3 class="panel-title">Log</h3>
               </div>
@@ -86,7 +86,7 @@
           </div>
           
           <div class="row">
-            <div class="panel panel-success">
+            <div id="pseudocode-panel" class="panel panel-success">
               <div class="panel-heading">
                 <h3 class="panel-title">Pseudocode</h3>
               </div>
@@ -137,7 +137,18 @@
               </button>
             </div>
           </ul>
-          <button type="button" class="btn btn-default navbar-btn navbar-right" onclick="resetPos()">Reset Position</button>
+          
+          <ul class="nav navbar-nav navbar-right">
+            <button type="button" class="btn btn-default navbar-btn" onclick="resetPos()">Reset Position</button>
+            <div class="btn-group">
+              <button id="log-btn" type="button" class="btn btn-default navbar-btn active" data-toggle="tooltip" data-placement="top" title="Log">
+                <span class="glyphicon glyphicon-list-alt"></span>
+              </button>
+              <button id="pseudocode-btn" type="button" class="btn btn-default navbar-btn active" data-toggle="tooltip" data-placement="top" title="Pseudocode">
+                <span class="glyphicon glyphicon-list"></span>
+              </button>
+            </div>
+          </ul>
         </div>
       </div>
     </div>
@@ -189,6 +200,20 @@
       function next(){
         anim.next();
       }
+      
+      $('#log-btn').on('click', function () {
+        $(this).toggleClass('active ');
+        $("#log-panel").toggle();
+      });
+      
+      $('#pseudocode-btn').on('click', function () {
+        $(this).toggleClass('active ');
+        $("#pseudocode-panel").toggle();
+      });
+      
+      $('#chk-learn').on('click', function () {
+        $(this).toggleClass('btn-default btn-success');
+      });
     </script>
     
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -205,6 +230,14 @@
       $(function () { 
           $("[data-toggle='tooltip']").tooltip({container: 'body'}); 
       });
+
+      $(function () { 
+          $("[data-popover='popover']").popover(); 
+      });
+      
+      $('.popover-dismiss').popover({
+        trigger: 'focus'
+      })
     </script>
   </body>
 </html>
