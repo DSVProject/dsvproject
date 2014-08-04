@@ -6,17 +6,45 @@ const SVG_RECT = "rect";
 const SVG_TEXT = "text";
 const SVG_LINE = "line";
 
-const ANIMATION_PAUSE = 0;
-const ANIMATION_PLAY = 1;
-const ANIMATION_STOP = -1;
+/** @const */
+const ANIMATION_STATUS = {
+  PAUSE: 0,
+  PLAY: 1,
+  STOP: -1
+};
+
+/** @const */
+const EDGE_TYPE = {
+  UNDIRECTED: 0,
+  UNIDIRECTIONAL: 1,
+  BIDIRECTIONAL: 2
+};
+
+/** @const */
+const EDGE_POSITION = {
+  CENTER: 0,
+  TOP: 1,
+  LEFT: 2,
+  BOTTOM: 3,
+  RIGHT: 4
+};
+
+/** @const */
+const EDGE_INOUT = {
+  INCOMING: 0,
+  OUTGOING: 1
+};
+
+/** @const */
+const USER_OBJ_TYPE = {
+  VALUE: 0,
+  MOVEMENT: 1
+};
 
 //Values in miliseconds
 const DEFAULT_ANIMATION_DURATION = 500;
 
-const EDGE_UNDIRECTED = 0;
-const EDGE_UNIDIRECTIONAL = 1;
-const EDGE_BIDIRECTIONAL = 2;
-
+/** @const */
 const defaultProperties = {
   "width":50,
   "height":50,

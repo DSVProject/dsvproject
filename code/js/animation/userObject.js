@@ -4,100 +4,80 @@
 /**
   * Defines a user graphic unit, used for the learning mode interactions.
   * This 'class' will hold all the properties and methods regarding this single unit. 
+  * @constructor
   *
-  * @param {String || Number} id : the id of this object.
+  * @param {coreAnimObject} coreObj : instance of the class coreAnimObject.
+  * @param {String|Number} id : the id of this object.
   * @param {Number} x : the x coordinate of this object on the screen.
   * @param {Number} y : the y coordinate of this object on the screen.
   * @param {String} text : the inner text of this object, that will be displayed on the screen.
-  * @param {String} rectClass : the CSS class of the rect svg element.
+  * @param {String} circleClass : the CSS class of the rect svg element.
   * @param {String} textClass : the CSS class of the text svg element.
+  * @param {Const} type : the type of this userObject (defined at 'animation/constant.js').
+  * @param {String|Number=} bindedObjID : if this instance is a MOVEMENT type object, it should be binded to another object.
   */
-var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textClass) {
-  var selfie = this;
-  var core = coreObj;
+var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textClass, type, bindedObjID) {
+  var self = this;
+  this.coreObj = coreObj;
   
-  var propObj = {
-    "id": null,
+  this.textAdjust = defaultProperties["font-size"]/3;
+
+  this.propObj = {
+    "id": id,
     
     "circle": {
-      "class": null,
-      "cx": null,
-      "cy": null,
-      "r": null,
-      "fill": null,
-      "fillOpacity": null,
-      "stroke": null,
-      "strokeWidth": null
+      "class": circleClass,
+      "cx": cx,
+      "cy": cy,
+      "r": radius,
+      "fill": defaultProperties.shape.default.fill,
+      "fillOpacity": defaultProperties.shape.default["fill-opacity"],
+      "stroke": defaultProperties.shape.default.stroke,
+      "strokeWidth": defaultProperties.shape.default["stroke-width"]
     },
 
     "text": {
-      "class": null,
-      "x": null,
-      "y": null,
-      "fill": null,
-      "fontFamily": null,
-      "fontWeight": null,
-      "fontSize": null,
-      "textAnchor": null,
-      "text": null
+      "class": textClass,
+      "x": cx,
+      "y": cy + this.textAdjust,
+      "fill": defaultProperties.text.default.stroke,
+      "fontFamily": defaultProperties["font-family"],
+      "fontWeight": defaultProperties["font-weight"],
+      "fontSize": defaultProperties["font-size"],
+      "textAnchor": defaultProperties["text-anchor"],
+      "text": text
     },
     
-    "toRemove": false
+    "toRemove": false,
+    
+    "isActive": false,
+    
+    "type": type,
+    
+    "bindedObjID": bindedObjID
   }
   
-  var edgeList = {};
-  
-  var textAdjust = defaultProperties["font-size"]/3;
-
-  initPropObj();
-
-  /**
-    * Initialise the element, with the provided parameters and other default properties.
-    */
-  function initPropObj() {
-    propObj.id = id;
-    
-    propObj.circle.class = circleClass;
-    propObj.circle.cx = cx;
-    propObj.circle.cy = cy;
-    propObj.circle.r = radius;
-    propObj.circle.fill = defaultProperties["shape"]["default"]["fill"];
-    propObj.circle.fillOpacity = defaultProperties["shape"]["default"]["fill-opacity"];
-    propObj.circle.stroke = defaultProperties["shape"]["default"]["stroke"];
-    propObj.circle.strokeWidth = defaultProperties["shape"]["default"]["stroke-width"];
-    
-    propObj.text.class = textClass;
-    propObj.text.x = cx;
-    propObj.text.y = cy + textAdjust;
-    propObj.text.fill = defaultProperties["text"]["default"]["stroke"];
-    propObj.text.fontFamily = defaultProperties["font-family"];
-    propObj.text.fontWeight = defaultProperties["font-weight"];
-    propObj.text.fontSize = defaultProperties["font-size"];
-    propObj.text.textAnchor = defaultProperties["text-anchor"];
-    propObj.text.text = text;
-    
-    edgeList = {};
-  }
+  this.edgeList = {};
   
   /**
     * @return {propObj} : the content of this object property map.
     */
   this.getAttributes = function () {
-    return propObj;
+    return this.propObj;
   }
   
   /**
     * @return {Array} : the edges of the current object.
     */
   this.getEdges = function () {
-    return edgeList;
+    return this.edgeList;
   }
   
   /**
-    * @return {String || Number} : the id of this object.
+    * @return {String|Number} : the id of this object.
     */
   this.getID = function () {
-    return propObj.id;
+    return this.propObj.id;
   }
   
   /**
@@ -106,28 +86,28 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textC
     * @param {String} newClass : the new CSS class.
     */
   this.setCircleClass = function(newClass){
-    propObj.circle.class = newClass;
+    this.propObj.circle.class = newClass;
   }
   
   /**
     * @return {String} : the class of the circle svg element.
     */
   this.getCircleClass = function () {
-    return propObj.circle.class;
+    return this.propObj.circle.class;
   }
   
   /**
     * @return {Number} : the cx coordinate of the circle svg element.
     */
   this.getCoordinateCX = function () {
-    return propObj.circle.cx;
+    return this.propObj.circle.cx;
   }
   
   /**
     * @return {Number} : the cy coordinate of the circle svg element.
     */
   this.getCoordinateCY = function () {
-    return propObj.circle.cy;
+    return this.propObj.circle.cy;
   }
   
   /**
@@ -137,14 +117,14 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textC
     */
   this.setRadius = function (newRadius) {
     if (newRadius == null || isNaN(newRadius)) return;
-    propObj.circle.r = newRadius;
+    this.propObj.circle.r = newRadius;
   }
   
   /**
     * @return {Number} : the radius of the circle svg element.
     */
   this.getRadius = function () {
-    return propObj.circle.radius;
+    return this.propObj.circle.radius;
   }
   
   /**
@@ -154,7 +134,7 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textC
     */
   this.setFill = function (newFill) {
     if(newFill == null) return;
-    propObj.circle.fill = newFill;
+    this.propObj.circle.fill = newFill;
   }
   
   /**
@@ -166,7 +146,7 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textC
     if(newOpacity == null || isNaN(newOpacity)) return;
     if(newOpacity < 0) newOpacity = 0.0;
     
-    propObj.circle.fillOpacity = newOpacity;
+    this.propObj.circle.fillOpacity = newOpacity;
   }
   
   /**
@@ -175,7 +155,7 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textC
     * @param {String} newStroke : the new CSS or svg stroke color.
     */
   this.setStroke = function (newStroke) {
-    propObj.circle.stroke = newStroke;
+    this.propObj.circle.stroke = newStroke;
   }
   
   /**
@@ -187,7 +167,7 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textC
     if(newStrokeWidth == null || isNaN(newStrokeWidth)) return;
     if(newStrokeWidth < 0) newStrokeWidth = 0;
     
-    propObj.circle.strokeWidth = newStrokeWidth;
+    this.propObj.circle.strokeWidth = newStrokeWidth;
   }
   
   /**
@@ -199,16 +179,18 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textC
   this.moveShape = function (x, y) {
     if(x == null || y == null || isNaN(x) || isNaN(y)) return;
   
-    propObj.circle.cx = x;
-    propObj.circle.cy = y;
+    this.propObj.circle.cx = x;
+    this.propObj.circle.cy = y;
 
-    propObj.text.x = x + 25;
-    propObj.text.y = y + 30;
+    this.propObj.text.x = x + 25;
+    this.propObj.text.y = y + 30;
     
-    for(var key in edgeList){
-      edgeList[key].moveEdgeStart(x, y);
+    /*
+    for(var key in this.edgeList){
+      this.edgeList[key].moveEdgeStart(x, y);
       //edgeList[key].moveEdgeEnd(x + propObj.rect.width + 50, y + 25);
     }
+    */
   }
   
   /**
@@ -217,14 +199,14 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textC
     * @param {String} newText : the new text.
     */
   this.setText = function (newText) {
-    propObj.text.text = newText;
+    this.propObj.text.text = newText;
   }
   
   /**
     * @return {String} : the text of the text svg element (located inside the shape).
     */ 
   this.getText = function () {
-    return propObj.text.text;
+    return this.propObj.text.text;
   }
   
   /**
@@ -233,7 +215,7 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textC
     * @param {String} newColor : the new CSS or svg color.
     */
   this.setFontColor = function (newColor) {
-    propObj.text.fill = newColor;
+    this.propObj.text.fill = newColor;
   }
   
   /**
@@ -242,57 +224,88 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textC
     * @param {Boolean} bool : if true, the object will be removed.
     */
   this.setToRemove = function (bool) {
-    propObj.toRemove = bool;
+    this.propObj.toRemove = bool;
   }
   
   /**
     * @return {Boolean} : the toRemove property.
     */ 
   this.getToRemove = function () {
-    return propObj.toRemove;
+    return this.propObj.toRemove;
   }
   
+  /**
+    * Set this object as the one active for the learning mode interaction. Only one object shall be active at a time..
+    *
+    * @param {Boolean} bool : if true, the object is active.
+    */
+  this.setIsActive = function (bool) {
+    this.propObj.isActive = bool;
+
+    d3.select("#u-shape-" + this.propObj.id).classed("selected", bool);
+  }
+  
+  /**
+    * @return {Boolean} : the isActive property.
+    */ 
+  this.getIsActive = function () {
+    return this.propObj.isActive;
+  }
+  
+  /**
+    * @return {Const} : the type property.
+    */ 
+  this.getType = function () {
+    return this.propObj.type;
+  }
+  
+  /**
+    * @return {String|Number} : the bindedObjID property.
+    */ 
+  this.getBindedObjID = function () {
+    return this.propObj.bindedObjID;
+  }
+  
+  /**
+    * Add an EdgeObject to this object edgeList.
+    *
+    * @param {EdgeObject} edgeObj : the instance of the EdgeObject.
+    */
   this.addEdge = function (edgeObj) {
-    edgeList[edgeObj.getID()] = edgeObj;
+    this.edgeList[edgeObj.getID()] = edgeObj;
   }
-  
+
   /**
     * Draw this object properties on the screen.
     * If the object is new, it will appear; if any property has changed, it will be updated.
     *
     * @param {Number} dur : the duration in miliseconds of this animation.
     */
-  this.draw = function (dur) {
+  this.draw = function (dur) {    
     if(dur == null || isNaN(dur) || dur < 0) dur = DEFAULT_ANIMATION_DURATION;
     
     var json = [];
-    json.push(propObj);
-  
+    json.push(this.propObj);
+    
     var shape = d3.select("#g-shape").selectAll(SVG_CIRCLE)
         .data(json, function (d) {return d.id;});
       
     shape.enter().append(SVG_CIRCLE)        
         .attr("id", function (d) {return "u-shape-" + d.id;})
         .on("click", function (d) {
-          core.coreAlertTest();
-          
-          if(this.classList.contains("selected")) {
-            d3.select(this).classed("selected", false);
-            
-            d3.selectAll(".placeHolder")
-                .remove();
+          var activeObject = self.coreObj.getActiveUserObject();
+
+          if (activeObject == null) {
+            self.coreObj.setActiveUserObject(self.propObj.id);
+
+            self.coreObj.createPlaceHolders();
           } else {
-            d3.select(this).classed("selected", true);
-            
-            $('.validTarget').each(function() {
-              var cx = parseInt(d3.select(this).attr("x")) + 25;
-              var cy = parseInt(d3.select(this).attr("y")) + 25;
-               
-              selfie.createPlaceHolder(cx, cy);
-            })
+            self.coreObj.setActiveUserObject();
+
+            self.coreObj.removePlaceHolders();
           }
-        })
-        //.call(drag);
+        });
+    
     shape.transition()
         .duration(dur)
         .attr("class", function (d) {return d.circle.class;})
@@ -321,8 +334,8 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textC
         .attr("text-anchor", function (d) {return d.text.textAnchor;})   
         .text(function (d) {return d.text.text;});
     
-    for(var key in edgeList){
-      edgeList[key].draw(dur);
+    for(var key in this.edgeList){
+      this.edgeList[key].draw(dur);
     }
   }
   
@@ -335,7 +348,7 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textC
     if(dur == null || isNaN(dur) || dur < 0) dur = DEFAULT_ANIMATION_DURATION;
     
     var json = [];
-    json.push(propObj);
+    json.push(this.propObj);
     
     var shape = d3.select("#g-shape").selectAll(SVG_CIRCLE)
         .data(json, function (d) {return d.id;});
@@ -351,8 +364,8 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textC
         .duration(dur)
         .remove();
     
-    for (var key in edgeList) {
-      edgeList[key].remove(dur); 
+    for (var key in this.edgeList) {
+      this.edgeList[key].remove(dur); 
     }
   }
   
@@ -362,9 +375,9 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textC
     * returning a new instance, without the references, allowing the animation to happen step by step.
     */
   this.cloneObject = function () {
-    var clone = new UserObject();
-    clone.cloneProperties(propObj);
-    clone.cloneEdges(edgeList);
+    var clone = new UserObject(this.coreObj);
+    clone.cloneProperties(this.propObj);
+    clone.cloneEdges(this.edgeList);
     
     return clone;
   }
@@ -376,7 +389,7 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textC
     * @param {propObj} prop : a propObj from the Object to be cloned.
     */
   this.cloneProperties = function (prop) {
-    propObj = clone(prop);
+    this.propObj = clone(prop);
   }
   
   /**
@@ -396,132 +409,6 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textC
       newList[key] = clone;
     }
     
-    edgeList = newList;
-  }
-  
-  this.createPlaceHolder = function (cx, cy) {
-    d3.select("#g-shape")
-        .append(SVG_CIRCLE)
-        .attr("class", "placeHolder")
-        .attr("cx", cx)
-        .attr("cy", cy)
-        .attr("r", 10);
-  }
-  
-  // This functions are used for the learning mode
-  
-  this.setTransform = function (x, y) {
-    d3.select("#shape-" + propObj.id)   
-        .attr("transform", "translate(" + [x , y] + ")");
-    d3.select("#text-" + propObj.id)        
-        .attr("transform", "translate(" + [x , y] + ")");
-  }
-  
-  var drag = d3.behavior.drag()
-      .on("drag", dragmove)
-      .on("dragstart", dragstart)
-      .on("dragend", dragend);
-  
-  function isValidDestination () {
-    return false;
-  }
-  
-  function dragstart (d) {
-    d3.select(this).moveToFront();
-    
-    d.circle.cx = Number(d3.select(this).attr("cx"));
-    d.circle.cy = Number(d3.select(this).attr("cy"));
-  }
-  
-  function dragmove (d) {
-    var initX = Number(d3.select(this).attr("cx"));
-    var initY = Number(d3.select(this).attr("cy"));
-    
-    d.circle.cx += d3.event.dx;
-    d.circle.cy += d3.event.dy;
-  
-    d3.select("#u-shape-" + d.id).attr("transform", function(d){
-      return "translate(" + [d.circle.cx - initX, d.circle.cy - initY] + ")"
-    });
-    
-    d3.select("#u-text-" + d.id).attr("transform", function(d){
-      return "translate(" + [d.circle.cx - initX, d.circle.cy - initY] + ")"
-    });
-    
-    
-  
-    /*
-    var initX = Number(d3.select(this).attr("x"));
-    var initY = Number(d3.select(this).attr("y"))
-
-    d3.select("#shape-" + d.id).attr("transform", function(d,i){
-      return "translate(" + [d3.event.x - (initX + 25) , d3.event.y - (initY + 35)] + ")"
-    });
-    
-    //d3.select("#label-" + d.id).text(null);
-    
-    d3.select("#text-" + d.id).attr("transform", function(d,i){
-      return "translate(" + [d3.event.x - (initX + 25) , d3.event.y - (initY + 35)] + ")"
-    });
-    
-    d.rect.x = d3.event.x;
-    d.rect.y = d3.event.y;
-    */
-  }
-  
-  function dragend (d) {
-    var targetData;
-    
-    /*
-    $('.validTarget').hover(function () {
-      targetData = $(this).prop("__data__");
-      
-      d3.select("#text-" + targetData.id).text(d.text.text);
-    });
-    */
-    
-    d3.select("#u-shape-" + d.id).attr("transform", function(d,i){
-      return "translate(0,0)";
-    });
-
-    d3.select("#u-text-" + d.id).attr("transform", function(d,i){
-      return "translate(0,0)";
-    });
-    
-    /*
-    var x = d.rect.x;
-    var y = d.rect.y;
-  
-    if(y > -35 && y < 10 && x > -25 && x < 770){
-      if(y > -35 && y < 10 && x > -25 && x < 25){
-        d3.select("#shape-" + d.id)
-            .attr("transform", function(d,i){
-              return "translate([0,0])";
-              })            
-            .style("fill", "palegreen")
-            .transition()
-            .duration(2000)
-            .style("fill", "white");
-        
-        d3.select("#text-" + d.id)
-            .attr("transform", function(d,i){
-              return "translate([0,0])";
-              });
-        
-        d3.select("#shape-newValue")
-            .remove();
-      }else{
-        
-      }
-    }else{
-      d3.select("#shape-" + d.id).attr("transform", function(d,i){
-        return "translate(" + [500-(Number(d.id)*50),-250] + ")";
-      });
-      
-      d3.select("#text-" + d.id).attr("transform", function(d,i){
-        return "translate(" + [500-(Number(d.id)*50),-250] + ")";
-      });
-    }
-    */
+    this.edgeList = newList;
   }
 }

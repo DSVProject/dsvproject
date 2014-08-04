@@ -172,6 +172,7 @@
     <script src="js/animation/userObject.js"></script>
     <script src="js/animation/squareObject.js"></script>
     <script src="js/animation/edgeObject.js"></script>
+    <script src="js/animation/edgeObject2.js"></script>
     <script src="js/algorithms/stackArray.js"></script>
     
     <script type="text/javascript">
@@ -209,6 +210,10 @@
         anim.next();
       }
       
+      function undo(){
+        anim.undo();
+      }
+
       $('#help-btn').on('click', function () {
         $("#div-control-buttons").popover('toggle');
         $("#div-panels").popover('toggle');

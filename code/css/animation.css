@@ -1,3 +1,6 @@
+#viz ::selection {
+  background: none;
+}
 .shape{
   fill:white;
   stroke:black;
@@ -23,7 +26,7 @@
   color:grey;
 }
 
-.shape .draggable{
+.shape .learning{
   fill:grey;
   fill-opacity:0.2;
   stroke:tomato;
@@ -31,7 +34,7 @@
   cursor: pointer;
 }
 
-.shape .draggable.selected{
+.shape .learning.selected{
   stroke-dasharray: 10 5;
 }
 
@@ -44,6 +47,6 @@
   cursor: pointer;
 }
 
-#pseudocode p {
-  line-height: normal;
+.table > tbody > tr.codeHighlight > td {
+  background-color: gold;
 }
