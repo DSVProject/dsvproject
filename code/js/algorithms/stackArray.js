@@ -78,7 +78,7 @@ var StackArray = function(){
     }
     
     coreAnim.saveState();
-    coreAnim.play();
+    coreAnim.play(coreAnim.getAnimationDuration());
   }
   
   this.isEmpty = function () { return top.value == 0; }
@@ -124,7 +124,7 @@ var StackArray = function(){
       //top.drawing.moveShape(500, 50);
       //coreAnim.saveState();
       
-      coreAnim.play();
+      coreAnim.play(coreAnim.getAnimationDuration());
     }
     
     return true;
@@ -159,7 +159,7 @@ var StackArray = function(){
     mArray[top.value].setFill(defaultProperties["shape"]["default"]["fill"]);
     coreAnim.saveState("Pop the top position.", 2);
     
-    coreAnim.play();
+    coreAnim.play(coreAnim.getAnimationDuration());
     
     return true;
   }

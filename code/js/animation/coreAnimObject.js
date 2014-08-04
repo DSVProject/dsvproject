@@ -313,6 +313,16 @@ var CoreAnimObject = function () {
     }, duration);
   }
   
+  /**
+    *
+    * @return {Number} : the duration in miliseconds of each animation, based on user's choice.
+    */
+  this.getAnimationDuration = function () {
+    var dur = $('#animation-duration').val();
+    
+    return 1100 - dur;
+  }
+  
   this.undo = function () {
     this.iterationActCount--;
     
@@ -511,6 +521,22 @@ var CoreAnimObject = function () {
         .append("tr")
         .append("td")
         .text(message);
+  }
+  
+  /**
+    * Print a variable value to the Variable Watch pannel.
+    *
+    * @param {String} variableName : the name of the variable to be printed.
+    * @param {String} variableValue : the current value of the variable.
+    */
+  this.printVariableWatch = function (variableName, variableValue) {
+    if (variableName == "" || variableName == null) return;
+      
+    d3.select("#variableWatch")
+        .append("tr")
+        .attr("id", variableName)
+        .append("td")
+        .text(variableName + ": " + variableValue);
   }
   
   /**
