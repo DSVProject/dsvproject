@@ -129,7 +129,7 @@
               </button>
             </div>
             <div class="btn-group">
-              <button type="button" class="btn btn-default navbar-btn" data-toggle="tooltip" data-placement="top" title="Undo" onclick="">
+              <button type="button" class="btn btn-default navbar-btn" data-toggle="tooltip" data-placement="top" title="Undo" onclick="undo()">
                 <span class="glyphicon glyphicon-step-backward"></span>
               </button>
               <button type="button" class="btn btn-default navbar-btn" data-toggle="tooltip" data-placement="top" title="Redo" onclick="">
@@ -164,6 +164,7 @@
     <script src="js/animation/userObject.js"></script>
     <script src="js/animation/squareObject.js"></script>
     <script src="js/animation/edgeObject.js"></script>
+    <script src="js/animation/edgeObject2.js"></script>
     <script src="js/algorithms/stackArray.js"></script>
     
     <script type="text/javascript">
@@ -201,6 +202,10 @@
         anim.next();
       }
       
+      function undo(){
+        anim.undo();
+      }
+      
       $('#log-btn').on('click', function () {
         $(this).toggleClass('active ');
         $("#log-panel").toggle();
@@ -213,24 +218,6 @@
       
       $('#chk-learn').on('click', function () {
         $(this).toggleClass('btn-default btn-success');
-      });
-      
-      // Learning Mode Code
-      
-      $('#g-shape').on('click', '.draggable', function() {
-        if(this.classList.contains("selected")) {
-          d3.select(this).classed("selected", false);
-          
-          anim.removePlaceHolders();
-        } else {
-          d3.select(this).classed("selected", true);
-          
-          anim.createPlaceHolders();
-        }
-      });
-      
-      $('#g-shape').on('click', '.placeHolder', function() {
-        anim.removePlaceHolders();
       });
     </script>
     

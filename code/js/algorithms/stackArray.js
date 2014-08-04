@@ -31,12 +31,14 @@ var StackArray = function(){
         POP = 1;
   
   for (var i=0; i<16; i++){
-    mArray[i] = coreAnim.newSquareObject(i, (i+1)*50, 300, null, i, "position");    
+    mArray[i] = coreAnim.newSquareObject(i, (i+1)*50, 300, null, i, "position", null, EDGE_POSITION.TOP);    
   }
   
   top.value = 0;
-  top.drawing = coreAnim.newSquareObject("top", 50, 50, 0, "top");
-  top.edge = coreAnim.newEdgeObject("top", top.drawing.getID(), top.drawing.getCoordinateX() + 25, top.drawing.getCoordinateY() + 100, mArray[0].getCoordinateX() + 25, mArray[0].getCoordinateY(), EDGE_UNIDIRECTIONAL);
+  top.drawing = coreAnim.newSquareObject("top", 50, 50, 0, "top", null, EDGE_POSITION.BOTTOM, null);
+  //top.edge = coreAnim.newEdgeObject("top", top.drawing.getID(), top.drawing.getCoordinateX() + 25, top.drawing.getCoordinateY() + 100, mArray[0].getCoordinateX() + 25, mArray[0].getCoordinateY(), EDGE_TYPE.UNIDIRECTIONAL);
+  
+  top.edge = coreAnim.newEdgeObject2("top", top.drawing.getID(), mArray[top.value].getID(), EDGE_TYPE.UNIDIRECTIONAL);
   top.edge.setMarkerEnd(defaultProperties.marker.default.end);
   
   coreAnim.saveState();
@@ -68,7 +70,8 @@ var StackArray = function(){
     
     top.value = 0;
     top.drawing.setText(top.value);
-    top.edge.moveEdgeEnd(mArray[0].getCoordinateX() + 25, mArray[0].getCoordinateY());
+    top.edge.setIdObjectB(mArray[0].getID());
+    //top.edge.moveEdgeEnd(mArray[0].getCoordinateX() + 25, mArray[0].getCoordinateY());
     
     for(var i=0; i<16; i++){
       mArray[i].setText(null);
@@ -78,22 +81,23 @@ var StackArray = function(){
     coreAnim.play();
   }
   
-  this.isEmpty = function() { return top.value == 0; }
+  this.isEmpty = function () { return top.value == 0; }
   
-  this.push = function(item) {
+  this.push = function (item) {
     if (top.value >= cap && item == "") {
       return false;
     }
     
     coreAnim.clearLog();
-    coreAnim.saveState();
+    coreAnim.newAction();
+    //coreAnim.saveState();
     
     if (coreAnim.isLearningMode()){
-      learnObj["newValue"] = coreAnim.newUserObject("newValue", 500, 75, 25, item, "draggable");
-      learnObj["newTopPointer"] = coreAnim.newUserObject("newTopPointer", top.edge.getCoordinateX2(), top.edge.getCoordinateY2(), 10, null, "draggable");
+      learnObj["newValue"] = coreAnim.newUserObject("newValue", 500, 75, 25, item, "learning");
+      learnObj["newTopPointer"] = coreAnim.newUserObject("newTopPointer", top.edge.getCoordinateX2(), top.edge.getCoordinateY2(), 10, null, "learning");
       
       for (var key in mArray) {
-        mArray[key].setRectClass("validTarget");
+        mArray[key].setIsValidTarget(true);
         coreAnim.saveState();
       }
       
@@ -110,11 +114,15 @@ var StackArray = function(){
       top.drawing.setFill(defaultProperties["shape"]["update"]["fill"]);
       coreAnim.saveState();
       
-      top.edge.moveEdgeEnd(mArray[top.value].getCoordinateX() + 25, mArray[top.value].getCoordinateY());
+      //top.edge.moveEdgeEnd(mArray[top.value].getCoordinateX() + 25, mArray[top.value].getCoordinateY());
+      top.edge.setIdObjectB(mArray[top.value].getID());
       
       top.drawing.setText(top.value);
       top.drawing.setFill(defaultProperties["shape"]["default"]["fill"]);
       coreAnim.saveState("Update the top pointer.", 1);
+      
+      //top.drawing.moveShape(500, 50);
+      //coreAnim.saveState();
       
       coreAnim.play();
     }
@@ -122,21 +130,23 @@ var StackArray = function(){
     return true;
   }
   
-  this.pop = function() {
+  this.pop = function () {
     if(this.isEmpty()){
       return false;
     }
     
     coreAnim.clearLog();
+    coreAnim.newAction();
     this.generatePseudocode(POP);
-    coreAnim.saveState();
+    //coreAnim.saveState();
     
     top.value--;
     
     top.drawing.setFill(defaultProperties["shape"]["update"]["fill"]);
     coreAnim.saveState();
     
-    top.edge.moveEdgeEnd(mArray[top.value].getCoordinateX() + 25, mArray[top.value].getCoordinateY());
+    //top.edge.moveEdgeEnd(mArray[top.value].getCoordinateX() + 25, mArray[top.value].getCoordinateY());
+    top.edge.setIdObjectB(mArray[top.value].getID());
     
     top.drawing.setText(top.value);
     top.drawing.setFill(defaultProperties["shape"]["default"]["fill"]);

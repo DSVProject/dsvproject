@@ -165,7 +165,7 @@ var EdgeObject = function(id, x1, y1, x2, y2, edgeClass, edgeType){
     *
     * @param {Number} dur : the duration in miliseconds of this animation.
     */
-  this.draw = function(dur){
+  this.draw = function (dur) {
     if(dur == null || isNaN(dur) || dur < 0) dur = DEFAULT_ANIMATION_DURATION;
     
     var json = [];
@@ -184,12 +184,12 @@ var EdgeObject = function(id, x1, y1, x2, y2, edgeClass, edgeType){
         .attr("x2", function (d) {return d.edge.x2;})
         .attr("y2", function (d) {return d.edge.y2;})
         .attr("marker-start", function (d) {
-          if (d.edge.type === EDGE_BIDIRECTIONAL) return d.edge.markerStart;
+          if (d.edge.type === EDGE_TYPE.BIDIRECTIONAL) return d.edge.markerStart;
           return null;
         })
         .attr("marker-end", function (d) {
-          if (d.edge.type === EDGE_UNDIRECTED) return null;
-          if (d.edge.type === EDGE_UNIDIRECTIONAL || d.edge.type === EDGE_BIDIRECTIONAL) return d.edge.markerEnd;
+          if (d.edge.type === EDGE_TYPE.UNDIRECTED) return null;
+          if (d.edge.type === EDGE_TYPE.UNIDIRECTIONAL || d.edge.type === EDGE_TYPE.BIDIRECTIONAL) return d.edge.markerEnd;
           return null;
         })
         .style("stroke", function (d) {return d.edge.stroke;})
