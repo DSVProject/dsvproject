@@ -93,8 +93,8 @@ var StackArray = function(){
     //coreAnim.saveState();
     
     if (coreAnim.isLearningMode()){
-      learnObj["newValue"] = coreAnim.newUserObject("newValue", 500, 75, 25, item, "learning");
-      learnObj["newTopPointer"] = coreAnim.newUserObject("newTopPointer", top.edge.getCoordinateX2(), top.edge.getCoordinateY2(), 10, null, "learning");
+      learnObj["newValue"] = coreAnim.newUserObject("newValue", 500, 75, 25, item, "learning", USER_OBJ_TYPE.VALUE);
+      learnObj["newTopPointer"] = coreAnim.newUserObject("newTopPointer", top.edge.getCoordinateX2(), top.edge.getCoordinateY2(), 10, null, "learning", USER_OBJ_TYPE.MOVEMENT, top.edge.getID());
       
       for (var key in mArray) {
         mArray[key].setIsValidTarget(true);

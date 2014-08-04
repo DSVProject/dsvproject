@@ -13,8 +13,10 @@
   * @param {String} text : the inner text of this object, that will be displayed on the screen.
   * @param {String} circleClass : the CSS class of the rect svg element.
   * @param {String} textClass : the CSS class of the text svg element.
+  * @param {Const} type : the type of this userObject (defined at 'animation/constant.js').
+  * @param {String|Number=} bindedObjID : if this instance is a MOVEMENT type object, it should be binded to another object.
   */
-var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textClass) {
+var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textClass, type, bindedObjID) {
   var self = this;
   this.coreObj = coreObj;
   
@@ -48,7 +50,11 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textC
     
     "toRemove": false,
     
-    "isActive": false
+    "isActive": false,
+    
+    "type": type,
+    
+    "bindedObjID": bindedObjID
   }
   
   this.edgeList = {};
@@ -247,6 +253,20 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textC
   }
   
   /**
+    * @return {Const} : the type property.
+    */ 
+  this.getType = function () {
+    return this.propObj.type;
+  }
+  
+  /**
+    * @return {String|Number} : the bindedObjID property.
+    */ 
+  this.getBindedObjID = function () {
+    return this.propObj.bindedObjID;
+  }
+  
+  /**
     * Add an EdgeObject to this object edgeList.
     *
     * @param {EdgeObject} edgeObj : the instance of the EdgeObject.
@@ -266,18 +286,18 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textC
     
     var json = [];
     json.push(this.propObj);
-  
+    
     var shape = d3.select("#g-shape").selectAll(SVG_CIRCLE)
         .data(json, function (d) {return d.id;});
       
     shape.enter().append(SVG_CIRCLE)        
-        .attr("id", function (d) {return "u-shape-" + d.id;})    
+        .attr("id", function (d) {return "u-shape-" + d.id;})
         .on("click", function (d) {
           var activeObject = self.coreObj.getActiveUserObject();
-          
+
           if (activeObject == null) {
             self.coreObj.setActiveUserObject(self.propObj.id);
-            
+
             self.coreObj.createPlaceHolders();
           } else {
             self.coreObj.setActiveUserObject();
@@ -315,7 +335,6 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textC
         .text(function (d) {return d.text.text;});
     
     for(var key in this.edgeList){
-      alert(key);
       this.edgeList[key].draw(dur);
     }
   }

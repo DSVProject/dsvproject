@@ -384,11 +384,12 @@ var CoreAnimObject = function () {
     * @param {Number} radius : the radius of the item.
     * @param {String} text : the text which will appear inside the item.
     * @param {String} circleClass : the class of the svg circle element, used for styling and functionality.
+    * @param {Const} type : the type of this userObject (defined at 'animation/constant.js').
     *
     * @return {userObject} : the new object.
     */
-  this.newUserObject = function (id, cx, cy, radius, text, circleClass) {
-    this.objectList[id] = new UserObject(this, id, cx, cy, radius, text, circleClass, "innerText");
+  this.newUserObject = function (id, cx, cy, radius, text, circleClass, type, bindedObjID) {
+    this.objectList[id] = new UserObject(this, id, cx, cy, radius, text, circleClass, "innerText", type, bindedObjID);
     
     return this.objectList[id];
   }
@@ -429,7 +430,7 @@ var CoreAnimObject = function () {
   
   this.newEdgeObject2 = function (id, idObjectA, idObjectB, edgeType) {
     var newEdge = new EdgeObject2(this, id, idObjectA, idObjectB, "edge", edgeType);
-    newEdge.calculatePath();
+    //newEdge.calculatePath();
 
     this.objectList[idObjectA].addEdge(newEdge);
     
@@ -592,6 +593,24 @@ var CoreAnimObject = function () {
       if (this.objectList[key] instanceof UserObject) {
         if (this.objectList[key].getIsActive() == true) {
           return this.objectList[key];
+        }
+      }
+    }
+    return null;
+  }
+  
+  /**
+    * @param {String|Number} id : the id of the binded object.
+    *
+    * @return {EdgeObject} : the edgeObject that is binded to the userObject.
+    *
+    */
+  this.getUserObjectBindedItem = function (id) {
+    for (var key in this.objectList) {
+      if (Object.keys(this.objectList[key].edgeList).length > 0) {
+        for (var edgeKey in this.objectList[key].edgeList) {
+          //alert(this.objectList[key].edgeList[edgeKey].getID() + ", " + id);
+          if (this.objectList[key].edgeList[edgeKey].getID() == id) return this.objectList[key].edgeList[edgeKey];
         }
       }
     }

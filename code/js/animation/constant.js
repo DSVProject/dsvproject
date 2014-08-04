@@ -35,9 +35,10 @@ const EDGE_INOUT = {
   OUTGOING: 1
 };
 
-const EDGE_ORIENTATION = {
-  RIGHT: 0,
-  DOWN: 1
+/** @const */
+const USER_OBJ_TYPE = {
+  VALUE: 0,
+  MOVEMENT: 1
 };
 
 //Values in miliseconds

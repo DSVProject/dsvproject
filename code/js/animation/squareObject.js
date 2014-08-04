@@ -394,6 +394,7 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
         
     label.enter().append("text")
         .attr("id", function (d) {return "label-" + d.id;})
+    label.transition()
         .attr("class", function (d) {return d.label.class;})
         .attr("x", function (d) {return d.label.x;})
         .attr("y", function (d) {return d.label.y;})
@@ -493,7 +494,6 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
     for (var key in edges) {
       clone = new EdgeObject2(this.coreObj);
       clone.cloneProperties(edges[key].getAttributes());
-      clone.calculatePath();
       
       newList[key] = clone;
     }
@@ -511,8 +511,24 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
         .on("click", function (d) {
           var activeObject = self.coreObj.getActiveUserObject();
           
-          self.propObj.text.text = activeObject.getText();
-          d3.select("#text-" + self.propObj.id).text(activeObject.getText());
+          if (activeObject.getType() == USER_OBJ_TYPE.VALUE) {
+            self.propObj.text.text = activeObject.getText();
+            self.draw();
+            //d3.select("#text-" + self.propObj.id).text(activeObject.getText());
+          } else if (activeObject.getType() == USER_OBJ_TYPE.MOVEMENT) {
+            var edge = self.coreObj.getUserObjectBindedItem(activeObject.getBindedObjID());
+
+            edge.setIdObjectB(self.propObj.id);
+            edge.draw();
+            
+            activeObject.moveShape(edge.getCoordinateX2(), edge.getCoordinateY2());
+            
+            d3.select("#u-shape-" + activeObject.getID())
+                .transition()
+                .duration(DEFAULT_ANIMATION_DURATION)
+                .attr("cx", edge.getCoordinateX2())
+                .attr("cy", edge.getCoordinateY2());
+          }
           
           self.coreObj.setActiveUserObject();
           self.coreObj.removePlaceHolders();

@@ -46,12 +46,13 @@ var QueueLinkedList = function () {
     switch (command) {
         case ENQUEUE:
           coreAnim.addPseudocodeLine(0, "Node temp = value;");
-          coreAnim.addPseudocodeLine(1, "Tail.next = temp;");
-          coreAnim.addPseudocodeLine(2, "Tail = temp;");
+          coreAnim.addPseudocodeLine(1, "last = temp;");
+          coreAnim.addPseudocodeLine(2, "if (isEmpty()) first = last;");
+          coreAnim.addPseudocodeLine(3, "else oldlast.next = last;");
           break;
         case DEQUEUE:
-          coreAnim.addPseudocodeLine(0, "Test 0");
-          coreAnim.addPseudocodeLine(1, "Test 1");
+          coreAnim.addPseudocodeLine(0, "first = first.next;");
+          coreAnim.addPseudocodeLine(1, "if (isEmpty()) last = null;");
           break;
     }
   }
@@ -65,10 +66,12 @@ var QueueLinkedList = function () {
     N = 0;
     counterID = 0;
     
-    edgeFirstD.moveEdgeEnd(firstD.getCoordinateX() + 25, firstD.getCoordinateY() + 100);
+    //edgeFirstD.moveEdgeEnd(firstD.getCoordinateX() + 25, firstD.getCoordinateY() + 100);
+    edgeFirstD.setIdObjectB(null);
     edgeFirstD.setStroke(defaultProperties.edge.null.stroke);
     edgeFirstD.setMarkerEnd(defaultProperties.marker.null.end);
-    edgeLastD.moveEdgeEnd(lastD.getCoordinateX() + 25, lastD.getCoordinateY() + 100);
+    //edgeLastD.moveEdgeEnd(lastD.getCoordinateX() + 25, lastD.getCoordinateY() + 100);
+    edgeLastD.setIdObjectB(null);
     edgeLastD.setStroke(defaultProperties.edge.null.stroke);
     edgeLastD.setMarkerEnd(defaultProperties.marker.null.end);
     
@@ -93,6 +96,8 @@ var QueueLinkedList = function () {
     coreAnim.saveState();
 
     var oldlast = last;
+    
+    if (oldlast != null) oldlast.drawing.setLabel("oldLast");
 
     last = new Node();
     last.item = item;
@@ -107,7 +112,7 @@ var QueueLinkedList = function () {
     edgeLastD.setStroke(defaultProperties.edge.default.stroke);
     edgeLastD.setMarkerEnd(defaultProperties.marker.default.end);
 
-    coreAnim.saveState("Update the last pointer.", 2);
+    coreAnim.saveState("Update the last pointer.", 1);
 
     last.drawing.moveShape((N+1)*100, 300);
     coreAnim.saveState();
@@ -119,7 +124,7 @@ var QueueLinkedList = function () {
       edgeFirstD.setStroke(defaultProperties.edge.default.stroke);
       edgeFirstD.setMarkerEnd(defaultProperties.marker.default.end);
 
-      coreAnim.saveState("If the list was empty, update the first pointer too.");
+      coreAnim.saveState("If the list was empty, update the first pointer too.", 2);
     } else {
       oldlast.next = last;
     }
@@ -127,7 +132,10 @@ var QueueLinkedList = function () {
     if (oldlast != null) {
       oldlast.edge.setStroke(defaultProperties.edge.default.stroke);
       oldlast.edge.setMarkerEnd(defaultProperties.marker.default.end);
-      coreAnim.saveState("Update the pointer of the previous node.", 1)
+      
+      oldlast.drawing.setLabel();
+      
+      coreAnim.saveState("Update the pointer of the previous node.", 3)
     }
 
     N++;
@@ -173,18 +181,19 @@ var QueueLinkedList = function () {
       edgeFirstD.setIdObjectB(null);
       edgeFirstD.setStroke(defaultProperties.edge.null.stroke);
       edgeFirstD.setMarkerEnd(defaultProperties.marker.null.end);
+      coreAnim.saveState("Update the first pointer.", 0);
       //edgeLastD.moveEdgeEnd(lastD.getCoordinateX() + 25, lastD.getCoordinateY() + 100);
       edgeLastD.setIdObjectB(null);
       edgeLastD.setStroke(defaultProperties.edge.null.stroke);
       edgeLastD.setMarkerEnd(defaultProperties.marker.null.end);
+      coreAnim.saveState("Update the last pointer.", 1);
     } else {
       //edgeFirstD.moveEdgeEnd(first.drawing.getCoordinateX() + 25, first.drawing.getCoordinateY());
       //edgeLastD.moveEdgeEnd(last.drawing.getCoordinateX() + 25, last.drawing.getCoordinateY());
-      edgeFirstD.setIdObjectB(first.drawing.getID());
-      edgeLastD.setIdObjectB(last.drawing.getID());
+      //edgeFirstD.setIdObjectB(first.drawing.getID());
+      //edgeLastD.setIdObjectB(last.drawing.getID());
+      coreAnim.saveState("Update the first pointer.", 0);
     }
-    
-    coreAnim.saveState("Update the pointers.");
     
     N--;
     
