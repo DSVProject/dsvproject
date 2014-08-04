@@ -47,3 +47,12 @@ code {
 .table > tbody > tr > td {
   padding: 2px;
 }
+
+.slider-selection {
+	background: #d6e9c6;
+}
+
+.slider-handle {
+  background: #505050;
+  opacity: 0.9;
+}
