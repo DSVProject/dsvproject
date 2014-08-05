@@ -471,36 +471,6 @@ var CoreAnimObject = function () {
     }
   }
   
-  /*
-  this.createArrayHighlight = function(id){
-    objectList["highlight"] = new SquareObject("highlight", objectList[id].getCoordinateX(), objectList[id].getCoordinateY(), null, "shape", "innerText");
-    
-    objectList["highlight"].setFillOpacity(animProperties["cell"]["highlight"]["fill-opacity"]);
-    objectList["highlight"].setStroke(animProperties["cell"]["highlight"]["stroke"]);
-    objectList["highlight"].setStrokeWidth(animProperties["cell"]["highlight"]["stroke-width"]);
-  
-    //internalJson.push(objectList["highlight"].getAttributes());
-    
-    this.saveState("The current " + id + " index.");
-  };
-  
-  this.moveHighlight = function(insertedIndex){
-    objectList["highlight"].moveShape(objectList[insertedIndex].getCoordinateX(), objectList[insertedIndex].getCoordinateY());
-    this.saveState("Where the new value should be inserted.");
-  }
-  
-  this.deleteHighlight = function(){
-    for(var k in internalJson) {
-      if (internalJson[k].id == "highlight") {
-        internalJson.splice(k,1);
-        break;
-      }
-    }
-    
-    this.saveState();
-  }
-  */
-  
   /**
     * Clear the message log.
     */
@@ -635,7 +605,6 @@ var CoreAnimObject = function () {
     for (var key in this.objectList) {
       if (Object.keys(this.objectList[key].edgeList).length > 0) {
         for (var edgeKey in this.objectList[key].edgeList) {
-          //alert(this.objectList[key].edgeList[edgeKey].getID() + ", " + id);
           if (this.objectList[key].edgeList[edgeKey].getID() == id) return this.objectList[key].edgeList[edgeKey];
         }
       }

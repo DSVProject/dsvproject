@@ -48,6 +48,10 @@ code {
   padding: 2px;
 }
 
+.slider {
+  margin: 10px;
+}
+
 .slider-selection {
 	background: #d6e9c6;
 }
