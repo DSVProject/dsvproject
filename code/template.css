@@ -38,8 +38,24 @@ code {
   font-size: 80%;
 }
 
-.panel-body {
-  height: 200px;
+.panel {
+  margin-bottom: 5px;
+}
+
+#pseudocode-panel .panel-body {
+  height: 175px;
+  overflow: auto;
+  padding: 0px;
+}
+
+#log-panel .panel-body {
+  height: 125px;
+  overflow: auto;
+  padding: 0px;
+}
+
+#variable-panel .panel-body {
+  height: 75px;
   overflow: auto;
   padding: 0px;
 }
