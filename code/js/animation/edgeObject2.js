@@ -1,21 +1,26 @@
-// Default properties are defined at 'animation/constant.js'
+// Default properties are defined on 'animation/constant.js'
 
 /**
-  * Defines an edge graphic unit.
-  * This 'class' will hold all the properties and methods regarding this single unit. 
+  * Defines a graphic edge.
+  * The instance of this class contains all the attributes and methods regarding graphical changes to this object.
+  *
   * @constructor
   *
-  * @param {coreAnimObject} coreObj : instance of the class coreAnimObject.
-  * @param {String} id : the id of this object.
+  * @param {CoreAnimObject} coreObj : instance of the CoreAnimObject class.
+  * @param {String|Number} id : the id of this object.
   * @param {String} idObjectA : the id of the origin object.
   * @param {String=} idObjectB : the id of the destination object.
   * @param {String} edgeClass : the CSS class of the line svg element.
-  * @param {Const} edgeType : a constant value (defined at 'animation/constant.js') indicating wether the vertex is unidirectional (from A -> B), bidirectional or has no direction.
+  * @param {Const} edgeType : a constant value (defined at 'animation/constant.js' : EDGE_TYPE) indicating wether the vertex is unidirectional (from A -> B), bidirectional or has no direction.
   */
 var EdgeObject2 = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeType) {
   var self = this;
   this.coreObj = coreObj;
   
+  /**
+    * This object map of attributes.
+    *
+    */
   this.propObj = {
     "id": id,
     
@@ -35,7 +40,6 @@ var EdgeObject2 = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTy
       "y1": null,
       "x2": null,
       "y2": null,
-      //"orientation": (orientation != null) ? orientation : ORIENTATION.DOWN,
       "stroke": defaultProperties.edge.default.stroke,
       "strokeWidth": defaultProperties.edge.default["stroke-width"]
     }
@@ -184,6 +188,10 @@ var EdgeObject2 = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTy
     this.propObj.edge.strokeWidth = newStrokeWidth;
   }
   
+  /**
+    * Update the coordinates of this path, based on the movement of the objects it is binded to.
+    *
+    */
   this.calculatePath = function () {
     var point;
     
@@ -191,7 +199,6 @@ var EdgeObject2 = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTy
       this.propObj.edge.x1 = this.coreObj.objectList[this.propObj.idObjectA].getEdgeCoordinateX(EDGE_INOUT.OUTGOING);
       this.propObj.edge.y1 = this.coreObj.objectList[this.propObj.idObjectA].getEdgeCoordinateY(EDGE_INOUT.OUTGOING);
 
-      //alert(this.propObj.idObjectB);
       if (this.propObj.idObjectB != null) {
         this.propObj.edge.x2 = this.coreObj.objectList[this.propObj.idObjectB].getEdgeCoordinateX(EDGE_INOUT.INCOMING);
         this.propObj.edge.y2 = this.coreObj.objectList[this.propObj.idObjectB].getEdgeCoordinateY(EDGE_INOUT.INCOMING);
@@ -216,15 +223,13 @@ var EdgeObject2 = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTy
   }
   
   /**
-    * Draw this object properties on the screen.
-    * If the object is new, it will appear; if any property has changed, it will be updated.
+    * Draw this object attributes on the screen.
+    * If the object is new, it will be generated; if any property has changed, it will be updated.
     *
     * @param {Number} dur : the duration in miliseconds of this animation.
     */
   this.draw = function (dur) {
     if (dur == null || isNaN(dur) || dur < 0) dur = DEFAULT_ANIMATION_DURATION;
-    
-    //this.calculatePath();
     
     var json = [];
     json.push(this.propObj);
@@ -284,5 +289,8 @@ var EdgeObject2 = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTy
     this.calculatePath();
   }
   
+  /**
+    * Calculate the path when the object is created.
+    */
   this.calculatePath();
 }

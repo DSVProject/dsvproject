@@ -366,6 +366,27 @@ var CoreAnimObject = function () {
   }
   
   /**
+    * Create a circle graphic element.
+    *
+    * @param {coreAnimObject} coreObj : instance of the class coreAnimObject.
+    * @param {String|Number} id : the id of this object.
+    * @param {Number} cx : the cx coordinate of this object on the screen.
+    * @param {Number} cy : the cy coordinate of this object on the screen.
+    * @param {String} text : the inner text of this object, that will be displayed on the screen.
+    * @param {String} label : the underneath text of this object, that will be displayed on the screen.
+    * @param {String} shapeClass : the CSS class of the circle svg element.
+    * @param {Const=} outgoingPoint : a constant value (defined at 'animation/constant.js') indicating from which point of the shape the edge will originate.
+    * @param {Const=} incomingPoint : a constant value (defined at 'animation/constant.js') indicating at which point of the shape the edge will arrive.
+    *
+    * @return {CircleObject} : the new object.
+    */
+  this.newCircleObject = function (id, cx, cy, radius, text, label, shapeClass, outgoingPoint, incomingPoint) {
+    this.objectList[id] = new CircleObject(this, id, cx, cy, radius, text, label, shapeClass, "innerText", "labelText", outgoingPoint, incomingPoint);
+    
+    return this.objectList[id];
+  }
+  
+  /**
     * Create a double square graphic element.
     *
     * @param {String|Number} id : the id of the item.
@@ -387,19 +408,22 @@ var CoreAnimObject = function () {
   /**
     * Create a user graphic element (used for the learning mode).
     *
-    * @param {coreAnimObject} coreObj : instance of the class coreAnimObject.
-    * @param {String || Number} id : the id of the item.
-    * @param {Number} cx : the cx coordinate of the item.
-    * @param {Number} cy : the cy coordinate of the item.
-    * @param {Number} radius : the radius of the item.
-    * @param {String} text : the text which will appear inside the item.
-    * @param {String} circleClass : the class of the svg circle element, used for styling and functionality.
-    * @param {Const} type : the type of this userObject (defined at 'animation/constant.js').
+    * @param {CoreAnimObject} coreObj : instance of the CoreAnimObject class.
+    * @param {String|Number} id : the id of this object.
+    * @param {Number} cx : the cx coordinate of this object inside the svg element.
+    * @param {Number} cy : the cy coordinate of this object inside the svg element.
+    * @param {String} text : the inner text of this object, that will be displayed on the screen.
+    * @param {String} shapeClass : the CSS class of the rect svg element.
+    * @param {String} textClass : the CSS class of the text svg element (inside the shape).
+    * @param {Const} type : the type of this userObject (defined at 'animation/constant.js' : USER_OBJ_TYPE).
+    * @param {Bool=} allowSwap: if this instance is a VALUE type object, this parameter should be passed. If true, this object's text will be swapped during  
+    *                           the interactions.
+    * @param {String|Number=} bindedObjID : if this instance is a MOVEMENT type object, it should be binded to another object.
     *
     * @return {userObject} : the new object.
     */
-  this.newUserObject = function (id, cx, cy, radius, text, circleClass, type, bindedObjID) {
-    this.objectList[id] = new UserObject(this, id, cx, cy, radius, text, circleClass, "innerText", type, bindedObjID);
+  this.newUserObject = function (id, cx, cy, radius, text, circleClass, type, allowSwap, bindedObjID) {
+    this.objectList[id] = new UserObject(this, id, cx, cy, radius, text, circleClass, "innerText", type, allowSwap, bindedObjID);
     
     return this.objectList[id];
   }
@@ -545,13 +569,15 @@ var CoreAnimObject = function () {
     d3.select("#line" + lineNumber)
         .classed("codeHighlight", "true");
   }
-  
-  this.createPlaceHolders = function () {
+  /**
+    * @param {Bool} allowSwap: if true this object's text will be swapped with the active UserObject's text (only for VALUE UserObject).
+    */
+  this.createPlaceHolders = function (allowSwap) {
     for (var key in this.objectList) {
       if (this.objectList[key] instanceof UserObject) continue; // skips the userObject as they are never valid targets.
       
       if (this.objectList[key].getIsValidTarget() == true) {
-        this.objectList[key].createPlaceHolder();
+        this.objectList[key].createPlaceHolder(allowSwap);
       }
     }
   }

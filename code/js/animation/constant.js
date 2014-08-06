@@ -45,7 +45,36 @@ const USER_OBJ_TYPE = {
 const DEFAULT_ANIMATION_DURATION = 500;
 
 /** @const */
+const DEFAULT_CLASSES = {
+  SHAPE: {
+    RECT:"shape",
+    CIRCLE:"shape"
+  },
+  EDGE:"",
+  TEXT:{
+    INNER:"innerText",
+    LABEL:"labelText"
+  },
+  LEARNINGMODE:{
+    PLACEHOLDER:"placeHolder",
+    VALIDTARGET:"validTarget"
+  }
+}
+
+/** @const */
+const DEFAULT_IDS = {
+  GROUP: {
+    MARKER:"g-marker",
+    SHAPE:"g-shape",
+    TEXT:"g-text",
+    LABEL:"g-label",
+    EDGE:"g-edge"
+  }
+}
+
+/** @const */
 const defaultProperties = {
+  "radius":25,
   "width":50,
   "height":50,
   "font-family":"sans-serif",

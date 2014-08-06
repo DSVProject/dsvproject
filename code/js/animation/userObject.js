@@ -1,32 +1,37 @@
 // Default properties are defined on 'animation/constant.js'
 
-
 /**
-  * Defines a user graphic unit, used for the learning mode interactions.
-  * This 'class' will hold all the properties and methods regarding this single unit. 
+  * Defines a user graphic unit, used only for the learning mode.
+  * The instance of this class contains all the attributes and methods regarding graphical changes to this object.
+  *
   * @constructor
   *
-  * @param {coreAnimObject} coreObj : instance of the class coreAnimObject.
+  * @param {CoreAnimObject} coreObj : instance of the CoreAnimObject class.
   * @param {String|Number} id : the id of this object.
-  * @param {Number} x : the x coordinate of this object on the screen.
-  * @param {Number} y : the y coordinate of this object on the screen.
+  * @param {Number} cx : the cx coordinate of this object inside the svg element.
+  * @param {Number} cy : the cy coordinate of this object inside the svg element.
   * @param {String} text : the inner text of this object, that will be displayed on the screen.
-  * @param {String} circleClass : the CSS class of the rect svg element.
-  * @param {String} textClass : the CSS class of the text svg element.
-  * @param {Const} type : the type of this userObject (defined at 'animation/constant.js').
+  * @param {String} shapeClass : the CSS class of the rect svg element.
+  * @param {String} textClass : the CSS class of the text svg element (inside the shape).
+  * @param {Const} type : the type of this userObject (defined at 'animation/constant.js' : USER_OBJ_TYPE).
+  * @param {Bool=} allowSwap: if this instance is a VALUE type object, this parameter should be passed. If true, this object's text will be swapped during the   *                           interactions.
   * @param {String|Number=} bindedObjID : if this instance is a MOVEMENT type object, it should be binded to another object.
   */
-var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textClass, type, bindedObjID) {
+var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textClass, type, allowSwap, bindedObjID) {
   var self = this;
   this.coreObj = coreObj;
   
   this.textAdjust = defaultProperties["font-size"]/3;
 
+  /**
+    * This object map of attributes.
+    *
+    */
   this.propObj = {
     "id": id,
     
-    "circle": {
-      "class": circleClass,
+    "shape": {
+      "class": shapeClass,
       "cx": cx,
       "cy": cy,
       "r": radius,
@@ -54,6 +59,8 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textC
     
     "type": type,
     
+    "allowSwap": allowSwap != null ? allowSwap : false,
+    
     "bindedObjID": bindedObjID
   }
   
@@ -67,7 +74,7 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textC
   }
   
   /**
-    * @return {Array} : the edges of the current object.
+    * @return {Array} : the edges of this object.
     */
   this.getEdges = function () {
     return this.edgeList;
@@ -85,29 +92,45 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textC
     *
     * @param {String} newClass : the new CSS class.
     */
-  this.setCircleClass = function(newClass){
-    this.propObj.circle.class = newClass;
+  this.setShapeClass = function (newClass) {
+    this.propObj.shape.class = newClass;
   }
   
   /**
     * @return {String} : the class of the circle svg element.
     */
-  this.getCircleClass = function () {
-    return this.propObj.circle.class;
+  this.getShapeClass = function () {
+    return this.propObj.shape.class;
+  }
+  
+  /**
+    * Move this object from its current position to a new position.
+    *
+    * @param {Number} cx : the destination x coordinate.
+    * @param {Number} cy : the destination y coordinate.
+    */
+  this.moveShape = function (cx, cy) {
+    if(cx == null || cy == null || isNaN(cx) || isNaN(cy)) return;
+  
+    this.propObj.shape.cx = cx;
+    this.propObj.shape.cy = cy;
+
+    this.propObj.text.x = cx;
+    this.propObj.text.y = cy + this.textAdjust;
   }
   
   /**
     * @return {Number} : the cx coordinate of the circle svg element.
     */
   this.getCoordinateCX = function () {
-    return this.propObj.circle.cx;
+    return this.propObj.shape.cx;
   }
   
   /**
     * @return {Number} : the cy coordinate of the circle svg element.
     */
   this.getCoordinateCY = function () {
-    return this.propObj.circle.cy;
+    return this.propObj.shape.cy;
   }
   
   /**
@@ -117,14 +140,14 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textC
     */
   this.setRadius = function (newRadius) {
     if (newRadius == null || isNaN(newRadius)) return;
-    this.propObj.circle.r = newRadius;
+    this.propObj.shape.r = newRadius;
   }
   
   /**
     * @return {Number} : the radius of the circle svg element.
     */
   this.getRadius = function () {
-    return this.propObj.circle.radius;
+    return this.propObj.shape.radius;
   }
   
   /**
@@ -134,7 +157,7 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textC
     */
   this.setFill = function (newFill) {
     if(newFill == null) return;
-    this.propObj.circle.fill = newFill;
+    this.propObj.shape.fill = newFill;
   }
   
   /**
@@ -146,7 +169,7 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textC
     if(newOpacity == null || isNaN(newOpacity)) return;
     if(newOpacity < 0) newOpacity = 0.0;
     
-    this.propObj.circle.fillOpacity = newOpacity;
+    this.propObj.shape.fillOpacity = newOpacity;
   }
   
   /**
@@ -155,7 +178,7 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textC
     * @param {String} newStroke : the new CSS or svg stroke color.
     */
   this.setStroke = function (newStroke) {
-    this.propObj.circle.stroke = newStroke;
+    this.propObj.shape.stroke = newStroke;
   }
   
   /**
@@ -167,30 +190,7 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textC
     if(newStrokeWidth == null || isNaN(newStrokeWidth)) return;
     if(newStrokeWidth < 0) newStrokeWidth = 0;
     
-    this.propObj.circle.strokeWidth = newStrokeWidth;
-  }
-  
-  /**
-    * Move this object from its current position to a new position.
-    *
-    * @param {Number} x : the destination x coordinate.
-    * @param {Number} y : the destination y coordinate.
-    */
-  this.moveShape = function (x, y) {
-    if(x == null || y == null || isNaN(x) || isNaN(y)) return;
-  
-    this.propObj.circle.cx = x;
-    this.propObj.circle.cy = y;
-
-    this.propObj.text.x = x + 25;
-    this.propObj.text.y = y + 30;
-    
-    /*
-    for(var key in this.edgeList){
-      this.edgeList[key].moveEdgeStart(x, y);
-      //edgeList[key].moveEdgeEnd(x + propObj.rect.width + 50, y + 25);
-    }
-    */
+    this.propObj.shape.strokeWidth = newStrokeWidth;
   }
   
   /**
@@ -276,8 +276,8 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textC
   }
 
   /**
-    * Draw this object properties on the screen.
-    * If the object is new, it will appear; if any property has changed, it will be updated.
+    * Draw this object attributes on the screen.
+    * If the object is new, it will be generated; if any property has changed, it will be updated.
     *
     * @param {Number} dur : the duration in miliseconds of this animation.
     */
@@ -298,7 +298,7 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textC
           if (activeObject == null) {
             self.coreObj.setActiveUserObject(self.propObj.id);
 
-            self.coreObj.createPlaceHolders();
+            self.coreObj.createPlaceHolders(self.propObj.allowSwap);
           } else {
             self.coreObj.setActiveUserObject();
 
@@ -308,14 +308,14 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textC
     
     shape.transition()
         .duration(dur)
-        .attr("class", function (d) {return d.circle.class;})
-        .attr("cx", function (d) {return d.circle.cx;})
-        .attr("cy", function (d) {return d.circle.cy;})
-        .attr("r", function (d) {return d.circle.r;})
-        .attr("fill", function (d) {return d.circle.fill;})
-        .attr("fill-opacity", function (d) {return d.circle.fillOpacity;})
-        .attr("stroke", function (d) {return d.circle.stroke;})
-        .attr("stroke-width", function (d) {return d.circle.strokeWidth;});
+        .attr("class", function (d) {return d.shape.class;})
+        .attr("cx", function (d) {return d.shape.cx;})
+        .attr("cy", function (d) {return d.shape.cy;})
+        .attr("r", function (d) {return d.shape.r;})
+        .attr("fill", function (d) {return d.shape.fill;})
+        .attr("fill-opacity", function (d) {return d.shape.fillOpacity;})
+        .attr("stroke", function (d) {return d.shape.stroke;})
+        .attr("stroke-width", function (d) {return d.shape.strokeWidth;});
       
     var text = d3.select("#g-text").selectAll("text")
         .data(json, function (d) {return d.id;});
@@ -368,7 +368,6 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, circleClass, textC
       this.edgeList[key].remove(dur); 
     }
   }
-  
   
   /**
     * This function should be called when creating a new state. This function will clone this entire object,

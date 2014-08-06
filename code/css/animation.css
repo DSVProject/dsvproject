@@ -1,6 +1,12 @@
 #viz ::selection {
   background: none;
 }
+
+#txt-input{
+  font-family:sans-serif;
+  color:grey;
+}
+
 .shape{
   fill:white;
   stroke:black;
@@ -19,11 +25,6 @@
   font-size:18px;
   text-anchor:middle;
   fill:black;
-}
-
-#txt-input{
-  font-family:sans-serif;
-  color:grey;
 }
 
 .shape .learning{
