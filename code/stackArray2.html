@@ -62,7 +62,14 @@
             </div>
           </ul>
           <!-- Template: Learning Mode Button -->
-          <button type="button" id="chk-learn" class="btn btn-default navbar-btn navbar-right popover-dismiss" data-toggle="button" data-popover="popover" data-html="true" data-placement="bottom" title="Learning Mode" data-content="Use this switch to toggle between the <b>Exploration</b> and the <b>Learning</b> modes.<br/><br/>In Exploration mode animations will happen automatically.<br/>In Learning mode you will have to create the final state of each method.">Learning Mode</button>
+          <ul class="nav navbar-nav navbar-right">
+            <button type="button" id="chk-learn" class="btn btn-default navbar-btn popover-dismiss" data-toggle="button" data-popover="popover" data-html="true" data-placement="bottom" title="Learning Mode" data-content="Use this switch to toggle between the <b>Exploration</b> and the <b>Learning</b> modes.<br/><br/>In Exploration mode animations will happen automatically.<br/>In Learning mode you will have to create the final state of each method.">Learning Mode</button>
+            <div class="btn-group">
+              <button id="help-btn" type="button" class="btn btn-default navbar-btn navbar-right" data-toggle="tooltip" data-placement="bottom" title="Help">
+                    <span class="glyphicon glyphicon-question-sign"></span>
+              </button>
+            </div>
+          </ul>
         </div>
       </div>
     </div>
@@ -88,7 +95,7 @@
           </div>
           
           <div class="row">
-            <div id="variable-panel" class="panel panel-success">
+            <div id="variables-panel" class="panel panel-success">
               <div class="panel-heading">
                 <h3 class="panel-title">Variables</h3>
               </div>
@@ -158,11 +165,13 @@
             </div>
           </ul>
           <ul class="nav navbar-nav navbar-right">
-            <button id="help-btn" type="button" class="btn btn-default navbar-btn" onclick="resetPos()">Help</button>
             <button type="button" class="btn btn-default navbar-btn" onclick="resetPos()">Reset Position</button>
             <div class="btn-group">
               <button id="log-btn" type="button" class="btn btn-default navbar-btn active" data-toggle="tooltip" data-placement="top" title="Log">
                 <span class="glyphicon glyphicon-list-alt"></span>
+              </button>
+              <button id="variables-btn" type="button" class="btn btn-default navbar-btn active" data-toggle="tooltip" data-placement="top" title="Variables">
+                <span class="glyphicon glyphicon-eye-open"></span>
               </button>
               <button id="pseudocode-btn" type="button" class="btn btn-default navbar-btn active" data-toggle="tooltip" data-placement="top" title="Pseudocode">
                 <span class="glyphicon glyphicon-list"></span>
@@ -243,6 +252,11 @@
       $('#log-btn').on('click', function () {
         $(this).toggleClass('active ');
         $("#log-panel").toggle();
+      });
+      
+      $('#variables-btn').on('click', function () {
+        $(this).toggleClass('active ');
+        $("#variables-panel").toggle();
       });
       
       $('#pseudocode-btn').on('click', function () {
