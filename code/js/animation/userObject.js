@@ -6,16 +6,17 @@
   *
   * @constructor
   *
-  * @param {CoreAnimObject} coreObj : instance of the CoreAnimObject class.
-  * @param {String|Number} id : the id of this object.
+  * @param {!CoreAnimObject} coreObj : instance of the CoreAnimObject class.
+  * @param {(String|Number)} id : the id of this object.
   * @param {Number} cx : the cx coordinate of this object inside the svg element.
   * @param {Number} cy : the cy coordinate of this object inside the svg element.
-  * @param {String} text : the inner text of this object, that will be displayed on the screen.
-  * @param {String} shapeClass : the CSS class of the rect svg element.
-  * @param {String} textClass : the CSS class of the text svg element (inside the shape).
-  * @param {Const} type : the type of this userObject (defined at 'animation/constant.js' : USER_OBJ_TYPE).
-  * @param {Bool=} allowSwap: if this instance is a VALUE type object, this parameter should be passed. If true, this object's text will be swapped during the   *                           interactions.
-  * @param {String|Number=} bindedObjID : if this instance is a MOVEMENT type object, it should be binded to another object.
+  * @param {Number} radius : the radius of this object.
+  * @param {String=} text : the inner text of this object, that will be displayed on the screen.
+  * @param {?String} shapeClass : the CSS class of the rect svg element.
+  * @param {?String} textClass : the CSS class of the text svg element (inside the shape).
+  * @param {!Const} type : the type of this userObject (defined at 'animation/constant.js' : USER_OBJ_TYPE).
+  * @param {!Bool=} allowSwap: if this instance is a VALUE type object, this parameter should be passed. If true, this object's text will be swapped during the interactions.
+  * @param {!(String|Number)=} bindedObjID : if this instance is a MOVEMENT type object, it should be binded to another object.
   */
 var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textClass, type, allowSwap, bindedObjID) {
   var self = this;
@@ -285,7 +286,7 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
     if(dur == null || isNaN(dur) || dur < 0) dur = DEFAULT_ANIMATION_DURATION;
     
     var json = [];
-    json.push(this.propObj);
+    json.push(self.propObj);
     
     var shape = d3.select("#g-shape").selectAll(SVG_CIRCLE)
         .data(json, function (d) {return d.id;});
@@ -293,18 +294,18 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
     shape.enter().append(SVG_CIRCLE)        
         .attr("id", function (d) {return "u-shape-" + d.id;})
         .on("click", function (d) {
-          var activeObject = self.coreObj.getActiveUserObject();
+            var activeObject = self.coreObj.getActiveUserObject();
 
-          if (activeObject == null) {
-            self.coreObj.setActiveUserObject(self.propObj.id);
+            if (activeObject == null) {
+              self.coreObj.setActiveUserObject(self.propObj.id);
 
-            self.coreObj.createPlaceHolders(self.propObj.allowSwap);
-          } else {
-            self.coreObj.setActiveUserObject();
+              self.coreObj.createPlaceHolders(self.propObj.allowSwap);
+            } else {
+              self.coreObj.setActiveUserObject();
 
-            self.coreObj.removePlaceHolders();
-          }
-        });
+              self.coreObj.removePlaceHolders();
+            }
+          });
     
     shape.transition()
         .duration(dur)
@@ -321,10 +322,10 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
         .data(json, function (d) {return d.id;});
         
     text.enter().append("text")
-        .attr("id", function (d) {return "u-text-" + d.id; });
+        .attr("id", function (d) {return "u-text-" + d.id;});
     text.transition()
         .duration(dur)
-        .attr("class", function (d) {return d.text.class})
+        .attr("class", function (d) {return d.text.class;})
         .attr("x", function (d) {return d.text.x;})
         .attr("y", function (d) {return d.text.y;})
         .attr("fill", function (d) {return d.text.fill;})
@@ -333,6 +334,46 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
         .attr("font-size", function (d) {return d.text.fontSize;})
         .attr("text-anchor", function (d) {return d.text.textAnchor;})   
         .text(function (d) {return d.text.text;});
+    
+    for(var key in this.edgeList){
+      this.edgeList[key].draw(dur);
+    }
+  }
+  
+  /**
+    * Redraw this object,
+    *
+    * @param {Number} dur : the duration in miliseconds of this animation.
+    */
+  this.redraw = function (dur) {    
+    if(dur == null || isNaN(dur) || dur < 0) dur = DEFAULT_ANIMATION_DURATION;
+    
+    var shape = d3.select("#u-shape-" + this.propObj.id);
+    
+    shape.transition()
+        .duration(dur)
+        .attr("class", this.propObj.shape.class)
+        .attr("cx", this.propObj.shape.cx)
+        .attr("cy", this.propObj.shape.cy)
+        .attr("r", this.propObj.shape.r)
+        .attr("fill", this.propObj.shape.fill)
+        .attr("fill-opacity", this.propObj.shape.fillOpacity)
+        .attr("stroke", this.propObj.shape.stroke)
+        .attr("stroke-width", this.propObj.shape.strokeWidth);
+      
+    var text = d3.select("#u-text-" + this.propObj.id);
+        
+    text.transition()
+        .duration(dur)
+        .attr("class", this.propObj.text.class)
+        .attr("x", this.propObj.text.x)
+        .attr("y", this.propObj.text.y)
+        .attr("fill", this.propObj.text.fill)
+        .attr("font-family", this.propObj.text.fontFamily)
+        .attr("font-weigh", this.propObj.text.fontWeight)
+        .attr("font-size", this.propObj.text.fontSize)
+        .attr("text-anchor", this.propObj.text.textAnchor)   
+        .text(this.propObj.text.text);
     
     for(var key in this.edgeList){
       this.edgeList[key].draw(dur);

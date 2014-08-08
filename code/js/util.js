@@ -35,3 +35,53 @@ d3.selection.prototype.moveToFront = function() {
     this.parentNode.appendChild(this);
   });
 }
+
+$('#help-btn').on('click', function () {
+  $("#div-control-buttons").popover('toggle');
+  $("#div-panels").popover('toggle');
+  $("#div-media-buttons").popover('toggle');
+  $("#chk-learn").popover('toggle');
+});
+
+$('#log-btn').on('click', function () {
+  $(this).toggleClass('active ');
+  $("#log-panel").toggle();
+});
+
+$('#variables-btn').on('click', function () {
+  $(this).toggleClass('active ');
+  $("#variables-panel").toggle();
+});
+
+$('#pseudocode-btn').on('click', function () {
+  $(this).toggleClass('active ');
+  $("#pseudocode-panel").toggle();
+});
+
+$('#chk-learn').on('click', function () {
+  $(this).toggleClass('btn-default btn-success');
+});
+
+$('.dropdown-menu').find('form').click(function (e) {
+  e.stopPropagation();
+});
+
+$(function () { 
+  $("[data-toggle='tooltip']").tooltip({container: 'body'}); 
+});
+
+$(function () { 
+  $("[data-popover='popover']").popover(); 
+});
+
+$('.popover-dismiss').popover({
+  trigger: 'manual'
+})
+
+$(document).ready(function() {
+  $('#animation-duration').slider({
+    formater: function(value) {
+      return 'Animation Speed: ' + value;
+    }
+  });
+});

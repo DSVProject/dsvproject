@@ -1,64 +1,133 @@
-// Default properties are defined at 'animation/constant.js'
+// Default properties are defined on 'animation/constant.js'
 
 /**
-  * Defines an edge graphic unit.
-  * This 'class' will hold all the properties and methods regarding this single unit. 
+  * Defines a graphic edge.
+  * The instance of this class contains all the attributes and methods regarding graphical changes to this object.
   *
-  * @param {String || Number} id : the id of this object.
-  * @param {Number} x1 : the x coordinate of the origin of this object on the screen.
-  * @param {Number} y1 : the y coordinate of the origin of this object on the screen.
-  * @param {Number} x2 : the x coordinate of the destination of this object on the screen.
-  * @param {Number} y2 : the y coordinate of the destination of this object on the screen.
+  * @constructor
+  *
+  * @param {CoreAnimObject} coreObj : instance of the CoreAnimObject class.
+  * @param {String|Number} id : the id of this object.
+  * @param {String} idObjectA : the id of the origin object.
+  * @param {String=} idObjectB : the id of the destination object.
   * @param {String} edgeClass : the CSS class of the line svg element.
-  * @param {Const} edgeType : a constant value (defined at 'animation/constant.js') indicating wether the vertex is unidirectional (from A -> B), bidirectional or has no direction.
+  * @param {Const} edgeType : a constant value (defined at 'animation/constant.js' : EDGE_TYPE) indicating wether the vertex is unidirectional (from A -> B), bidirectional or has no direction.
   */
-var EdgeObject = function(id, x1, y1, x2, y2, edgeClass, edgeType){
-  var propObj = {
-    "id": null,
+var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeType) {
+  var self = this;
+  this.coreObj = coreObj;
+  
+  /**
+    * This object map of attributes.
+    *
+    */
+  this.propObj = {
+    "id": id,
+    
+    "idObjectA": idObjectA,
+    
+    "idObjectB": idObjectB,
+    
+    "type": edgeType,
+    
+    "markerStart": defaultProperties.marker.null.start,
+    
+    "markerEnd": defaultProperties.marker.null.end,
     
     "edge": {
-      "class": null,
+      "class": edgeClass,
       "x1": null,
       "y1": null,
       "x2": null,
       "y2": null,
-      "type": null,
-      "markerStart": null,
-      "markerEnd": null,
-      "stroke": null,
-      "strokeWidth": null
+      "stroke": defaultProperties.edge.default.stroke,
+      "strokeWidth": defaultProperties.edge.default["stroke-width"]
     }
   }
-  
-  initPropObj();
 
-  function initPropObj(){
-    propObj.id = id;
-    
-    propObj.edge.class = edgeClass;
-    propObj.edge.x1 = x1;
-    propObj.edge.y1 = y1;
-    propObj.edge.x2 = x2;
-    propObj.edge.y2 = y2;
-    propObj.edge.type = edgeType;
-    propObj.edge.markerStart = defaultProperties.marker.null.start;
-    propObj.edge.markerEnd = defaultProperties.marker.null.end;
-    propObj.edge.stroke = defaultProperties.edge.default.stroke;
-    propObj.edge.strokeWidth = defaultProperties.edge.default["stroke-width"];
-  }
-  
   /**
     * @return {propObj} : the content of this object property map.
     */
-  this.getAttributes = function(){
-    return propObj;
+  this.getAttributes = function () {
+    return this.propObj;
   }
   
   /**
-    * @return {String || Number} : the id of this object.
+    * @return {String|Number} : the id of this object.
     */
-  this.getID = function(){
-    return propObj.id;
+  this.getID = function () {
+    return this.propObj.id;
+  }
+  
+  /**
+    * @return {Number} : the x1 coordinate of the line svg element.
+    */
+  this.getIdObjectA = function () {
+    return this.propObj.idObjectA;
+  }
+  
+  /**
+    * Set the id of the object that is the origin of the edge.
+    *
+    * @param {String} newID : the id of the new origin.
+    */
+  this.setIdObjectA = function (newID) {
+    this.coreObj.updateEdgeList(this.propObj.idObjectA, newID, this.propObj.id);
+    this.propObj.idObjectA = newID;
+    
+    this.calculatePath();
+  }
+  
+  /**
+    * @return {Number} : the y1 coordinate of the line svg element.
+    */
+  this.getIdObjectB = function () {
+    return this.propObj.idObjectB;
+  }
+  
+  /**
+    * Set the id of the object that is the destination of the edge.
+    *
+    * @param {String} newID : the id of the new destination.
+    */
+  this.setIdObjectB = function (newID) {
+    this.propObj.idObjectB = newID;
+    
+    this.calculatePath();
+  }
+  
+  /**
+    * @return {Const} : the type of the edge (defined at 'animation/constant.js').
+    */
+  this.getType = function () {
+    return this.propObj.type;
+  }
+  
+  /**
+    * Set the type of the edge
+    *
+    * @param {Const} newType : the new value of the type (defined at 'animation/constant.js').
+    */
+  this.setType = function (newType) {
+    this.propObj.type = newType;
+  }
+  
+  /**
+    * Set the marker of the start of the edge.
+    *
+    * @param {Const} newMarker : the new value of the marker (defined at 'animation/constant.js').
+    */
+  this.setMarkerStart = function (newMarker) {
+    this.propObj.markerStart = newMarker;
+  }
+  
+  /**
+    * Set the marker of the end of the edge.
+    *
+    * @param {Const} newMarker : the new value of the marker (defined at 'animation/constant.js').
+    */
+  this.setMarkerEnd = function (newMarker) {
+    this.propObj.markerEnd = newMarker;
   }
   
   /**
@@ -66,52 +135,36 @@ var EdgeObject = function(id, x1, y1, x2, y2, edgeClass, edgeType){
     *
     * @param {String} newClass : the new CSS class.
     */
-  this.setEdgeClass = function(newClass){
-    propObj.edge.class = newClass;
+  this.setEdgeClass = function (newClass) {
+    this.propObj.edge.class = newClass;
   }
   
   /**
     * @return {Number} : the x1 coordinate of the line svg element.
     */
   this.getCoordinateX1 = function(){
-    return propObj.edge.x1;
+    return this.propObj.edge.x1;
   }
   
   /**
     * @return {Number} : the y1 coordinate of the line svg element.
     */
   this.getCoordinateY1 = function(){
-    return propObj.edge.y1;
+    return this.propObj.edge.y1;
   }  
   
   /**
     * @return {Number} : the x2 coordinate of the line svg element.
     */
   this.getCoordinateX2 = function(){
-    return propObj.edge.x2;
+    return this.propObj.edge.x2;
   }
   
   /**
     * @return {Number} : the y2 coordinate of the line svg element.
     */
   this.getCoordinateY2 = function(){
-    return propObj.edge.y2;
-  }
-  
-  this.getType = function() {
-    return propObj.edge.type;
-  }
-  
-  this.setType = function (newType) {
-    propObj.edge.type = newType;
-  }
-  
-  this.setMarkerStart = function (newMarker) {
-    propObj.edge.markerStart = newMarker;
-  }
-  
-  this.setMarkerEnd = function (newMarker) {
-    propObj.edge.markerEnd = newMarker;
+    return this.propObj.edge.y2;
   }
 
   /**
@@ -119,8 +172,8 @@ var EdgeObject = function(id, x1, y1, x2, y2, edgeClass, edgeType){
     *
     * @param {String} newStroke : the new CSS or svg stroke color.
     */
-  this.setStroke = function(newStroke){
-    propObj.edge.stroke = newStroke;
+  this.setStroke = function (newStroke) {
+    this.propObj.edge.stroke = newStroke;
   }
   
   /**
@@ -128,48 +181,58 @@ var EdgeObject = function(id, x1, y1, x2, y2, edgeClass, edgeType){
     *
     * @param {Number} newOpacity : the new stroke width value.
     */
-  this.setStrokeWidth = function(newStrokeWidth){
+  this.setStrokeWidth = function (newStrokeWidth) {
     if(newStrokeWidth == null || isNaN(newStrokeWidth)) return;
     if(newStrokeWidth < 0) newStrokeWidth = 0;
     
-    propObj.edge.strokeWidth = newStrokeWidth;
+    this.propObj.edge.strokeWidth = newStrokeWidth;
   }
   
   /**
-    * Change the start of the edge.
+    * Update the coordinates of this path, based on the movement of the objects it is binded to.
     *
-    * @param {Number} x : the new x coordinate of the edge.
-    * @param {Number} y : the new y coordinate of the edge.
     */
-  this.moveEdgeStart = function(x, y){
-    if(x == null || isNaN(x) || y == null || isNaN(y)) return;
-    propObj.edge.x1 = x;
-    propObj.edge.y1 = y;
+  this.calculatePath = function () {
+    var point;
+    
+    try {
+      this.propObj.edge.x1 = this.coreObj.objectList[this.propObj.idObjectA].getEdgeCoordinateX(EDGE_INOUT.OUTGOING);
+      this.propObj.edge.y1 = this.coreObj.objectList[this.propObj.idObjectA].getEdgeCoordinateY(EDGE_INOUT.OUTGOING);
+
+      if (this.propObj.idObjectB != null) {
+        this.propObj.edge.x2 = this.coreObj.objectList[this.propObj.idObjectB].getEdgeCoordinateX(EDGE_INOUT.INCOMING);
+        this.propObj.edge.y2 = this.coreObj.objectList[this.propObj.idObjectB].getEdgeCoordinateY(EDGE_INOUT.INCOMING);
+      } else {
+        point = this.coreObj.objectList[this.propObj.idObjectA].getOutgoingPoint();
+
+        if (point == EDGE_POSITION.BOTTOM) {
+          this.propObj.edge.x2 = this.propObj.edge.x1;
+          this.propObj.edge.y2 = this.propObj.edge.y1 + 50;
+        } else if (point == EDGE_POSITION.RIGHT) {
+          this.propObj.edge.x2 = this.propObj.edge.x1 + 50;
+          this.propObj.edge.y2 = this.propObj.edge.y1;
+        } else if (point == EDGE_POSITION.TOP) {
+          this.propObj.edge.x2 = this.propObj.edge.x1;
+          this.propObj.edge.y2 = this.propObj.edge.y1 - 50;
+        } else if (point == EDGE_POSITION.LEFT) {
+          this.propObj.edge.x2 = this.propObj.edge.x1 - 50;
+          this.propObj.edge.y2 = this.propObj.edge.y1;
+        }
+      }
+    } catch (err) {}
   }
   
   /**
-    * Change the destination of the edge.
-    *
-    * @param {Number} x : the new x coordinate of the edge.
-    * @param {Number} y : the new y coordinate of the edge.
-    */
-  this.moveEdgeEnd = function(x, y){
-    if(x == null || isNaN(x) || y == null || isNaN(y)) return;
-    propObj.edge.x2 = x;
-    propObj.edge.y2 = y;
-  }
-  
-  /**
-    * Draw this object properties on the screen.
-    * If the object is new, it will appear; if any property has changed, it will be updated.
+    * Draw this object attributes on the screen.
+    * If the object is new, it will be generated; if any property has changed, it will be updated.
     *
     * @param {Number} dur : the duration in miliseconds of this animation.
     */
   this.draw = function (dur) {
-    if(dur == null || isNaN(dur) || dur < 0) dur = DEFAULT_ANIMATION_DURATION;
+    if (dur == null || isNaN(dur) || dur < 0) dur = DEFAULT_ANIMATION_DURATION;
     
     var json = [];
-    json.push(propObj);
+    json.push(this.propObj);
   
     var edge = d3.select("#g-edge").selectAll(SVG_LINE)
         .data(json, function (d) {return d.id;});
@@ -184,12 +247,12 @@ var EdgeObject = function(id, x1, y1, x2, y2, edgeClass, edgeType){
         .attr("x2", function (d) {return d.edge.x2;})
         .attr("y2", function (d) {return d.edge.y2;})
         .attr("marker-start", function (d) {
-          if (d.edge.type === EDGE_TYPE.BIDIRECTIONAL) return d.edge.markerStart;
+          if (d.type === EDGE_TYPE.BIDIRECTIONAL) return d.markerStart;
           return null;
         })
         .attr("marker-end", function (d) {
-          if (d.edge.type === EDGE_TYPE.UNDIRECTED) return null;
-          if (d.edge.type === EDGE_TYPE.UNIDIRECTIONAL || d.edge.type === EDGE_TYPE.BIDIRECTIONAL) return d.edge.markerEnd;
+          if (d.type === EDGE_TYPE.UNDIRECTED) return null;
+          if (d.type === EDGE_TYPE.UNIDIRECTIONAL || d.type === EDGE_TYPE.BIDIRECTIONAL) return d.markerEnd;
           return null;
         })
         .style("stroke", function (d) {return d.edge.stroke;})
@@ -202,10 +265,10 @@ var EdgeObject = function(id, x1, y1, x2, y2, edgeClass, edgeType){
     * @param {Number} dur : the duration in miliseconds of this animation.
     */
   this.remove = function (dur) {
-    if(dur == null || isNaN(dur) || dur < 0) dur = DEFAULT_ANIMATION_DURATION;
+    if (dur == null || isNaN(dur) || dur < 0) dur = DEFAULT_ANIMATION_DURATION;
     
     var json = [];
-    json.push(propObj);
+    json.push(this.propObj);
     
     var edge = d3.select("#g-edge").selectAll(SVG_LINE)
         .data(json, function (d) {return d.id;});
@@ -222,6 +285,12 @@ var EdgeObject = function(id, x1, y1, x2, y2, edgeClass, edgeType){
     * @param {propObj} prop : a propObj from the Object to be cloned.
     */
   this.cloneProperties = function (prop) {
-    propObj = clone(prop);
+    this.propObj = clone(prop);
+    this.calculatePath();
   }
+  
+  /**
+    * Calculate the path when the object is created.
+    */
+  this.calculatePath();
 }

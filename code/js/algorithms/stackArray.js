@@ -14,9 +14,9 @@ var Pointer = function () {
   * Defines a Stack object (Array implementation). Used to keep track of the object internally and to interact with the animations.
   */
 var StackArray = function(){
-  var selfie = this;
+  var self = this;
   var coreAnim = new CoreAnimObject();
-  coreAnim.init();
+  //coreAnim.init();
   
   coreAnim.newStateList();
   coreAnim.saveState();
@@ -31,14 +31,14 @@ var StackArray = function(){
         POP = 1;
   
   for (var i=0; i<16; i++){
-    mArray[i] = coreAnim.newSquareObject(i, (i+1)*50, 300, null, i, "position", null, EDGE_POSITION.TOP);    
+    mArray[i] = coreAnim.newSquareObject(i, (i+1)*50, 300, null, i, null, null, null, null, EDGE_POSITION.TOP);  
   }
   
   top.value = 0;
-  top.drawing = coreAnim.newSquareObject("top", 50, 50, 0, "top", null, EDGE_POSITION.BOTTOM, null);
+  top.drawing = coreAnim.newSquareObject("top", 50, 50, 0, "top", null, null, null, EDGE_POSITION.BOTTOM, null);
   //top.edge = coreAnim.newEdgeObject("top", top.drawing.getID(), top.drawing.getCoordinateX() + 25, top.drawing.getCoordinateY() + 100, mArray[0].getCoordinateX() + 25, mArray[0].getCoordinateY(), EDGE_TYPE.UNIDIRECTIONAL);
   
-  top.edge = coreAnim.newEdgeObject2("top", top.drawing.getID(), mArray[top.value].getID(), EDGE_TYPE.UNIDIRECTIONAL);
+  top.edge = coreAnim.newEdgeObject("top", top.drawing.getID(), mArray[top.value].getID(), null, EDGE_TYPE.UNIDIRECTIONAL);
   top.edge.setMarkerEnd(defaultProperties.marker.default.end);
   
   coreAnim.saveState();
@@ -93,8 +93,8 @@ var StackArray = function(){
     //coreAnim.saveState();
     
     if (coreAnim.isLearningMode()){
-      learnObj["newValue"] = coreAnim.newUserObject("newValue", 500, 75, 25, item, "learning", USER_OBJ_TYPE.VALUE, false);
-      learnObj["newTopPointer"] = coreAnim.newUserObject("newTopPointer", top.edge.getCoordinateX2(), top.edge.getCoordinateY2(), 10, null, "learning", USER_OBJ_TYPE.MOVEMENT, null, top.edge.getID());
+      learnObj["newValue"] = coreAnim.newUserObject("newValue", 500, 75, 25, item, "learning", null, USER_OBJ_TYPE.VALUE, true, null);
+      learnObj["newTopPointer"] = coreAnim.newUserObject("newTopPointer", top.edge.getCoordinateX2(), top.edge.getCoordinateY2(), 10, null, "learning", null, USER_OBJ_TYPE.MOVEMENT, null, top.edge.getID());
       
       for (var key in mArray) {
         mArray[key].setIsValidTarget(true);
@@ -126,6 +126,9 @@ var StackArray = function(){
       
       coreAnim.play(coreAnim.getAnimationDuration());
     }
+    
+    coreAnim.printVariableWatch("top", top.value);
+    coreAnim.printVariableWatch("isEmpty", self.isEmpty());
     
     return true;
   }

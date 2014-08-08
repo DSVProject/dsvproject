@@ -1,5 +1,5 @@
 /**
-  * Defines the unit the will control the animation main actions.
+  * Defines the class the will control the animation main actions.
   *
   * When initiated it will create the svg groups that will hold the graphic elements:
   *   #g-marker: holds all the svg markers (arrow heads for the edges)
@@ -8,6 +8,7 @@
   *   #g-label: holds all the svg texts that are acting like labels, appearing beneath the shapes
   *   #g-edge: holds all the svg lines and paths, used to conect the elements
   *
+  * @constructor
   */
 var CoreAnimObject = function () {
   var self = this;
@@ -27,64 +28,10 @@ var CoreAnimObject = function () {
   
   this.animationStatus = ANIMATION_STATUS.STOP;
   
-  this.getIterationCount = function () {
-    return iterationCount;
-  }
-  
-  this.incrementIterationCount = function () {
-    iterationCount++;
-  }
-  
-  this.decrementIterationCount = function () {
-    iterationCount--;
-  }
-  
-  this.getIterationAnimation= function () {
-    return iterationAnimation;
-  }
-  
-  this.incrementIterationAnimation = function () {
-    iterationAnimation++;
-  }
-  
-  this.decrementIterationAnimation = function () {
-    iterationAnimation--;
-  }
-  
-  this.getIterationActions = function (pos) {
-    return iterationActions[pos];
-  }
-  
-  this.setIterationActions = function (pos, newValue) {
-    iterationActions[pos] = newValue;
-  }
-  
-  this.getIterationActCount = function () {
-    return iterationActCount;
-  }
-  
-  this.incrementIterationActCount = function () {
-    iterationActCount++;
-  }
-  
-  this.decrementIterationActCount = function () {
-    iterationActCounter--;
-  }
-  
-  this.getAnimationStatus = function () {
-    return animationStatus;
-  }
-  
-  this.setAnimationStatus = function (newValue) {
-    animationStatus = newValue;
-  }
-  
-  this.init = function () {
-    createGroups();
-    createMarkers();
-  }
-  
-  function createGroups() {
+  /**
+    * Creates the groups that will contain all the graphic elements.
+    */
+  this.createGroups = function () {
     var markerGroup = d3.select("#g-main")
         .append("g")
         .attr("id", "g-marker")
@@ -111,7 +58,10 @@ var CoreAnimObject = function () {
         .attr("class", "innerText");
   }
   
-  function createMarkers() {
+  /**
+    * Creates the marker object references, to be used by the edges.
+    */
+  this.createMarkers = function () {
     var markerGroup = d3.select("#g-marker");
     
     markerGroup.append("marker")
@@ -161,9 +111,9 @@ var CoreAnimObject = function () {
   
   /**
     * Creates a snapshot of the current state of all the objects on the screen.
-    * All other functions that change any property of a graphic element should call this function as a last instruction. 
     *
-    * @param {String} status : an optional message about the changes, that will appear on the screen log.
+    * @param {String=} status : an optional message about the changes, that will appear on the screen log.
+    * @param {Number=} pseudocodeLine : the pseudocode line to be highlighted during the exuction of this iteration.
     */
   this.saveState = function (status, pseudocodeLine) {
     var state = {}; // The current state being created
@@ -188,7 +138,7 @@ var CoreAnimObject = function () {
   }
   
   /**
-    * Reset the state list, used when reseting all actions..
+    * Reset the state list, used when reseting all actions.
     */
   this.newStateList = function () {
     this.stateList = [];
@@ -197,7 +147,7 @@ var CoreAnimObject = function () {
   }
   
   /**
-    * Create a checkpoint of each user action, used for the undo and redo process.
+    * Create a checkpoint of each user action, used for the undo and redo.
     */
   this.newAction = function () {
     this.iterationActions[this.iterationActCount] = this.iterationCount;
@@ -214,6 +164,8 @@ var CoreAnimObject = function () {
   this.draw = function (currentState, dur) {
     var currentObjectList = currentState.data;
     var allObjectsJson = [];
+    
+    if(dur == null || isNaN(dur) || dur < 0) dur = this.getAnimationDuration();
     
     if (typeof currentState.status != 'undefined') {
       self.printLog(currentState.status);
@@ -314,7 +266,6 @@ var CoreAnimObject = function () {
   }
   
   /**
-    *
     * @return {Number} : the duration in miliseconds of each animation, based on user's choice.
     */
   this.getAnimationDuration = function () {
@@ -323,6 +274,9 @@ var CoreAnimObject = function () {
     return 1100 - dur;
   }
   
+  /**
+    * Undo the last action.
+    */
   this.undo = function () {
     this.iterationActCount--;
     
@@ -333,6 +287,9 @@ var CoreAnimObject = function () {
     this.draw(this.stateList[parseInt(this.iterationCount)], 0);  
   }
   
+  /**
+    * Undo the previous action.
+    */
   this.redo = function (duration) {
     if (iterationCurrent < 0) iterationCurrent = 0;
     
@@ -345,158 +302,7 @@ var CoreAnimObject = function () {
   }
   
   /**
-    * Create a square graphic element.
-    *
-    * @param {coreAnimObject} coreObj : instance of the class coreAnimObject.
-    * @param {String|Number} id : the id of the item.
-    * @param {Number} x : the x coordinate of the item.
-    * @param {Number} y : the y coordinate of the item.
-    * @param {String} value : the value to be displayed inside the item.
-    * @param {String} label : the label which will appear beneath the item.
-    * @param {String} shapeClass : the class of the svg rect element, used for styling and functionality.
-    * @param {Const=} outgoingPoint : a constant value (defined at 'animation/constant.js') indicating from which point of the shape the edge will originate.
-    * @param {Const=} incomingPoint : a constant value (defined at 'animation/constant.js') indicating at which point of the shape the edge will arrive.
-    *
-    * @return {SquareObject} : the new object.
-    */
-  this.newSquareObject = function (id, x, y, value, label, shapeClass, outgoingPoint, incomingPoint) {
-    this.objectList[id] = new SquareObject(this, id, x, y, value, label, shapeClass, "innerText", "labelText", outgoingPoint, incomingPoint);
-    
-    return this.objectList[id];
-  }
-  
-  /**
-    * Create a circle graphic element.
-    *
-    * @param {coreAnimObject} coreObj : instance of the class coreAnimObject.
-    * @param {String|Number} id : the id of this object.
-    * @param {Number} cx : the cx coordinate of this object on the screen.
-    * @param {Number} cy : the cy coordinate of this object on the screen.
-    * @param {String} text : the inner text of this object, that will be displayed on the screen.
-    * @param {String} label : the underneath text of this object, that will be displayed on the screen.
-    * @param {String} shapeClass : the CSS class of the circle svg element.
-    * @param {Const=} outgoingPoint : a constant value (defined at 'animation/constant.js') indicating from which point of the shape the edge will originate.
-    * @param {Const=} incomingPoint : a constant value (defined at 'animation/constant.js') indicating at which point of the shape the edge will arrive.
-    *
-    * @return {CircleObject} : the new object.
-    */
-  this.newCircleObject = function (id, cx, cy, radius, text, label, shapeClass, outgoingPoint, incomingPoint) {
-    this.objectList[id] = new CircleObject(this, id, cx, cy, radius, text, label, shapeClass, "innerText", "labelText", outgoingPoint, incomingPoint);
-    
-    return this.objectList[id];
-  }
-  
-  /**
-    * Create a double square graphic element.
-    *
-    * @param {String|Number} id : the id of the item.
-    * @param {Number} x : the x coordinate of the item.
-    * @param {Number} y : the y coordinate of the item.
-    * @param {String} value1 : the value to be displayed inside the first square.
-    * @param {String} value1 : the value to be displayed inside the second square.
-    * @param {String} label : the label which will appear beneath the item.
-    * @param {String} shapeClass : the class of the svg element, used for styling and functionality.
-    *
-    * @return {SquareObject} : the new object.
-    */
-  this.newDoubleSquareObject = function (id, x, y, value1, value2, label, shapeClass) {
-    this.objectList[id] = new DoubleSquareObject(id, x, y, value1, value2, label, shapeClass, "innerText", "labelText");
-    
-    return this.objectList[id];
-  }
-  
-  /**
-    * Create a user graphic element (used for the learning mode).
-    *
-    * @param {CoreAnimObject} coreObj : instance of the CoreAnimObject class.
-    * @param {String|Number} id : the id of this object.
-    * @param {Number} cx : the cx coordinate of this object inside the svg element.
-    * @param {Number} cy : the cy coordinate of this object inside the svg element.
-    * @param {String} text : the inner text of this object, that will be displayed on the screen.
-    * @param {String} shapeClass : the CSS class of the rect svg element.
-    * @param {String} textClass : the CSS class of the text svg element (inside the shape).
-    * @param {Const} type : the type of this userObject (defined at 'animation/constant.js' : USER_OBJ_TYPE).
-    * @param {Bool=} allowSwap: if this instance is a VALUE type object, this parameter should be passed. If true, this object's text will be swapped during  
-    *                           the interactions.
-    * @param {String|Number=} bindedObjID : if this instance is a MOVEMENT type object, it should be binded to another object.
-    *
-    * @return {userObject} : the new object.
-    */
-  this.newUserObject = function (id, cx, cy, radius, text, circleClass, type, allowSwap, bindedObjID) {
-    this.objectList[id] = new UserObject(this, id, cx, cy, radius, text, circleClass, "innerText", type, allowSwap, bindedObjID);
-    
-    return this.objectList[id];
-  }
-  
-  /**
-    * Create an edge graphic element, that will be owned by the origin object.
-    *
-    * @param {String|Number} id : the id of the item.
-    * @param {String|Number} idObjectA : the id of the origin object of the edge.
-    * @param {Number} ax : the x coordinate of the start of the edge, with necessary adjustments.
-    * @param {Number} ay : the y coordinate of the start of the edge, with necessary adjustments.
-    * @param {Number} bx : the x coordinate of the end of the edge, with necessary adjustments.
-    * @param {Number} by : the y coordinate of the end of the edge, with necessary adjustments.
-    * @param {Const} edgeType : a constant value (defined at 'animation/constant.js') indicating wether the vertex
-    *                           is unidirectional (from A -> B), bidirectional or has no direction.
-    * @param {String} orientation : if there's yet no current target for edge (with bx and by equal to null),
-    *                             an edge will be created in this direction, using ax and ay as base.
-    *
-    * @return {EdgeObject} : the new object.
-    */
-  this.newEdgeObject = function (id, idObjectA, ax, ay, bx, by, edgeType, orientation) {
-    if (bx == null || by == null) {
-      if (orientation === "right") {
-          bx = ax + 50;
-          by = ay;
-      } else if (orientation === "down") {
-        bx = ax;
-        by = ay + 50;
-      }
-    }
-    
-    var newEdge = new EdgeObject(id, ax, ay, bx, by, "edge", edgeType);
-
-    this.objectList[idObjectA].addEdge(newEdge);
-    
-    return newEdge;
-  }
-  
-  this.newEdgeObject2 = function (id, idObjectA, idObjectB, edgeType) {
-    var newEdge = new EdgeObject2(this, id, idObjectA, idObjectB, "edge", edgeType);
-    //newEdge.calculatePath();
-
-    this.objectList[idObjectA].addEdge(newEdge);
-    
-    return newEdge;
-  }
-  
-  /**
-    * Set a flag for the object to be removed on the next draw action.
-    *
-    * @param {String|Number} id : the id of the item to be removed.
-    */
-  this.removeShape = function (id) {
-    this.objectList[id].setToRemove(true);
-  }
-  
-  /**
-    * Set a flag for all objects of the selected class to be removed on the next draw action.
-    *
-    * @param {String} selectedClass : the class of the items to be removed.
-    * @param {Number} duration : the duration of the animation.
-    */
-  this.removeAll = function (selectedClass, duration) {
-    for (var key in this.objectList) { 
-      if (this.objectList[key].getRectClass() == selectedClass) {
-        
-        this.objectList[key].setToRemove(true);
-      }
-    }
-  }
-  
-  /**
-    * Clear the message log.
+    * Clear the message log panel.
     */
   this.clearLog = function(){
     d3.select("#log").selectAll("tr")
@@ -518,6 +324,14 @@ var CoreAnimObject = function () {
   }
   
   /**
+    * Clear the variable watch panel.
+    */
+  this.clearVariableWatch = function(){
+    d3.select("#variables").selectAll("tr")
+        .remove();
+  }
+  
+  /**
     * Print a variable value to the Variable Watch pannel.
     *
     * @param {String} variableName : the name of the variable to be printed.
@@ -525,12 +339,21 @@ var CoreAnimObject = function () {
     */
   this.printVariableWatch = function (variableName, variableValue) {
     if (variableName == "" || variableName == null) return;
+    
+    var variable = [{
+      name: variableName,
+      value: variableValue
+    }];
       
-    d3.select("#variableWatch")
+    var varLines = d3.select("#variables").selectAll("tr")
+        .data(variable, function (d) {return d.name;});
+    
+    var varItems = varLines.enter()
         .append("tr")
-        .attr("id", variableName)
-        .append("td")
-        .text(variableName + ": " + variableValue);
+        .append("td");
+    
+    varItems.transition()
+        .text(function (d) {return d.name + " : " + d.value;});
   }
   
   /**
@@ -569,7 +392,22 @@ var CoreAnimObject = function () {
     d3.select("#line" + lineNumber)
         .classed("codeHighlight", "true");
   }
+  
   /**
+    * Verify if the Learning Mode is active.
+    *
+    * @return {Boolean} : true if "#chk-learn" has class "active", false other wise.
+    */
+  this.isLearningMode = function () {
+    return $("#chk-learn").hasClass("active");
+  }
+  
+  // FUNCTIONS CALLED FROM INSIDE SHAPE INSTANCES
+  
+  /**
+    * Iterate through the objects classified as valid targets creating a place holder on them.
+    * This function should only be called from inside an UserObject instance.
+    *
     * @param {Bool} allowSwap: if true this object's text will be swapped with the active UserObject's text (only for VALUE UserObject).
     */
   this.createPlaceHolders = function (allowSwap) {
@@ -582,17 +420,18 @@ var CoreAnimObject = function () {
     }
   }
   
+  /**
+    * Remove all the place holders.
+    * This function is only called from other object instances.
+    */
   this.removePlaceHolders = function () {
     d3.selectAll(".placeHolder")
         .remove();
   }
   
-  this.isLearningMode = function () {
-    return $("#chk-learn").hasClass("active");
-  }
-  
   /**
     * Change the userObject which is currently active.
+    * This function should only be called from inside an UserObject instance.
     *
     * @param {String=} id : the id of the object. If null all the objects will be set as inactive.
     */
@@ -607,8 +446,9 @@ var CoreAnimObject = function () {
   }
   
   /**
-    * @return {userObject} : the userObject which active. Null if there's any.
+    * This function should only be called from inside object instances.
     *
+    * @return {userObject} : the userObject which active. Null if there's any.
     */
   this.getActiveUserObject = function () {
     for (var key in this.objectList) {
@@ -622,10 +462,9 @@ var CoreAnimObject = function () {
   }
   
   /**
-    * @param {String|Number} id : the id of the binded object.
+    * @param {(String|Number)} id : the id of the binded object.
     *
     * @return {EdgeObject} : the edgeObject that is binded to the userObject.
-    *
     */
   this.getUserObjectBindedItem = function (id) {
     for (var key in this.objectList) {
@@ -638,10 +477,135 @@ var CoreAnimObject = function () {
     return null;
   }
   
+  /**
+    * Move an edge object from one shape object to another. This function is only called from inside an edgeObject instance.
+    *
+    * @param {(String|Number)} oldObjID : the id of the object to have the edge removed.
+    * @param {(String|Number)} newObjID : the id of the object to have the edge added.
+    * @param {(String|Number)} edgeID : the id of the edge object.
+    */
   this.updateEdgeList = function (oldObjID, newObjID, edgeID) {
     var edge = this.objectList[oldObjID].edgeList[edgeID];
     
     this.objectList[oldObjID].edgeList[edgeID].remove();
     this.objectList[newObjID].addEdge(edge); 
   }
+  
+  // OBJECT CONSTRUCTORS
+  
+  /**
+    * Create a square graphic element.
+    *
+    * @param {(String|Number)} id : the id of this object.
+    * @param {Number} x : the x coordinate of this object inside the svg element.
+    * @param {Number} y : the y coordinate of this object inside the svg element.
+    * @param {String} text : the inner text of this object, that will be displayed on the screen.
+    * @param {String=} label : the beneath text of this object, that will be displayed on the screen.
+    * @param {String=} shapeClass : the CSS class of the rect svg element.
+    * @param {String=} textClass : the CSS class of the text svg element (inside the shape).
+    * @param {String=} labelClass : the CSS class of the text svg element (underneath the shape).
+    * @param {Const=} outgoingPoint : a constant value (defined at 'animation/constant.js' : EDGE_POSITION) indicating from which point of the shape the edge will originate.
+    * @param {Const=} incomingPoint : a constant value (defined at 'animation/constant.js' : EDGE_POSITION) indicating at which point of the shape the edge will arrive.
+    *
+    * @return {SquareObject} : the new object.
+    */
+  this.newSquareObject = function (id, x, y, text, label, shapeClass, textClass, labelClass, outgoingPoint, incomingPoint) {
+    this.objectList[id] = new SquareObject(this, id, x, y, text, label, shapeClass, textClass, labelClass, outgoingPoint, incomingPoint);
+    
+    return this.objectList[id];
+  }
+  
+  /**
+    * Create a circle graphic element.
+    *
+    * @param {String|Number} id : the id of this object.
+    * @param {Number} cx : the cx coordinate of this object inside the svg element.
+    * @param {Number} cy : the cy coordinate of this object inside the svg element.
+    * @param {String} text : the inner text of this object, that will be displayed on the screen.
+    * @param {String=} label : the beneath text of this object, that will be displayed on the screen.
+    * @param {String=} shapeClass : the CSS class of the rect svg element.
+    * @param {String=} textClass : the CSS class of the text svg element (inside the shape).
+    * @param {String=} labelClass : the CSS class of the text svg element (underneath the shape).
+    * @param {Const=} outgoingPoint : a constant value (defined at 'animation/constant.js') indicating from which point of the shape the edge will originate.
+    * @param {Const=} incomingPoint : a constant value (defined at 'animation/constant.js') indicating at which point of the shape the edge will arrive.
+    *
+    * @return {CircleObject} : the new object.
+    */
+  this.newCircleObject = function (id, cx, cy, radius, text, label, shapeClass, textClass, labelClass, outgoingPoint, incomingPoint) {
+    this.objectList[id] = new CircleObject(this, id, cx, cy, radius, text, label, shapeClass, textClass, labelClass, outgoingPoint, incomingPoint);
+    
+    return this.objectList[id];
+  }
+  
+  /**
+    * Create a user graphic element (used for the learning mode).
+    *
+    * @param {(String|Number)} id : the id of this object.
+    * @param {Number} cx : the cx coordinate of this object inside the svg element.
+    * @param {Number} cy : the cy coordinate of this object inside the svg element.
+    * @param {Number} radius : the radius of this object.
+    * @param {String=} text : the inner text of this object, that will be displayed on the screen.
+    * @param {?String} shapeClass : the CSS class of the rect svg element.
+    * @param {?String} textClass : the CSS class of the text svg element (inside the shape).
+    * @param {!Const} type : the type of this userObject (defined at 'animation/constant.js' : USER_OBJ_TYPE).
+    * @param {!Bool=} allowSwap: if this instance is a VALUE type object, this parameter should be passed. If true, this object's text will be swapped during the interactions.
+    * @param {!(String|Number)=} bindedObjID : if this instance is a MOVEMENT type object, it should be binded to another object.
+    *
+    * @return {userObject} : the new object.
+    */
+  this.newUserObject = function (id, cx, cy, radius, text, shapeClass, textClass, type, allowSwap, bindedObjID) {
+    this.objectList[id] = new UserObject(this, id, cx, cy, radius, text, shapeClass, textClass, type, allowSwap, bindedObjID);
+    
+    return this.objectList[id];
+  }
+  
+  /**
+    * Create an edge graphic element, that will be stored in the origin object edgelist[].
+    *
+    * @param {CoreAnimObject} coreObj : instance of the CoreAnimObject class.
+    * @param {String|Number} id : the id of this object.
+    * @param {String} idObjectA : the id of the origin object.
+    * @param {String=} idObjectB : the id of the destination object.
+    * @param {String} edgeClass : the CSS class of the line svg element.
+    * @param {Const} edgeType : a constant value (defined at 'animation/constant.js' : EDGE_TYPE) indicating wether the vertex is unidirectional (from A -> B), bidirectional or has no direction.
+    *
+    * @return {EdgeObject} : the new object.
+    */
+  this.newEdgeObject = function (id, idObjectA, idObjectB, edgeClass, edgeType) {
+    var newEdge = new EdgeObject(this, id, idObjectA, idObjectB, edgeClass, edgeType);
+
+    this.objectList[idObjectA].addEdge(newEdge);
+    
+    return newEdge;
+  }
+  
+  /**
+    * Set a flag for the object to be removed on the next draw action.
+    *
+    * @param {String|Number} id : the id of the item to be removed.
+    */
+  this.removeShape = function (id) {
+    this.objectList[id].setToRemove(true);
+  }
+  
+  /**
+    * Set a flag for all objects of the selected class to be removed on the next draw action.
+    *
+    * @param {String} selectedClass : the class of the items to be removed.
+    * @param {Number} duration : the duration of the animation.
+    */
+  this.removeAll = function (selectedClass, duration) {
+    for (var key in this.objectList) { 
+      if (this.objectList[key].getRectClass() == selectedClass) {
+        
+        this.objectList[key].setToRemove(true);
+      }
+    }
+  }
+  
+  /**
+    * Code to be executed by constructor
+    */
+  this.createGroups();
+  this.createMarkers();
 }
