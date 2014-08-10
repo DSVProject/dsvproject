@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Template: Page Title -->
     <title>Stack - Array Implementation</title>
 
     <!-- Bootstrap -->
@@ -41,14 +42,17 @@
             <!-- Template: Method's buttons -->
             <div id="div-control-buttons" class="btn-group popover-dismiss" data-popover="popover" data-html="true" data-placement="bottom" title="Methods" data-content="Here you will find the controls to run the <b>methods</b> of the current data structure visualisation.">
               <div class="btn-group">
+                <!-- Template: Text input button (methods that require an input value) -->
                 <button type="button" class="btn btn-default navbar-btn dropdown-toggle" data-toggle="dropdown">
                   Push <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" role="menu">
                   <form class="navbar-form">
                     <div class="input-group">
+                      <!-- Template: Textbox id, for future reference -->
                       <input id="txt-input" type="text" class="form-control">
                       <span class="input-group-btn">
+                        <!-- Template: onclick function -->
                         <button class="btn btn-default" type="button" onclick="push()">
                           <span class="glyphicon glyphicon-plus"></span>
                         </button>
@@ -57,6 +61,7 @@
                   </form>
                 </ul>
               </div>
+              <!-- Template: Normal button (methods that don't require an input value) -->
               <button type="button" class="btn btn-default navbar-btn" onclick="pop()">Pop</button>
               <button type="button" class="btn btn-default navbar-btn" onclick="empty()">Clear</button>
             </div>
@@ -199,7 +204,7 @@
     <script src="js/animation/circleObject.js"></script>
     <script src="js/animation/edgeObject.js"></script>
     
-    <!-- Template: Queue Linked List Scripts -->
+    <!-- Template: Your Visualisation Scripts -->
     <script src="js/algorithms/stackArray.js"></script>
     
     <script type="text/javascript">

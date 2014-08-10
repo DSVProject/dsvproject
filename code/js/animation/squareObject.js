@@ -1,8 +1,16 @@
+/**
+  * Copyright 2014 Filipe Belatti and Laércio Guimarães, Trinity College Dublin. All rights reserved.
+  *
+  * The views and conclusions contained in the software and documentation are those of the
+  * authors and should not be interpreted as representing official policies, either expressed
+  * or implied, of Trinity College Dublin.
+  */
+
 // Default properties are defined on 'animation/constant.js'
 
 /**
   * Defines a square graphic unit.
-  * The instance of this class contains all the attributes and methods regarding graphical changes to this object.
+  * The instance of this class contains all the attributes and methods regarding graphic changes to this object.
   *
   * @constructor
   *
@@ -10,14 +18,13 @@
   * @param {!(String|Number)} id : the id of this object.
   * @param {!Number} x : the x coordinate of this object inside the svg element.
   * @param {!Number} y : the y coordinate of this object inside the svg element.
-  * @param {String} text : the inner text of this object, that will be displayed on the screen.
-  * @param {?String} label : the beneath text of this object, that will be displayed on the screen.
-  * @param {?String} shapeClass : the CSS class of the rect svg element.
-  * @param {?String} textClass : the CSS class of the text svg element (inside the shape).
-  * @param {?String} labelClass : the CSS class of the text svg element (underneath the shape).
-  * @param {?Const=} outgoingPoint : a constant value (defined at 'animation/constant.js' : EDGE_POSITION) indicating from which point of the shape the edge will originate.
-  * @param {?Const=} incomingPoint : a constant value (defined at 'animation/constant.js' : EDGE_POSITION) indicating at which point of the shape the edge will arrive.
-  *
+  * @param {?String=} text : the inner text of this object, that will be displayed on the screen.
+  * @param {?String=} label : the text underneath this object, that will be displayed on the screen.
+  * @param {?String=} shapeClass : the CSS class of the shape svg element.
+  * @param {?String=} textClass : the CSS class of the text svg element (inside the shape).
+  * @param {?String=} labelClass : the CSS class of the text svg element (underneath the shape).
+  * @param {?Const=} outgoingPoint : a constant value (defined at 'animation/constant.js' : EDGE_POSITION) indicating from which point of the shape the edge will originate. If null the CENTER position will be used.
+  * @param {?Const=} incomingPoint : a constant value (defined at 'animation/constant.js' : EDGE_POSITION) indicating at which point of the shape the edge will arrive. If null the CENTER position will be used.
   */
 var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textClass, labelClass, outgoingPoint, incomingPoint) {
   var self = this;
@@ -29,13 +36,15 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
   
   this.coreObj = coreObj;
   
+  /**
+    * Offset values for the text elements.
+    */
   this.textAdjustX = defaultProperties.width / 2;
   this.textAdjustY = defaultProperties.height / 1.75;
   this.labelAdjustY = defaultProperties.height + 30;
   
   /**
     * This object map of attributes.
-    *
     */
   this.propObj = {
     "id": id,
@@ -80,6 +89,9 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
     "incomingPoint": incomingPoint != null ? incomingPoint : EDGE_POSITION.CENTER
   }
   
+  /**
+    * This object edge list.
+    */
   this.edgeList = [];
   
   /**
@@ -90,7 +102,7 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
   }
   
   /**
-    * @return {Array} : the edges of this object.
+    * @return {Array} : the edgeList[] of this object.
     */
   this.getEdges = function () {
     return this.edgeList;
@@ -104,7 +116,7 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
   }
   
   /**
-    * Set the CSS class of the rect svg element.
+    * Set the CSS class of the shape svg element.
     *
     * @param {?String} newClass : the new CSS class.
     */
@@ -113,7 +125,7 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
   }
   
   /**
-    * @return {String} : the CSS class of the rect svg element.
+    * @return {String} : the CSS class of the shape svg element.
     */
   this.getShapeClass = function () {
     return this.propObj.shape.class;
@@ -139,14 +151,16 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
   }
   
   /**
-    * @return {Number} : the x coordinate of the rect svg element.
+    * @return {Number} : the x coordinate of the shape svg element.
     */
   this.getCoordinateX = function () {
     return this.propObj.shape.x;
   }
   
   /**
-    * @return {Number} : the x coordinate of the svg element, with offset adjust (for edge use).
+    * @param {!Const} inout : if who is calling this function is either origin or destination (const defined at 'animation/constant.js' : EDGE_INOUT).
+    *
+    * @return {Number} : the x coordinate of the shape svg element, with offset adjust (for edge use).
     */
   this.getEdgeCoordinateX = function (inout) {
     var coord = this.propObj.shape.x;
@@ -162,14 +176,16 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
   }
   
   /**
-    * @return {Number} : the y coordinate of the rect svg element.
+    * @return {Number} : the y coordinate of the shape svg element.
     */
   this.getCoordinateY = function () {
     return this.propObj.shape.y;
   }
   
   /**
-    * @return {Number} : the y coordinate of the svg element, with offset adjust (for edge use).
+    * @param {!Const} inout : if who is calling this function is either origin or destination (const defined at 'animation/constant.js' : EDGE_INOUT).
+    *
+    * @return {Number} : the y coordinate of the shape svg element, with offset adjust (for edge use).
     */
   this.getEdgeCoordinateY = function (inout) {
     var coord = this.propObj.shape.y;
@@ -189,7 +205,7 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
   }
   
   /**
-    * Set the width of the rect svg element.
+    * Set the width of the shape svg element.
     *
     * @param {!Number} newWidth : the new width.
     */
@@ -199,14 +215,14 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
   }
   
   /**
-    * @return {Number} : the width of the rect svg element.
+    * @return {Number} : the width of the shape svg element.
     */
   this.getWidth = function () {
     return this.propObj.shape.width;
   }
   
   /**
-    * Set the height of the rect svg element.
+    * Set the height of the shape svg element.
     *
     * @param {!Number} newHeight : the new height.
     */
@@ -216,14 +232,14 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
   }
   
   /**
-    * @return {Number} : the height of the rect svg element.
+    * @return {Number} : the height of the shape svg element.
     */
   this.getHeight = function () {
     return this.propObj.shape.height;
   }
   
   /**
-    * Set the fill color of the rect svg element.
+    * Set the fill color of the shape svg element.
     *
     * @param {!String} newFill : the new CSS or svg color.
     */
@@ -233,7 +249,7 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
   }
   
   /**
-    * Set the fill opacity of the rect svg element.
+    * Set the fill opacity of the shape svg element.
     *
     * @param {!Number} newOpacity : the new opacity value.
     */
@@ -245,7 +261,7 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
   }
   
   /**
-    * Set the stroke color of the rect svg element.
+    * Set the stroke color of the shape svg element.
     *
     * @param {!String} newStroke : the new CSS or svg stroke color.
     */
@@ -255,9 +271,9 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
   }
   
   /**
-    * Set the stroke width of the rect svg element.
+    * Set the stroke width of the shape svg element.
     *
-    * @param {!Number} newOpacity : the new stroke width value.
+    * @param {!Number} newStrokeWidth : the new stroke width value.
     */
   this.setStrokeWidth = function (newStrokeWidth) {
     if(newStrokeWidth == null || isNaN(newStrokeWidth)) return;
@@ -283,6 +299,22 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
   }
   
   /**
+    * Set the CSS class of the text svg element.
+    *
+    * @param {?String} newClass : the new CSS class.
+    */
+  this.setTextClass = function (newClass) {
+    this.propObj.text.class = newClass;
+  }
+  
+  /**
+    * @return {String} : the CSS class of the text svg element.
+    */
+  this.getTextClass = function () {
+    return this.propObj.text.class;
+  }
+  
+  /**
     * Set the text color of the text svg element.
     *
     * @param {!String} newColor : the new CSS or svg color.
@@ -299,6 +331,22 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
     */
   this.setLabel = function (newLabel) {
     this.propObj.label.text = newLabel;
+  }
+  
+  /**
+    * Set the CSS class of the text svg element (used as label).
+    *
+    * @param {?String} newClass : the new CSS class.
+    */
+  this.setLabelClass = function (newClass) {
+    this.propObj.label.class = newClass;
+  }
+  
+  /**
+    * @return {String} : the CSS class of the text svg element (used as label).
+    */
+  this.getLabelClass = function () {
+    return this.propObj.label.class;
   }
   
   /**
@@ -363,7 +411,7 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
   }
   
   /**
-    * Add an EdgeObject to this object edgeList.
+    * Add an EdgeObject to this object edgeList[].
     *
     * @param {!EdgeObject} edgeObj : the instance of the EdgeObject.
     */
@@ -384,11 +432,11 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
     var json = [];
     json.push(this.propObj);
   
-    var shape = d3.select("#g-shape").selectAll(SVG_RECT)
+    var shape = d3.select("#" + DEFAULT_IDS.SVG_GROUP.SHAPE).selectAll(SVG_RECT)
         .data(json, function (d) {return d.id;});
       
     shape.enter().append(SVG_RECT)        
-        .attr("id", function (d) {return "shape-" + d.id;});
+        .attr("id", function (d) {return DEFAULT_IDS.SVG_ELEMENT.SHAPE + d.id;});
     shape.transition()
         .duration(dur)
         .attr("class", function (d) {return d.shape.class})
@@ -401,11 +449,11 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
         .attr("stroke", function (d) {return d.shape.stroke;})
         .attr("stroke-width", function (d) {return d.shape.strokeWidth;});
       
-    var text = d3.select("#g-text").selectAll("text")
+    var text = d3.select("#" + DEFAULT_IDS.SVG_GROUP.TEXT).selectAll(SVG_TEXT)
         .data(json, function (d) {return d.id;});
         
-    text.enter().append("text")
-        .attr("id", function (d) {return "text-" + d.id; });
+    text.enter().append(SVG_TEXT)
+        .attr("id", function (d) {return DEFAULT_IDS.SVG_ELEMENT.TEXT + d.id; });
     text.transition()
         .duration(dur)
         .attr("class", function (d) {return d.text.class})
@@ -418,11 +466,11 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
         .attr("text-anchor", function (d) {return d.text.textAnchor;})   
         .text(function (d) {return d.text.text;});
     
-    var label = d3.select("#g-label").selectAll("text")
+    var label = d3.select("#" + DEFAULT_IDS.SVG_GROUP.LABEL).selectAll(SVG_TEXT)
         .data(json, function (d) {return d.id;});
         
-    label.enter().append("text")
-        .attr("id", function (d) {return "label-" + d.id;})
+    label.enter().append(SVG_TEXT)
+        .attr("id", function (d) {return DEFAULT_IDS.SVG_ELEMENT.LABEL + d.id;})
     label.transition()
         .duration(dur)
         .attr("class", function (d) {return d.label.class;})
@@ -446,21 +494,21 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
     var json = [];
     json.push(this.propObj);
     
-    var shape = d3.select("#g-shape").selectAll(SVG_RECT)
+    var shape = d3.select("#" + DEFAULT_IDS.SVG_GROUP.SHAPE).selectAll(SVG_RECT)
         .data(json, function (d) {return d.id;});
     
     shape.transition()
         .duration(dur)
         .remove();
     
-    var label = d3.select("#g-label").selectAll(SVG_TEXT)
+    var label = d3.select("#" + DEFAULT_IDS.SVG_GROUP.LABEL).selectAll(SVG_TEXT)
         .data(json, function (d) {return d.id;});
         
     label.transition()
         .duration(dur)
         .remove();
     
-    var text = d3.select("#g-text").selectAll(SVG_TEXT)
+    var text = d3.select("#" + DEFAULT_IDS.SVG_GROUP.TEXT).selectAll(SVG_TEXT)
         .data(json, function (d) {return d.id;});
         
     text.transition()
@@ -488,7 +536,7 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
     * This function should be called when creating a new state. This function will clone the properties
     * from the orignal object, without the references, allowing the animation to happen step by step.
     *
-    * @param {propObj} prop : the propObj from the Object to be cloned.
+    * @param {!propObj} prop : the propObj from the Object to be cloned.
     */
   this.cloneProperties = function (prop) {
     this.propObj = clone(prop);
@@ -498,7 +546,7 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
     * This function should be called when creating a new state. This function will clone the edges
     * from the orignal object, without the references, allowing the animationg to happen step by step.
     *
-    * @param {edgeList} edges : the edgeList{} from the Object to be cloned.
+    * @param {!edgeList} edges : the edgeList[] from the Object to be cloned.
     */
   this.cloneEdges = function (edges) {
     var newList = [];
@@ -520,12 +568,12 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
     *     -If it was a VALUE UserObject, this object will have its inner text changed to the same inner text as the UserObject.
     *     -If it was a MOVEMENT UserObject (user for edges), the binded edge tip will be moved to this object. 
     *
-    * @param {?Bool=} allowSwap: if true this object's text will be swapped with the active UserObject's text (only for VALUE UserObject).
+    * @param {!Bool=} allowSwap: if true this object's text will be swapped with the active UserObject's text (only for VALUE type UserObject).
     */
   this.createPlaceHolder = function (allowSwap) {
-    d3.select("#g-shape")
+    d3.select("#" + DEFAULT_IDS.SVG_GROUP.SHAPE)
         .append(SVG_CIRCLE)
-        .attr("class", "placeHolder")
+        .attr("class", DEFAULT_CLASSES.LEARNING_MODE.PLACE_HOLDER)
         .attr("cx", this.propObj.shape.x + this.textAdjustX)
         .attr("cy", this.propObj.shape.y + this.textAdjustY)
         .attr("r", 10)

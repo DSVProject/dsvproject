@@ -1,3 +1,11 @@
+/**
+  * Copyright 2014 Filipe Belatti and Laércio Guimarães, Trinity College Dublin. All rights reserved.
+  *
+  * The views and conclusions contained in the software and documentation are those of the
+  * authors and should not be interpreted as representing official policies, either expressed
+  * or implied, of Trinity College Dublin.
+  */
+
 // Default properties are defined on 'animation/constant.js'
 
 /**
@@ -6,15 +14,21 @@
   *
   * @constructor
   *
-  * @param {CoreAnimObject} coreObj : instance of the CoreAnimObject class.
-  * @param {String|Number} id : the id of this object.
-  * @param {String} idObjectA : the id of the origin object.
-  * @param {String=} idObjectB : the id of the destination object.
-  * @param {String} edgeClass : the CSS class of the line svg element.
-  * @param {Const} edgeType : a constant value (defined at 'animation/constant.js' : EDGE_TYPE) indicating wether the vertex is unidirectional (from A -> B), bidirectional or has no direction.
+  * @param {!CoreAnimObject} coreObj : instance of the CoreAnimObject class.
+  * @param {!(String|Number)} id : the id of this object.
+  * @param {!String} idObjectA : the id of the origin object.
+  * @param {?String=} idObjectB : the id of the destination object. If null a small edge will be created following the orientation of the origin point.
+  * @param {?String=} edgeClass : the CSS class of the line svg element.
+  * @param {!Const} edgeType : a constant value (defined at 'animation/constant.js' : EDGE_TYPE) indicating wether the vertex is unidirectional (from A -> B), bidirectional or has no direction.
   */
 var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeType) {
   var self = this;
+
+  if (coreObj == null) {
+    throw new InvalidArgumentException("Invalid null parameter.");
+    return;
+  }
+
   this.coreObj = coreObj;
   
   /**
@@ -53,14 +67,14 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
   }
   
   /**
-    * @return {String|Number} : the id of this object.
+    * @return {(String|Number)} : the id of this object.
     */
   this.getID = function () {
     return this.propObj.id;
   }
   
   /**
-    * @return {Number} : the x1 coordinate of the line svg element.
+    * @return {(String|Number)} : the id of ObjectA binded to this edge.
     */
   this.getIdObjectA = function () {
     return this.propObj.idObjectA;
@@ -69,9 +83,13 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
   /**
     * Set the id of the object that is the origin of the edge.
     *
-    * @param {String} newID : the id of the new origin.
+    * @param {!(String|Number)} newID : the id of the new origin.
     */
   this.setIdObjectA = function (newID) {
+    if (newID == null) return;
+    // TEST THIS
+    if (typeof this.coreObj.objectList[newID] == 'undefined') return;
+
     this.coreObj.updateEdgeList(this.propObj.idObjectA, newID, this.propObj.id);
     this.propObj.idObjectA = newID;
     
@@ -79,16 +97,16 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
   }
   
   /**
-    * @return {Number} : the y1 coordinate of the line svg element.
+    * @return {(String|Number)} : the id of ObjectB binded to this edge.
     */
   this.getIdObjectB = function () {
     return this.propObj.idObjectB;
   }
   
   /**
-    * Set the id of the object that is the destination of the edge.
+    * Set the id of the object that is the origin of the edge.
     *
-    * @param {String} newID : the id of the new destination.
+    * @param {(String|Number)} newID : the id of the new origin.
     */
   this.setIdObjectB = function (newID) {
     this.propObj.idObjectB = newID;
@@ -97,7 +115,7 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
   }
   
   /**
-    * @return {Const} : the type of the edge (defined at 'animation/constant.js').
+    * @return {Const} : the type of the edge (defined at 'animation/constant.js' : EDGE_TYPE).
     */
   this.getType = function () {
     return this.propObj.type;
@@ -106,34 +124,37 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
   /**
     * Set the type of the edge
     *
-    * @param {Const} newType : the new value of the type (defined at 'animation/constant.js').
+    * @param {!Const} newType : the new value of the type (defined at 'animation/constant.js' : EDGE_TYPE.
     */
   this.setType = function (newType) {
+    if (newType == null) return;
     this.propObj.type = newType;
   }
   
   /**
     * Set the marker of the start of the edge.
     *
-    * @param {Const} newMarker : the new value of the marker (defined at 'animation/constant.js').
+    * @param {!Const} newMarker : the new value of the marker (defined at 'animation/constant.js' : defaultProperties.marker).
     */
   this.setMarkerStart = function (newMarker) {
+    if (newMarker == null) return;
     this.propObj.markerStart = newMarker;
   }
   
   /**
     * Set the marker of the end of the edge.
     *
-    * @param {Const} newMarker : the new value of the marker (defined at 'animation/constant.js').
+    * @param {!Const} newMarker : the new value of the marker (defined at 'animation/constant.js' : defaultProperties.marker).
     */
   this.setMarkerEnd = function (newMarker) {
+    if (newMarker == null) return;
     this.propObj.markerEnd = newMarker;
   }
   
   /**
     * Set the CSS class of the line svg element.
     *
-    * @param {String} newClass : the new CSS class.
+    * @param {?String=} newClass : the new CSS class.
     */
   this.setEdgeClass = function (newClass) {
     this.propObj.edge.class = newClass;
@@ -170,16 +191,17 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
   /**
     * Set the stroke color of the line svg element.
     *
-    * @param {String} newStroke : the new CSS or svg stroke color.
+    * @param {!String} newStroke : the new CSS or svg stroke color.
     */
   this.setStroke = function (newStroke) {
+    if(newStroke == null) return;
     this.propObj.edge.stroke = newStroke;
   }
   
   /**
     * Set the stroke width of the line svg element.
     *
-    * @param {Number} newOpacity : the new stroke width value.
+    * @param {!Number} newStrokeWidth : the new stroke width value.
     */
   this.setStrokeWidth = function (newStrokeWidth) {
     if(newStrokeWidth == null || isNaN(newStrokeWidth)) return;
@@ -190,7 +212,6 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
   
   /**
     * Update the coordinates of this path, based on the movement of the objects it is binded to.
-    *
     */
   this.calculatePath = function () {
     var point;
@@ -226,7 +247,7 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
     * Draw this object attributes on the screen.
     * If the object is new, it will be generated; if any property has changed, it will be updated.
     *
-    * @param {Number} dur : the duration in miliseconds of this animation.
+    * @param {!Number=} dur : the duration in miliseconds of this animation.
     */
   this.draw = function (dur) {
     if (dur == null || isNaN(dur) || dur < 0) dur = DEFAULT_ANIMATION_DURATION;
@@ -234,11 +255,11 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
     var json = [];
     json.push(this.propObj);
   
-    var edge = d3.select("#g-edge").selectAll(SVG_LINE)
+    var edge = d3.select("#" + DEFAULT_IDS.SVG_GROUP.EDGE).selectAll(SVG_LINE)
         .data(json, function (d) {return d.id;});
       
     edge.enter().append(SVG_LINE)        
-        .attr("id", function (d) {return "edge-" + d.id;});
+        .attr("id", function (d) {return DEFAULT_IDS.SVG_ELEMENT.EDGE + d.id;});
     edge.transition()
         .duration(dur)
         .attr("class", function (d) {return d.edge.class;})
@@ -262,7 +283,7 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
   /**
     * Remove this object from the screen.
     *
-    * @param {Number} dur : the duration in miliseconds of this animation.
+    * @param {!Number=} dur : the duration in miliseconds of this animation.
     */
   this.remove = function (dur) {
     if (dur == null || isNaN(dur) || dur < 0) dur = DEFAULT_ANIMATION_DURATION;
@@ -270,7 +291,7 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
     var json = [];
     json.push(this.propObj);
     
-    var edge = d3.select("#g-edge").selectAll(SVG_LINE)
+    var edge = d3.select("#" + DEFAULT_IDS.SVG_GROUP.EDGE).selectAll(SVG_LINE)
         .data(json, function (d) {return d.id;});
     
     edge.transition()
@@ -282,12 +303,14 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
     * This function should be called when creating a new state. This function will clone the properties
     * from the orignal object, without the reference, allowing the animation to happen step by step.
     *
-    * @param {propObj} prop : a propObj from the Object to be cloned.
+    * @param {!propObj} prop : a propObj from the Object to be cloned.
     */
   this.cloneProperties = function (prop) {
     this.propObj = clone(prop);
     this.calculatePath();
   }
+
+  // CODE TO BE EXECUTED BY CONSTRUCTOR
   
   /**
     * Calculate the path when the object is created.

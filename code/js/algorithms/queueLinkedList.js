@@ -1,3 +1,11 @@
+/**
+  * Copyright 2014 Filipe Belatti and Laércio Guimarães, Trinity College Dublin. All rights reserved.
+  *
+  * The views and conclusions contained in the software and documentation are those of the
+  * authors and should not be interpreted as representing official policies, either expressed
+  * or implied, of Trinity College Dublin.
+  */
+
 // Defines a Queue object (Linked-List Implementation). Used to keep track of the object internally and to interact with the animations
 
 var Node = function () {

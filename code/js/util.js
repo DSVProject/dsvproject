@@ -1,3 +1,6 @@
+/**
+  * Deep copy the obj passed as parameter.
+  */
 function clone(obj) {
     // Handle the 3 simple types, and null or undefined
     if (null == obj || "object" != typeof obj) return obj;
@@ -30,12 +33,22 @@ function clone(obj) {
     throw new Error("Unable to copy obj! Its type isn't supported.");
 }
 
+/**
+  * Enables moving a d3 selection to front. In svg the object are rendered in the same order as the code is executed.
+  * In a for loop, a square created in the first iteraction will appear behind one created in the second iteraction, 
+  * in case they are overlapped.
+  */
 d3.selection.prototype.moveToFront = function() {
   return this.each(function(){
     this.parentNode.appendChild(this);
   });
 }
 
+// THE CODE BELOW IS USED IN THE HTML PAGES. DO NOT REMOVE.
+
+/**
+  * Show or hide the help popovers.
+  */
 $('#help-btn').on('click', function () {
   $("#div-control-buttons").popover('toggle');
   $("#div-panels").popover('toggle');
@@ -43,21 +56,33 @@ $('#help-btn').on('click', function () {
   $("#chk-learn").popover('toggle');
 });
 
+/**
+  * Show or hide the log panel.
+  */
 $('#log-btn').on('click', function () {
   $(this).toggleClass('active ');
   $("#log-panel").toggle();
 });
 
+/**
+  * Show or hide the variable watch panel.
+  */
 $('#variables-btn').on('click', function () {
   $(this).toggleClass('active ');
   $("#variables-panel").toggle();
 });
 
+/**
+  * Show or hide the pseudocode panel.
+  */
 $('#pseudocode-btn').on('click', function () {
   $(this).toggleClass('active ');
   $("#pseudocode-panel").toggle();
 });
 
+/**
+  * Enable or disable the Learning Mode.
+  */
 $('#chk-learn').on('click', function () {
   $(this).toggleClass('btn-default btn-success');
 });

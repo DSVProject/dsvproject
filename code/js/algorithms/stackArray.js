@@ -1,4 +1,12 @@
 /**
+  * Copyright 2014 Filipe Belatti and Laércio Guimarães, Trinity College Dublin. All rights reserved.
+  *
+  * The views and conclusions contained in the software and documentation are those of the
+  * authors and should not be interpreted as representing official policies, either expressed
+  * or implied, of Trinity College Dublin.
+  */
+
+/**
   * Defines a Pointer object, that contains:
   *   {Number} value
   *   {Object} drawing : an instace of one of the basic shapes (squareObject, nodeObject, etc)
@@ -93,6 +101,8 @@ var StackArray = function(){
     //coreAnim.saveState();
     
     if (coreAnim.isLearningMode()){
+      coreAnim.clearPseudocode();
+      
       learnObj["newValue"] = coreAnim.newUserObject("newValue", 500, 75, 25, item, "learning", null, USER_OBJ_TYPE.VALUE, true, null);
       learnObj["newTopPointer"] = coreAnim.newUserObject("newTopPointer", top.edge.getCoordinateX2(), top.edge.getCoordinateY2(), 10, null, "learning", null, USER_OBJ_TYPE.MOVEMENT, null, top.edge.getID());
       

@@ -1,27 +1,43 @@
+/**
+  * Copyright 2014 Filipe Belatti and Laércio Guimarães, Trinity College Dublin. All rights reserved.
+  *
+  * The views and conclusions contained in the software and documentation are those of the
+  * authors and should not be interpreted as representing official policies, either expressed
+  * or implied, of Trinity College Dublin.
+  */
+
 // Default properties are defined on 'animation/constant.js'
 
 /**
   * Defines a user graphic unit, used only for the learning mode.
-  * The instance of this class contains all the attributes and methods regarding graphical changes to this object.
+  * The instance of this class contains all the attributes and methods regarding graphic changes to this object.
   *
   * @constructor
   *
   * @param {!CoreAnimObject} coreObj : instance of the CoreAnimObject class.
-  * @param {(String|Number)} id : the id of this object.
-  * @param {Number} cx : the cx coordinate of this object inside the svg element.
-  * @param {Number} cy : the cy coordinate of this object inside the svg element.
-  * @param {Number} radius : the radius of this object.
-  * @param {String=} text : the inner text of this object, that will be displayed on the screen.
-  * @param {?String} shapeClass : the CSS class of the rect svg element.
-  * @param {?String} textClass : the CSS class of the text svg element (inside the shape).
+  * @param {!(String|Number)} id : the id of this object.
+  * @param {!Number} cx : the cx coordinate of this object inside the svg element.
+  * @param {!Number} cy : the cy coordinate of this object inside the svg element.
+  * @param {?String=} text : the inner text of this object, that will be displayed on the screen.
+  * @param {?String=} shapeClass : the CSS class of the rect svg element.
+  * @param {?String=} textClass : the CSS class of the text svg element (inside the shape).
   * @param {!Const} type : the type of this userObject (defined at 'animation/constant.js' : USER_OBJ_TYPE).
   * @param {!Bool=} allowSwap: if this instance is a VALUE type object, this parameter should be passed. If true, this object's text will be swapped during the interactions.
   * @param {!(String|Number)=} bindedObjID : if this instance is a MOVEMENT type object, it should be binded to another object.
   */
 var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textClass, type, allowSwap, bindedObjID) {
   var self = this;
+
+  if (coreObj == null) {
+    throw new InvalidArgumentException("Invalid null parameter.");
+    return;
+  }
+
   this.coreObj = coreObj;
   
+  /**
+    * Offset values for the text elements.
+    */
   this.textAdjust = defaultProperties["font-size"]/3;
 
   /**
@@ -65,6 +81,9 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
     "bindedObjID": bindedObjID
   }
   
+  /**
+    * This object edge list.
+    */
   this.edgeList = {};
   
   /**
@@ -75,30 +94,30 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
   }
   
   /**
-    * @return {Array} : the edges of this object.
+    * @return {Array} : the edgeList[] of this object.
     */
   this.getEdges = function () {
     return this.edgeList;
   }
   
   /**
-    * @return {String|Number} : the id of this object.
+    * @return {(String|Number)} : the id of this object.
     */
   this.getID = function () {
     return this.propObj.id;
   }
   
   /**
-    * Set the CSS class of the circle svg element.
+    * Set the CSS class of the shape svg element.
     *
-    * @param {String} newClass : the new CSS class.
+    * @param {?String} newClass : the new CSS class.
     */
   this.setShapeClass = function (newClass) {
     this.propObj.shape.class = newClass;
   }
   
   /**
-    * @return {String} : the class of the circle svg element.
+    * @return {String} : the class of the shape svg element.
     */
   this.getShapeClass = function () {
     return this.propObj.shape.class;
@@ -107,8 +126,8 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
   /**
     * Move this object from its current position to a new position.
     *
-    * @param {Number} cx : the destination x coordinate.
-    * @param {Number} cy : the destination y coordinate.
+    * @param {!Number} x : the destination x coordinate.
+    * @param {!Number} y : the destination y coordinate.
     */
   this.moveShape = function (cx, cy) {
     if(cx == null || cy == null || isNaN(cx) || isNaN(cy)) return;
@@ -121,23 +140,23 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
   }
   
   /**
-    * @return {Number} : the cx coordinate of the circle svg element.
+    * @return {Number} : the cx coordinate of the shape svg element.
     */
   this.getCoordinateCX = function () {
     return this.propObj.shape.cx;
   }
   
   /**
-    * @return {Number} : the cy coordinate of the circle svg element.
+    * @return {Number} : the cy coordinate of the shape svg element.
     */
   this.getCoordinateCY = function () {
     return this.propObj.shape.cy;
   }
   
   /**
-    * Set the radius of the circle svg element.
+    * Set the radius of the shape svg element.
     *
-    * @param {Number} newRadius : the new radius.
+    * @param {!Number} newRadius : the new radius.
     */
   this.setRadius = function (newRadius) {
     if (newRadius == null || isNaN(newRadius)) return;
@@ -145,16 +164,16 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
   }
   
   /**
-    * @return {Number} : the radius of the circle svg element.
+    * @return {Number} : the radius of the shape svg element.
     */
   this.getRadius = function () {
     return this.propObj.shape.radius;
   }
   
   /**
-    * Set the fill color of the circle svg element.
+    * Set the fill color of the shape svg element.
     *
-    * @param {String} newFill : the new CSS or svg color.
+    * @param {!String} newFill : the new CSS or svg color.
     */
   this.setFill = function (newFill) {
     if(newFill == null) return;
@@ -162,9 +181,9 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
   }
   
   /**
-    * Set the fill opacity of the circle svg element.
+    * Set the fill opacity of the shape svg element.
     *
-    * @param {Number} newOpacity : the new opacity value.
+    * @param {!Number} newOpacity : the new opacity value.
     */
   this.setFillOpacity = function (newOpacity) {
     if(newOpacity == null || isNaN(newOpacity)) return;
@@ -174,18 +193,19 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
   }
   
   /**
-    * Set the stroke color of the circle svg element.
+    * Set the stroke color of the shape svg element.
     *
-    * @param {String} newStroke : the new CSS or svg stroke color.
+    * @param {!String} newStroke : the new CSS or svg stroke color.
     */
   this.setStroke = function (newStroke) {
+    if(newStroke == null) return;
     this.propObj.shape.stroke = newStroke;
   }
   
   /**
-    * Set the stroke width of the circle svg element.
+    * Set the stroke width of the shape svg element.
     *
-    * @param {Number} newOpacity : the new stroke width value.
+    * @param {!Number} newStrokeWidth : the new stroke width value.
     */
   this.setStrokeWidth = function (newStrokeWidth) {
     if(newStrokeWidth == null || isNaN(newStrokeWidth)) return;
@@ -197,7 +217,7 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
   /**
     * Set the text of the text svg element.
     *
-    * @param {String} newText : the new text.
+    * @param {?String} newText : the new text.
     */
   this.setText = function (newText) {
     this.propObj.text.text = newText;
@@ -209,22 +229,40 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
   this.getText = function () {
     return this.propObj.text.text;
   }
+
+  /**
+    * Set the CSS class of the text svg element.
+    *
+    * @param {?String} newClass : the new CSS class.
+    */
+  this.setTextClass = function (newClass) {
+    this.propObj.text.class = newClass;
+  }
   
+  /**
+    * @return {String} : the CSS class of the text svg element.
+    */
+  this.getTextClass = function () {
+    return this.propObj.text.class;
+  }
+
   /**
     * Set the text color of the text svg element.
     *
-    * @param {String} newColor : the new CSS or svg color.
+    * @param {!String} newColor : the new CSS or svg color.
     */
   this.setFontColor = function (newColor) {
+    if(newColor == null) return;
     this.propObj.text.fill = newColor;
   }
   
   /**
     * Set this object to be removed on the next iteration.
     *
-    * @param {Boolean} bool : if true, the object will be removed.
+    * @param {!Boolean} bool : if true, the object will be removed.
     */
   this.setToRemove = function (bool) {
+    if (bool == null) return;
     this.propObj.toRemove = bool;
   }
   
@@ -238,12 +276,12 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
   /**
     * Set this object as the one active for the learning mode interaction. Only one object shall be active at a time..
     *
-    * @param {Boolean} bool : if true, the object is active.
+    * @param {!Boolean} bool : if true, the object is active.
     */
   this.setIsActive = function (bool) {
     this.propObj.isActive = bool;
 
-    d3.select("#u-shape-" + this.propObj.id).classed("selected", bool);
+    d3.select("#" + DEFAULT_IDS.SVG_ELEMENT.USER_SHAPE + this.propObj.id).classed(DEFAULT_CLASSES.LEARNING_MODE.OBJECT_SELECTED, bool);
   }
   
   /**
@@ -261,16 +299,16 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
   }
   
   /**
-    * @return {String|Number} : the bindedObjID property.
+    * @return {(String|Number)} : the bindedObjID property.
     */ 
   this.getBindedObjID = function () {
     return this.propObj.bindedObjID;
   }
   
   /**
-    * Add an EdgeObject to this object edgeList.
+    * Add an EdgeObject to this object edgeList[].
     *
-    * @param {EdgeObject} edgeObj : the instance of the EdgeObject.
+    * @param {!EdgeObject} edgeObj : the instance of the EdgeObject.
     */
   this.addEdge = function (edgeObj) {
     this.edgeList[edgeObj.getID()] = edgeObj;
@@ -280,7 +318,7 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
     * Draw this object attributes on the screen.
     * If the object is new, it will be generated; if any property has changed, it will be updated.
     *
-    * @param {Number} dur : the duration in miliseconds of this animation.
+    * @param {!Number=} dur : the duration in miliseconds of this animation.
     */
   this.draw = function (dur) {    
     if(dur == null || isNaN(dur) || dur < 0) dur = DEFAULT_ANIMATION_DURATION;
@@ -288,11 +326,11 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
     var json = [];
     json.push(self.propObj);
     
-    var shape = d3.select("#g-shape").selectAll(SVG_CIRCLE)
+    var shape = d3.select("#" + DEFAULT_IDS.SVG_GROUP.SHAPE).selectAll(SVG_CIRCLE)
         .data(json, function (d) {return d.id;});
       
     shape.enter().append(SVG_CIRCLE)        
-        .attr("id", function (d) {return "u-shape-" + d.id;})
+        .attr("id", function (d) {return DEFAULT_IDS.SVG_ELEMENT.USER_SHAPE + d.id;})
         .on("click", function (d) {
             var activeObject = self.coreObj.getActiveUserObject();
 
@@ -318,11 +356,11 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
         .attr("stroke", function (d) {return d.shape.stroke;})
         .attr("stroke-width", function (d) {return d.shape.strokeWidth;});
       
-    var text = d3.select("#g-text").selectAll("text")
+    var text = d3.select("#" + DEFAULT_IDS.SVG_GROUP.TEXT).selectAll(SVG_TEXT)
         .data(json, function (d) {return d.id;});
         
-    text.enter().append("text")
-        .attr("id", function (d) {return "u-text-" + d.id;});
+    text.enter().append(SVG_TEXT)
+        .attr("id", function (d) {return DEFAULT_IDS.SVG_ELEMENT.USER_TEXT + d.id;});
     text.transition()
         .duration(dur)
         .attr("class", function (d) {return d.text.class;})
@@ -341,14 +379,17 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
   }
   
   /**
-    * Redraw this object,
+    * Redraw this object. This function is called during Learning Mode interactions.
+    * This function has to be called instead of this.draw because the object on the screen
+    * is a clone and not the object store at CoreAnimObject.objectList. Calling this.draw
+    * will throw an error of undefined object.
     *
-    * @param {Number} dur : the duration in miliseconds of this animation.
+    * @param {!Number=} dur : the duration in miliseconds of this animation.
     */
   this.redraw = function (dur) {    
     if(dur == null || isNaN(dur) || dur < 0) dur = DEFAULT_ANIMATION_DURATION;
     
-    var shape = d3.select("#u-shape-" + this.propObj.id);
+    var shape = d3.select("#" + DEFAULT_IDS.SVG_ELEMENT.USER_SHAPE + this.propObj.id);
     
     shape.transition()
         .duration(dur)
@@ -361,7 +402,7 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
         .attr("stroke", this.propObj.shape.stroke)
         .attr("stroke-width", this.propObj.shape.strokeWidth);
       
-    var text = d3.select("#u-text-" + this.propObj.id);
+    var text = d3.select("#" + DEFAULT_IDS.SVG_ELEMENT.USER_TEXT + this.propObj.id);
         
     text.transition()
         .duration(dur)
@@ -383,7 +424,7 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
   /**
     * Remove this object from the screen.
     *
-    * @param {Number} dur : the duration in miliseconds of this animation.
+    * @param {!Number=} dur : the duration in miliseconds of this animation.
     */
   this.remove = function (dur) {
     if(dur == null || isNaN(dur) || dur < 0) dur = DEFAULT_ANIMATION_DURATION;
@@ -391,14 +432,14 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
     var json = [];
     json.push(this.propObj);
     
-    var shape = d3.select("#g-shape").selectAll(SVG_CIRCLE)
+    var shape = d3.select("#" + DEFAULT_IDS.SVG_GROUP.SHAPE).selectAll(SVG_CIRCLE)
         .data(json, function (d) {return d.id;});
     
     shape.transition()
         .duration(dur)
         .remove();
     
-    var text = d3.select("#g-text").selectAll(SVG_TEXT)
+    var text = d3.select("#" + DEFAULT_IDS.SVG_GROUP.TEXT).selectAll(SVG_TEXT)
         .data(json, function (d) {return d.id;});
         
     text.transition()
@@ -426,7 +467,7 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
     * This function should be called when creating a new state. This function will clone the properties
     * from the orignal object, without the references, allowing the animation to happen step by step.
     *
-    * @param {propObj} prop : a propObj from the Object to be cloned.
+    * @param {!propObj} prop : a propObj from the Object to be cloned.
     */
   this.cloneProperties = function (prop) {
     this.propObj = clone(prop);
@@ -436,7 +477,7 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
     * This function should be called when creating a new state. This function will clone the edges
     * from the orignal object, without the references, allowing the animationg to happen step by step.
     *
-    * @param {edgeList} edges : the edgeList{} from the Object to be cloned.
+    * @param {!edgeList} edges : the edgeList[] from the Object to be cloned.
     */
   this.cloneEdges = function (edges) {
     var newList = [];
