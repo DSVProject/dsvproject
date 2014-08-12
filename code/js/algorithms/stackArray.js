@@ -24,19 +24,21 @@ var Pointer = function () {
 var StackArray = function(){
   var self = this;
   var coreObj = new CoreObject();
-  //coreObj.init();
   
+  // ARRAY TO STORE LEARNING MODE OBJECTS
+  var learnObj = [];
+  
+  // CONSTANTS FOR PSEUDOCODE GENERATION
+  const PUSH = 0,
+        POP = 1;
+  
+  // CREATE INITIAL ITEMS IF ANY
   coreObj.newStateList();
   coreObj.saveState();
-  
-  var learnObj = [];
 
   var cap = 16;
   var top = new Pointer();
   var mArray = [];
-  
-  const PUSH = 0,
-        POP = 1;
   
   for (var i=0; i<16; i++){
     mArray[i] = coreObj.newSquareObject(i, (i+1)*50, 300, null, i, null, null, null, null, EDGE_POSITION.TOP);  
@@ -52,6 +54,7 @@ var StackArray = function(){
   coreObj.saveState();
   coreObj.play(0);
 
+  // METHODS
   this.getCore = function () {
     return coreObj;
   }

@@ -44,6 +44,10 @@
             <li><a href="#new-visualisation"><i class="icon-chevron-right"></i> Creating a New Visualisation</a></li>
             <li><a href="#two-files"><i class="icon-chevron-right"></i> &nbsp;&nbsp; The Two Files</a></li>
             <li><a href="#custom-items"><i class="icon-chevron-right"></i> &nbsp;&nbsp; Custom Items</a></li>
+            
+            <li><a href="#learning-mode"><i class="icon-chevron-right"></i> Learning Mode</a></li>
+            <li><a href="#valid-target"><i class="icon-chevron-right"></i> &nbsp;&nbsp; User Shape and Valid Targets</a></li>
+            <li><a href="#place-holder"><i class="icon-chevron-right"></i> &nbsp;&nbsp; Place Holders</a></li>
           </ul>
         </div>
         <div class="span9">
@@ -67,6 +71,7 @@ DSVProject/
 │   ├── d3/
 │   ├── js/
 │   │   ├── algorithms/
+│   │   │   ├── template.js
 │   │   │   ├── visualisation JS files
 │   │   ├── framework/
 │   │   │   ├── CoreObject.js
@@ -681,7 +686,8 @@ this.cloneProperties = function (prop) {
             </ul>
           </section>
           
-          <!-- The Two Files -->
+          <!-- The Two Files
+          ================================================== -->
           <section id="two-files">
             <h2>3.1. The two files</h2>
             <p>In most cases you will only have to create two files: an <strong>HTML</strong> and a <strong>JavaScript</strong>. This will only be different if you decide to create a custom shape or set of shapes, which will take another <strong>JavaScript</strong> file.</p>
@@ -802,16 +808,144 @@ this.cloneProperties = function (prop) {
   }
 &lt;/script>
 </pre>
+            <p>As you can see in the visualisation above we've referenced our algorithm file in line 2. Then we'll have to create a new instance of our class (line 5). An important method that every algorithm js file should have is this:</p>
+            <img src="img/getCore.png" alt="">
+            <p>This method is called in line 6, and will allow us to call the default media control methods (from line 23 until the end of the script).</p>
+            <p>Other than that you should create calls for the methods in your class, sending inputs if required, making use of the ids defined on the creation of the html buttons (line 9).</p>
             
             <h3>3.1.2. JavaScript</h3>
+            <p>To create the JS file of your data structure visualisation we recommend that you use the <strong>template.js </strong>file provided as it follows some guidelines of our framework. Here's how it looks like:</p>
             
-            <h4>3.1.2.1. How to organise the data and the graphics</h4>
+<pre class="prettyprint linenums">
+/**
+  * Defines a Pointer object, that contains:
+  *   {Number} value
+  *   {Object} drawing : an instace of one of the basic shapes (squareObject, nodeObject, etc)
+  *   {Object} edge : an instace of the edgeObject
+  */
+var Pointer = function () {
+  var value;
+  var drawing;
+  var edge;
+}
+
+/**
+  * Defines a Stack object (Array implementation). Used to keep track of the object internally and to interact with the animations.
+  */
+var Template = function(){
+  var self = this;
+  var coreObj = new CoreObject();
+  
+  // ARRAY TO STORE LEARNING MODE OBJECTS
+  var learnObj = [];
+  
+  // CONSTANTS FOR PSEUDOCODE GENERATION
+  const PUSH = 0,
+        POP = 1;
+  
+  // CREATE INITIAL ITEMS IF ANY
+  coreObj.newStateList();
+  coreObj.saveState();
+
+  var cap = 16;
+  var top = new Pointer();
+  var mArray = [];
+  
+  for (var i=0; i&lt;16; i++){
+    mArray[i] = coreObj.newSquareObject(i, (i+1)*50, 300, null, i, null, null, null, null, EDGE_POSITION.TOP);  
+  }
+  
+  top.value = 0;
+  top.drawing = coreObj.newSquareObject("top", 50, 50, 0, "top", null, null, null, EDGE_POSITION.BOTTOM, null);
+
+  top.edge = coreObj.newEdgeObject("top", top.drawing.getID(), mArray[top.value].getID(), null, EDGE_TYPE.UNIDIRECTIONAL);
+  top.edge.setMarkerEnd(defaultProperties.marker.default.end);
+  
+  coreObj.saveState();
+  coreObj.play(0);
+
+  // DEFAULT METHODS
+  this.getCore = function () {
+    return coreObj;
+  }
+  
+  this.generatePseudocode = function (command) {
+    coreObj.clearPseudocode();
+    
+    switch (command) {
+        case PUSH:
+          coreObj.addPseudocodeLine(lineNo, "Instruction");
+          break;
+        case POP:
+          coreObj.addPseudocodeLine(lineNo, "Instruction");
+          break;
+    }
+  }
+  
+  // PARTICULAR METHODS
+  
+  this.init = function() {...}
+  
+  this.isEmpty = function () {...}
+  
+  this.push = function (item) {...}
+  
+  this.pop = function () {...}
+}
+</pre>
+            <p>Now let's understand what's happening in there.</p>
+            
+            <h4>3.1.2.1. Organising the data and the graphics</h4>
+            <p>As we've seen when studying CoreObject each graphic object created is returned to this class, enabling any necessary graphic changes.</p>
+            
+            <h4>3.1.2.2. Default variables</h4>
+            <p>There are only four default variables that have to be declared:</p>
+            <ul>
+              <li><strong>this.self:</strong> current value of <strong>this</strong>, useful for scope issues.</li>
+              <li><strong>this.coreObj:</strong> the instance of CoreObject.js, that will create objects and control the animation.</li>
+              <li><strong>this.learnObj:</strong> optional, used to store Learning Mode objects.</li>
+              <li><strong>Constants:</strong> values used to create the apropriate pseudocode set.</li>
+            </ul>
+            
+            <h4>3.1.2.3. Initial Items</h4>
+            <p>In certain visualisations some initial graphic elements may be necessary. For example, in an Array implementation you'll have to display the array itself.</p>
+            <img src="img/array.png" alt="">
+            <p>To achieve this you'll have to create all these items in here as this lines of code will execute as this class is instantiated and the graphics will be displayed as soon as the page load.</p>
+            
+            <h4>3.1.2.4. Default Methods</h4>
+            <p>The two important default methods are:</p>
+            <ul>
+              <li><strong>this.getCore:</strong> this method will return the instance of CoreObject.js to the HTML file.</li>
+              <li><strong>this.generatePseudocode:</strong> this method will fill the pseudocode panel when executing a method.</li>
+            </ul>
+            
+            <h4>3.1.2.5. Particular Methods</h4>
+            <p>Any method related to this data structure, that will be called from the HTML file.</p>
             
           </section>
           
           <!-- The Two Files -->
           <section id="custom-items">
             <h2>3.2. Custom Items</h2>
+          </section>
+          
+          <!-- Learning Mode
+          ================================================== -->
+          <section id="learning-mode">
+            <div class="page-header">
+              <h1>4. Learning Mode</h1>
+            </div>
+            
+          </section>
+          
+          <!-- User Shape and Valid Targets -->
+          <section id="valid-target">
+            <h2>4.1. User Shape and Valid Targets</h2>
+          </section>
+          
+          <!-- Place Holders -->
+          <section id="place-holder">
+            <h2>4.2. Place Holders</h2>
           </section>
 
           <!-- Examples
