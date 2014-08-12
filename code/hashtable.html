@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Template: Page Title -->
-    <title>Your title here</title>
+    <title>Hash Table</title>
 
     <!-- Bootstrap -->
     <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
@@ -35,7 +35,7 @@
             <span class="icon-bar"></span>
           </button>
           <!-- Template: Visualisation Title -->
-          <a class="navbar-brand" href="#">Your Visualisation</a>
+          <a class="navbar-brand" href="#">Hash Table</a>
         </div>
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
@@ -44,7 +44,7 @@
               <div class="btn-group">
                 <!-- Template: Text input button (methods that require an input value) -->
                 <button type="button" class="btn btn-default navbar-btn dropdown-toggle" data-toggle="dropdown">
-                  Method Name <span class="caret"></span>
+                  Push <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" role="menu">
                   <form class="navbar-form">
@@ -62,7 +62,8 @@
                 </ul>
               </div>
               <!-- Template: Normal button (methods that don't require an input value) -->
-              <button type="button" class="btn btn-default navbar-btn" onclick="">Method Name</button>
+              <button type="button" class="btn btn-default navbar-btn" onclick="">Pop</button>
+              <button type="button" class="btn btn-default navbar-btn" onclick="">Clear</button>
             </div>
           </ul>
           <ul class="nav navbar-nav navbar-right">
@@ -197,35 +198,21 @@
     <script type='text/javascript' src="bootstrap/js/bootstrap-slider.js"></script>
     <!-- Default Animation scripts. Do not remove -->
     <script src="js/util.js"></script>
-    <script src="js/animation/constant.js"></script>
-    <script src="js/animation/svg.js"></script>
-    <script src="js/animation/coreAnimObject.js"></script>
-    <script src="js/animation/userObject.js"></script>
-    <script src="js/animation/squareObject.js"></script>
-    <script src="js/animation/circleObject.js"></script>
-    <script src="js/animation/edgeObject.js"></script>
+    <script src="js/framework/constant.js"></script>
+    <script src="js/framework/svg.js"></script>
+    <script src="js/framework/coreObject.js"></script>
+    <script src="js/framework/userObject.js"></script>
+    <script src="js/framework/squareObject.js"></script>
+    <script src="js/framework/circleObject.js"></script>
+    <script src="js/framework/edgeObject.js"></script>
     
     <!-- Template: Your Visualisation Scripts -->
-    <script src="js/algorithms/stackArray.js"></script>
+    <script src="js/algorithms/hashtable.js"></script>
+    <script src="js/custom/arrayPointer.js"></script>
     
     <script type="text/javascript">
-      var stack = new StackArray();
-      var anim = stack.getAnim();
-
-      function push(){
-        var input = $("#txt-input");
-        
-        stack.push(input.val());
-        input.val("");
-      }
-      
-      function pop(){
-        stack.pop();
-      }
-      
-      function empty(){
-        stack.init();
-      }
+      var hashtable = new Hashtable();
+      var anim = hashtable.getAnim();
       
       function previous(){
         anim.previous();

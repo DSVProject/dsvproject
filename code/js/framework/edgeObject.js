@@ -163,28 +163,28 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
   /**
     * @return {Number} : the x1 coordinate of the line svg element.
     */
-  this.getCoordinateX1 = function(){
+  this.getCoordinateX1 = function () {
     return this.propObj.edge.x1;
   }
   
   /**
     * @return {Number} : the y1 coordinate of the line svg element.
     */
-  this.getCoordinateY1 = function(){
+  this.getCoordinateY1 = function () {
     return this.propObj.edge.y1;
   }  
   
   /**
     * @return {Number} : the x2 coordinate of the line svg element.
     */
-  this.getCoordinateX2 = function(){
+  this.getCoordinateX2 = function () {
     return this.propObj.edge.x2;
   }
   
   /**
     * @return {Number} : the y2 coordinate of the line svg element.
     */
-  this.getCoordinateY2 = function(){
+  this.getCoordinateY2 = function () {
     return this.propObj.edge.y2;
   }
 
@@ -226,17 +226,20 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
       } else {
         point = this.coreObj.objectList[this.propObj.idObjectA].getOutgoingPoint();
 
-        if (point == EDGE_POSITION.BOTTOM) {
+        if (point == EDGE_POSITION.CENTER) {
           this.propObj.edge.x2 = this.propObj.edge.x1;
-          this.propObj.edge.y2 = this.propObj.edge.y1 + 50;
+          this.propObj.edge.y2 = this.propObj.edge.y1 + 35;
+        } else if (point == EDGE_POSITION.BOTTOM) {
+          this.propObj.edge.x2 = this.propObj.edge.x1;
+          this.propObj.edge.y2 = this.propObj.edge.y1 + 25;
         } else if (point == EDGE_POSITION.RIGHT) {
-          this.propObj.edge.x2 = this.propObj.edge.x1 + 50;
+          this.propObj.edge.x2 = this.propObj.edge.x1 + 25;
           this.propObj.edge.y2 = this.propObj.edge.y1;
         } else if (point == EDGE_POSITION.TOP) {
           this.propObj.edge.x2 = this.propObj.edge.x1;
-          this.propObj.edge.y2 = this.propObj.edge.y1 - 50;
+          this.propObj.edge.y2 = this.propObj.edge.y1 - 25;
         } else if (point == EDGE_POSITION.LEFT) {
-          this.propObj.edge.x2 = this.propObj.edge.x1 - 50;
+          this.propObj.edge.x2 = this.propObj.edge.x1 - 25;
           this.propObj.edge.y2 = this.propObj.edge.y1;
         }
       }

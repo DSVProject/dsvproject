@@ -196,54 +196,60 @@
     <script type='text/javascript' src="bootstrap/js/bootstrap-slider.js"></script>
     <!-- Default Animation scripts. Do not remove -->
     <script src="js/util.js"></script>
-    <script src="js/animation/constant.js"></script>
-    <script src="js/animation/svg.js"></script>
-    <script src="js/animation/coreAnimObject.js"></script>
-    <script src="js/animation/userObject.js"></script>
-    <script src="js/animation/squareObject.js"></script>
-    <script src="js/animation/circleObject.js"></script>
-    <script src="js/animation/edgeObject.js"></script>
+    <script src="js/framework/constant.js"></script>
+    <script src="js/framework/svg.js"></script>
+    <script src="js/framework/coreObject.js"></script>
+    <script src="js/framework/userObject.js"></script>
+    <script src="js/framework/squareObject.js"></script>
+    <script src="js/framework/circleObject.js"></script>
+    <script src="js/framework/edgeObject.js"></script>
     
     <!-- Template: Your Visualisation Scripts -->
     <script src="js/algorithms/stackArray.js"></script>
     
     <script type="text/javascript">
       var stack = new StackArray();
-      var anim = stack.getAnim();
+      var core = stack.getCore();
 
-      function push(){
+      function push () {
         var input = $("#txt-input");
         
         stack.push(input.val());
         input.val("");
       }
       
-      function pop(){
+      function pop () {
         stack.pop();
       }
       
-      function empty(){
+      function empty () {
         stack.init();
       }
       
-      function previous(){
-        anim.previous();
+      // DEFAULT METHODS. DO NOT REMOVE.
+      
+      function previous () {
+        core.previous();
       }
       
-      function play(){
-        anim.play();
+      function play () {
+        core.play();
       }
       
-      function pause(){
-        anim.pause();
+      function pause () {
+        core.pause();
       }
       
-      function next(){
-        anim.next();
+      function next () {
+        core.next();
       }
       
-      function undo(){
-        anim.undo();
+      function undo () {
+        core.undo();
+      }
+      
+      function redo () {
+        core.redo();
       }
     </script>
   </body>

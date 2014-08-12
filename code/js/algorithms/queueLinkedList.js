@@ -17,57 +17,57 @@ var Node = function () {
 
 var QueueLinkedList = function () {
   var selfie = this;
-  var coreAnim = new CoreAnimObject();
+  var coreObj = new CoreObject();
   
   const ENQUEUE = 0,
         DEQUEUE = 1;
   
-  coreAnim.init();
-  coreAnim.newStateList();
-  coreAnim.saveState();
+  coreObj.init();
+  coreObj.newStateList();
+  coreObj.saveState();
 
   var first = null;
   var last = null;
   var N = 0;
   var counterID = 0;
   
-  var firstD = coreAnim.newSquareObject("first", 50, 50, "First", null, "pointer", EDGE_POSITION.BOTTOM);
-  var lastD = coreAnim.newSquareObject("last", 150, 50, "Last", null, "pointer", EDGE_POSITION.BOTTOM);
-  //var edgeFirstD = coreAnim.newEdgeObject("first", firstD.getID(), firstD.getCoordinateX() + 25, firstD.getCoordinateY() + 50, null, null, EDGE_UNIDIRECTIONAL, "down");
-  //var edgeLastD = coreAnim.newEdgeObject("last", lastD.getID(), lastD.getCoordinateX() + 25, lastD.getCoordinateY() + 50, null, null, EDGE_UNIDIRECTIONAL, "down");
-  var edgeFirstD = coreAnim.newEdgeObject2("first", firstD.getID(), null, EDGE_TYPE.UNIDIRECTIONAL);
-  var edgeLastD = coreAnim.newEdgeObject2("last", lastD.getID(), null, EDGE_TYPE.UNIDIRECTIONAL);
+  var firstD = coreObj.newSquareObject("first", 50, 50, "First", null, "pointer", EDGE_POSITION.BOTTOM);
+  var lastD = coreObj.newSquareObject("last", 150, 50, "Last", null, "pointer", EDGE_POSITION.BOTTOM);
+  //var edgeFirstD = coreObj.newEdgeObject("first", firstD.getID(), firstD.getCoordinateX() + 25, firstD.getCoordinateY() + 50, null, null, EDGE_UNIDIRECTIONAL, "down");
+  //var edgeLastD = coreObj.newEdgeObject("last", lastD.getID(), lastD.getCoordinateX() + 25, lastD.getCoordinateY() + 50, null, null, EDGE_UNIDIRECTIONAL, "down");
+  var edgeFirstD = coreObj.newEdgeObject2("first", firstD.getID(), null, EDGE_TYPE.UNIDIRECTIONAL);
+  var edgeLastD = coreObj.newEdgeObject2("last", lastD.getID(), null, EDGE_TYPE.UNIDIRECTIONAL);
   
   edgeFirstD.setStroke(defaultProperties.edge.null.stroke);
   edgeLastD.setStroke(defaultProperties.edge.null.stroke);
 
-  coreAnim.saveState();
-  coreAnim.play(0);
+  coreObj.saveState();
+  coreObj.play(0);
   
   this.getAnim = function () {
-    return coreAnim;
+    return coreObj;
   }
   
   this.generatePseudocode = function (command) {
-    coreAnim.clearPseudocode();
+    coreObj.clearPseudocode();
     
     switch (command) {
         case ENQUEUE:
-          coreAnim.addPseudocodeLine(0, "Node temp = value;");
-          coreAnim.addPseudocodeLine(1, "last = temp;");
-          coreAnim.addPseudocodeLine(2, "if (isEmpty()) first = last;");
-          coreAnim.addPseudocodeLine(3, "else oldlast.next = last;");
+          coreObj.addPseudocodeLine(0, "Node temp = value;");
+          coreObj.addPseudocodeLine(1, "last = temp;");
+          coreObj.addPseudocodeLine(2, "if (isEmpty()) first = last;");
+          coreObj.addPseudocodeLine(3, "else oldlast.next = last;");
           break;
         case DEQUEUE:
-          coreAnim.addPseudocodeLine(0, "first = first.next;");
-          coreAnim.addPseudocodeLine(1, "if (isEmpty()) last = null;");
+          coreObj.addPseudocodeLine(0, "first = first.next;");
+          coreObj.addPseudocodeLine(1, "if (isEmpty()) last = null;");
           break;
     }
   }
   
   this.init = function () {
-    coreAnim.clearLog();
-    coreAnim.newStateList();
+    coreObj.clearLog();
+    coreObj.newStateList();
     
     first = null;
     last = null;
@@ -83,10 +83,10 @@ var QueueLinkedList = function () {
     edgeLastD.setStroke(defaultProperties.edge.null.stroke);
     edgeLastD.setMarkerEnd(defaultProperties.marker.null.end);
     
-    coreAnim.removeAll("node");
+    coreObj.removeAll("node");
     
-    coreAnim.saveState();
-    coreAnim.play();
+    coreObj.saveState();
+    coreObj.play();
   }
 
   this.isEmpty = function () { return first == null; }
@@ -98,10 +98,10 @@ var QueueLinkedList = function () {
       return false;
     }
 
-    coreAnim.clearLog();
+    coreObj.clearLog();
     this.generatePseudocode(ENQUEUE);
 
-    coreAnim.saveState();
+    coreObj.saveState();
 
     var oldlast = last;
     
@@ -110,20 +110,20 @@ var QueueLinkedList = function () {
     last = new Node();
     last.item = item;
     last.next = null;
-    last.drawing = coreAnim.newSquareObject(++counterID, 200, 200, item, null, "node", EDGE_POSITION.RIGHT, EDGE_POSITION.TOP);
-	last.edge = coreAnim.newEdgeObject2(counterID, last.drawing.getID(), null, EDGE_TYPE.UNIDIRECTIONAL);
+    last.drawing = coreObj.newSquareObject(++counterID, 200, 200, item, null, "node", EDGE_POSITION.RIGHT, EDGE_POSITION.TOP);
+	last.edge = coreObj.newEdgeObject2(counterID, last.drawing.getID(), null, EDGE_TYPE.UNIDIRECTIONAL);
     last.edge.setStroke(defaultProperties.edge.null.stroke);
 
-    coreAnim.saveState("Inserting new node.", 0);
+    coreObj.saveState("Inserting new node.", 0);
 
     edgeLastD.setIdObjectB(last.drawing.getID());
     edgeLastD.setStroke(defaultProperties.edge.default.stroke);
     edgeLastD.setMarkerEnd(defaultProperties.marker.default.end);
 
-    coreAnim.saveState("Update the last pointer.", 1);
+    coreObj.saveState("Update the last pointer.", 1);
 
     last.drawing.moveShape((N+1)*100, 300);
-    coreAnim.saveState();
+    coreObj.saveState();
 
     if (this.isEmpty()) {
       first = last;
@@ -132,7 +132,7 @@ var QueueLinkedList = function () {
       edgeFirstD.setStroke(defaultProperties.edge.default.stroke);
       edgeFirstD.setMarkerEnd(defaultProperties.marker.default.end);
 
-      coreAnim.saveState("If the list was empty, update the first pointer too.", 2);
+      coreObj.saveState("If the list was empty, update the first pointer too.", 2);
     } else {
       oldlast.next = last;
     }
@@ -143,11 +143,11 @@ var QueueLinkedList = function () {
       
       oldlast.drawing.setLabel();
       
-      coreAnim.saveState("Update the pointer of the previous node.", 3)
+      coreObj.saveState("Update the pointer of the previous node.", 3)
     }
 
     N++;
-    coreAnim.play();
+    coreObj.play();
   }
   
   this.dequeue = function() {
@@ -155,23 +155,23 @@ var QueueLinkedList = function () {
       return false;
     }
     
-    coreAnim.clearLog();
-    //coreAnim.newStateList();
+    coreObj.clearLog();
+    //coreObj.newStateList();
     this.generatePseudocode(DEQUEUE);
     
-    coreAnim.saveState();
+    coreObj.saveState();
     
     var item = first.item;
     
-    coreAnim.removeShape(first.drawing.getID());
-    coreAnim.saveState();
+    coreObj.removeShape(first.drawing.getID());
+    coreObj.saveState();
 
     first = first.next;
     
     if (first != null){
       //edgeFirstD.moveEdgeEnd(first.drawing.getCoordinateX() + 25, first.drawing.getCoordinateY());
       edgeFirstD.setIdObjectB(first.drawing.getID());
-      coreAnim.saveState("Dequeue the first position.");
+      coreObj.saveState("Dequeue the first position.");
     }
     
     var iterator = first;
@@ -189,23 +189,23 @@ var QueueLinkedList = function () {
       edgeFirstD.setIdObjectB(null);
       edgeFirstD.setStroke(defaultProperties.edge.null.stroke);
       edgeFirstD.setMarkerEnd(defaultProperties.marker.null.end);
-      coreAnim.saveState("Update the first pointer.", 0);
+      coreObj.saveState("Update the first pointer.", 0);
       //edgeLastD.moveEdgeEnd(lastD.getCoordinateX() + 25, lastD.getCoordinateY() + 100);
       edgeLastD.setIdObjectB(null);
       edgeLastD.setStroke(defaultProperties.edge.null.stroke);
       edgeLastD.setMarkerEnd(defaultProperties.marker.null.end);
-      coreAnim.saveState("Update the last pointer.", 1);
+      coreObj.saveState("Update the last pointer.", 1);
     } else {
       //edgeFirstD.moveEdgeEnd(first.drawing.getCoordinateX() + 25, first.drawing.getCoordinateY());
       //edgeLastD.moveEdgeEnd(last.drawing.getCoordinateX() + 25, last.drawing.getCoordinateY());
       //edgeFirstD.setIdObjectB(first.drawing.getID());
       //edgeLastD.setIdObjectB(last.drawing.getID());
-      coreAnim.saveState("Update the first pointer.", 0);
+      coreObj.saveState("Update the first pointer.", 0);
     }
     
     N--;
     
-    coreAnim.play();
+    coreObj.play();
     return item;
   }
 }

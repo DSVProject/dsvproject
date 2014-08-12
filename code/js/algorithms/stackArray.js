@@ -23,11 +23,11 @@ var Pointer = function () {
   */
 var StackArray = function(){
   var self = this;
-  var coreAnim = new CoreAnimObject();
-  //coreAnim.init();
+  var coreObj = new CoreObject();
+  //coreObj.init();
   
-  coreAnim.newStateList();
-  coreAnim.saveState();
+  coreObj.newStateList();
+  coreObj.saveState();
   
   var learnObj = [];
 
@@ -39,42 +39,42 @@ var StackArray = function(){
         POP = 1;
   
   for (var i=0; i<16; i++){
-    mArray[i] = coreAnim.newSquareObject(i, (i+1)*50, 300, null, i, null, null, null, null, EDGE_POSITION.TOP);  
+    mArray[i] = coreObj.newSquareObject(i, (i+1)*50, 300, null, i, null, null, null, null, EDGE_POSITION.TOP);  
   }
   
   top.value = 0;
-  top.drawing = coreAnim.newSquareObject("top", 50, 50, 0, "top", null, null, null, EDGE_POSITION.BOTTOM, null);
-  //top.edge = coreAnim.newEdgeObject("top", top.drawing.getID(), top.drawing.getCoordinateX() + 25, top.drawing.getCoordinateY() + 100, mArray[0].getCoordinateX() + 25, mArray[0].getCoordinateY(), EDGE_TYPE.UNIDIRECTIONAL);
+  top.drawing = coreObj.newSquareObject("top", 50, 50, 0, "top", null, null, null, EDGE_POSITION.BOTTOM, null);
+  //top.edge = coreObj.newEdgeObject("top", top.drawing.getID(), top.drawing.getCoordinateX() + 25, top.drawing.getCoordinateY() + 100, mArray[0].getCoordinateX() + 25, mArray[0].getCoordinateY(), EDGE_TYPE.UNIDIRECTIONAL);
   
-  top.edge = coreAnim.newEdgeObject("top", top.drawing.getID(), mArray[top.value].getID(), null, EDGE_TYPE.UNIDIRECTIONAL);
+  top.edge = coreObj.newEdgeObject("top", top.drawing.getID(), mArray[top.value].getID(), null, EDGE_TYPE.UNIDIRECTIONAL);
   top.edge.setMarkerEnd(defaultProperties.marker.default.end);
   
-  coreAnim.saveState();
-  coreAnim.play(0);
+  coreObj.saveState();
+  coreObj.play(0);
 
-  this.getAnim = function () {
-    return coreAnim;
+  this.getCore = function () {
+    return coreObj;
   }
   
   this.generatePseudocode = function (command) {
-    coreAnim.clearPseudocode();
+    coreObj.clearPseudocode();
     
     switch (command) {
         case PUSH:
-          coreAnim.addPseudocodeLine(0, "Array[top] = value;");
-          coreAnim.addPseudocodeLine(1, "top++;");
+          coreObj.addPseudocodeLine(0, "Array[top] = value;");
+          coreObj.addPseudocodeLine(1, "top++;");
           break;
         case POP:
-          coreAnim.addPseudocodeLine(0, "top--;");
-          coreAnim.addPseudocodeLine(1, "Value = Array[top];");
-          coreAnim.addPseudocodeLine(2, "Array[top] = '';");
+          coreObj.addPseudocodeLine(0, "top--;");
+          coreObj.addPseudocodeLine(1, "Value = Array[top];");
+          coreObj.addPseudocodeLine(2, "Array[top] = '';");
           break;
     }
   }
   
   this.init = function() {
-    coreAnim.clearLog();
-    coreAnim.saveState();
+    coreObj.clearLog();
+    coreObj.saveState();
     
     top.value = 0;
     top.drawing.setText(top.value);
@@ -85,8 +85,8 @@ var StackArray = function(){
       mArray[i].setText(null);
     }
     
-    coreAnim.saveState();
-    coreAnim.play(coreAnim.getAnimationDuration());
+    coreObj.saveState();
+    coreObj.play(coreObj.getAnimationDuration());
   }
   
   this.isEmpty = function () { return top.value == 0; }
@@ -96,49 +96,49 @@ var StackArray = function(){
       return false;
     }
     
-    coreAnim.clearLog();
-    coreAnim.newAction();
-    //coreAnim.saveState();
+    coreObj.clearLog();
+    coreObj.newAction();
+    //coreObj.saveState();
     
-    if (coreAnim.isLearningMode()){
-      coreAnim.clearPseudocode();
+    if (coreObj.isLearningMode()){
+      coreObj.clearPseudocode();
       
-      learnObj["newValue"] = coreAnim.newUserObject("newValue", 500, 75, 25, item, "learning", null, USER_OBJ_TYPE.VALUE, true, null);
-      learnObj["newTopPointer"] = coreAnim.newUserObject("newTopPointer", top.edge.getCoordinateX2(), top.edge.getCoordinateY2(), 10, null, "learning", null, USER_OBJ_TYPE.MOVEMENT, null, top.edge.getID());
+      learnObj["newValue"] = coreObj.newUserObject("newValue", 500, 75, 25, item, "learning", null, USER_OBJ_TYPE.VALUE, true, null);
+      learnObj["newTopPointer"] = coreObj.newUserObject("newTopPointer", top.edge.getCoordinateX2(), top.edge.getCoordinateY2(), 10, null, "learning", null, USER_OBJ_TYPE.MOVEMENT, null, top.edge.getID());
       
       for (var key in mArray) {
         mArray[key].setIsValidTarget(true);
-        coreAnim.saveState();
+        coreObj.saveState();
       }
       
-      coreAnim.saveState("Use the grey circles to create the final state.");
-      coreAnim.play(0);
+      coreObj.saveState("Use the grey circles to create the final state.");
+      coreObj.play(0);
       
     } else {
       this.generatePseudocode(PUSH);
       
       mArray[top.value].setText(item);
-      coreAnim.saveState("Inserting the new value", 0);
+      coreObj.saveState("Inserting the new value", 0);
   
       top.value++;
       top.drawing.setFill(defaultProperties["shape"]["update"]["fill"]);
-      coreAnim.saveState();
+      coreObj.saveState();
       
       //top.edge.moveEdgeEnd(mArray[top.value].getCoordinateX() + 25, mArray[top.value].getCoordinateY());
       top.edge.setIdObjectB(mArray[top.value].getID());
       
       top.drawing.setText(top.value);
       top.drawing.setFill(defaultProperties["shape"]["default"]["fill"]);
-      coreAnim.saveState("Update the top pointer.", 1);
+      coreObj.saveState("Update the top pointer.", 1);
       
       //top.drawing.moveShape(500, 50);
-      //coreAnim.saveState();
+      //coreObj.saveState();
       
-      coreAnim.play(coreAnim.getAnimationDuration());
+      coreObj.play(coreObj.getAnimationDuration());
     }
     
-    coreAnim.printVariableWatch("top", top.value);
-    coreAnim.printVariableWatch("isEmpty", self.isEmpty());
+    coreObj.printVariableWatch("top", top.value);
+    coreObj.printVariableWatch("isEmpty", self.isEmpty());
     
     return true;
   }
@@ -148,31 +148,31 @@ var StackArray = function(){
       return false;
     }
     
-    coreAnim.clearLog();
-    coreAnim.newAction();
+    coreObj.clearLog();
+    coreObj.newAction();
     this.generatePseudocode(POP);
-    //coreAnim.saveState();
+    //coreObj.saveState();
     
     top.value--;
     
     top.drawing.setFill(defaultProperties["shape"]["update"]["fill"]);
-    coreAnim.saveState();
+    coreObj.saveState();
     
     //top.edge.moveEdgeEnd(mArray[top.value].getCoordinateX() + 25, mArray[top.value].getCoordinateY());
     top.edge.setIdObjectB(mArray[top.value].getID());
     
     top.drawing.setText(top.value);
     top.drawing.setFill(defaultProperties["shape"]["default"]["fill"]);
-    coreAnim.saveState("Update the top pointer.", 0);
+    coreObj.saveState("Update the top pointer.", 0);
     
     mArray[top.value].setFill(defaultProperties["shape"]["delete"]["fill"]);
-    coreAnim.saveState(null, 1);
+    coreObj.saveState(null, 1);
     
     mArray[top.value].setText(null);
     mArray[top.value].setFill(defaultProperties["shape"]["default"]["fill"]);
-    coreAnim.saveState("Pop the top position.", 2);
+    coreObj.saveState("Pop the top position.", 2);
     
-    coreAnim.play(coreAnim.getAnimationDuration());
+    coreObj.play(coreObj.getAnimationDuration());
     
     return true;
   }

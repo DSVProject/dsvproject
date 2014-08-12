@@ -18,7 +18,7 @@
   *
   * @constructor
   */
-var CoreAnimObject = function () {
+var CoreObject = function () {
   var self = this;
   
   // Internal array that keeps an instance of all objects on the screen
@@ -537,6 +537,7 @@ var CoreAnimObject = function () {
     * @param {!(String|Number)} id : the id of this object.
     * @param {!Number} cx : the cx coordinate of this object inside the svg element.
     * @param {!Number} cy : the cy coordinate of this object inside the svg element.
+    * @param {!Number} radius : the radius of this object.
     * @param {?String=} text : the inner text of this object, that will be displayed on the screen.
     * @param {?String=} label : the text underneath this object, that will be displayed on the screen.
     * @param {?String=} shapeClass : the CSS class of the rect svg element.
@@ -559,6 +560,7 @@ var CoreAnimObject = function () {
     * @param {!(String|Number)} id : the id of this object.
     * @param {!Number} cx : the cx coordinate of this object inside the svg element.
     * @param {!Number} cy : the cy coordinate of this object inside the svg element.
+    * @param {!Number} radius : the radius of this object.
     * @param {?String=} text : the inner text of this object, that will be displayed on the screen.
     * @param {?String=} shapeClass : the CSS class of the rect svg element.
     * @param {?String=} textClass : the CSS class of the text svg element (inside the shape).
@@ -587,7 +589,7 @@ var CoreAnimObject = function () {
     */
   this.newEdgeObject = function (id, idObjectA, idObjectB, edgeClass, edgeType) {
     var newEdge = new EdgeObject(this, id, idObjectA, idObjectB, edgeClass, edgeType);
-
+    
     this.objectList[idObjectA].addEdge(newEdge);
     
     return newEdge;

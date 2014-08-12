@@ -23,10 +23,10 @@ var Pointer = function () {
   */
 var QueueArray = function () {
   var self = this;
-  var coreAnim = new CoreAnimObject();
+  var coreObj = new CoreObject();
   
-  coreAnim.newStateList();
-  coreAnim.saveState();
+  coreObj.newStateList();
+  coreObj.saveState();
   
   var learnObj = [];
 
@@ -39,45 +39,45 @@ var QueueArray = function () {
         DEQUEUE = 1;
   
   for (var i=0; i<16; i++){
-    mArray[i] = coreAnim.newSquareObject(i, (i+1)*50, 300, null, i, null, null, null, null, EDGE_POSITION.TOP);  
+    mArray[i] = coreObj.newSquareObject(i, (i+1)*50, 300, null, i, null, null, null, null, EDGE_POSITION.TOP);  
   }
   
   head.value = 0;
-  head.drawing = coreAnim.newSquareObject("head", 50, 50, 0, "head", null, null, null, EDGE_POSITION.BOTTOM, null);
-  head.edge = coreAnim.newEdgeObject("head", head.drawing.getID(), mArray[head.value].getID(), null, EDGE_TYPE.UNIDIRECTIONAL);
+  head.drawing = coreObj.newSquareObject("head", 50, 50, 0, "head", null, null, null, EDGE_POSITION.BOTTOM, null);
+  head.edge = coreObj.newEdgeObject("head", head.drawing.getID(), mArray[head.value].getID(), null, EDGE_TYPE.UNIDIRECTIONAL);
   head.edge.setMarkerEnd(defaultProperties.marker.default.end);
   
   tail.value = 0
-  tail.drawing = coreAnim.newSquareObject("tail", 150, 50, 0, "tail", null, null, null, EDGE_POSITION.BOTTOM, null);
-  tail.edge = coreAnim.newEdgeObject("tail", tail.drawing.getID(), mArray[tail.value].getID(), null, EDGE_TYPE.UNIDIRECTIONAL);
+  tail.drawing = coreObj.newSquareObject("tail", 150, 50, 0, "tail", null, null, null, EDGE_POSITION.BOTTOM, null);
+  tail.edge = coreObj.newEdgeObject("tail", tail.drawing.getID(), mArray[tail.value].getID(), null, EDGE_TYPE.UNIDIRECTIONAL);
   tail.edge.setMarkerEnd(defaultProperties.marker.default.end);
 
-  coreAnim.saveState();
-  coreAnim.play(0);
+  coreObj.saveState();
+  coreObj.play(0);
 
   this.getAnim = function () {
-    return coreAnim;
+    return coreObj;
   }
   
   this.generatePseudocode = function (command) {
-    coreAnim.clearPseudocode();
+    coreObj.clearPseudocode();
     
     switch (command) {
         case ENQUEUE:
-          coreAnim.addPseudocodeLine(0, "Array[top] = value;");
-          coreAnim.addPseudocodeLine(1, "top++;");
+          coreObj.addPseudocodeLine(0, "Array[top] = value;");
+          coreObj.addPseudocodeLine(1, "top++;");
           break;
         case DEQUEUE:
-          coreAnim.addPseudocodeLine(0, "top--;");
-          coreAnim.addPseudocodeLine(1, "Value = Array[top];");
-          coreAnim.addPseudocodeLine(2, "Array[top] = '';");
+          coreObj.addPseudocodeLine(0, "top--;");
+          coreObj.addPseudocodeLine(1, "Value = Array[top];");
+          coreObj.addPseudocodeLine(2, "Array[top] = '';");
           break;
     }
   }
 
   this.init = function () {
-    coreAnim.clearLog();
-    coreAnim.saveState();
+    coreObj.clearLog();
+    coreObj.saveState();
     
     head.value = 0;
     head.drawing.setText(head.value);
@@ -91,8 +91,8 @@ var QueueArray = function () {
       mArray[i].setText(null);
     }
     
-    coreAnim.saveState();
-    coreAnim.play();
+    coreObj.saveState();
+    coreObj.play();
   }
 
   this.isEmpty = function () { return tail.item === 0; }
@@ -102,41 +102,41 @@ var QueueArray = function () {
       return false;
     }
     
-    coreAnim.clearLog();
-    coreAnim.newAction();
+    coreObj.clearLog();
+    coreObj.newAction();
     
-    if (coreAnim.isLearningMode()){
-      coreAnim.clearPseudocode();
+    if (coreObj.isLearningMode()){
+      coreObj.clearPseudocode();
       
-      learnObj["newValue"] = coreAnim.newUserObject("newValue", 500, 75, 25, item, "learning", null, USER_OBJ_TYPE.VALUE, true, null);
-      learnObj["newHeadPointer"] = coreAnim.newUserObject("newHeadPointer", head.edge.getCoordinateX2(), head.edge.getCoordinateY2(), 10, null, "learning", null, USER_OBJ_TYPE.MOVEMENT, null, head.edge.getID());
-      learnObj["newTailPointer"] = coreAnim.newUserObject("newTailPointer", tail.edge.getCoordinateX2(), tail.edge.getCoordinateY2(), 10, null, "learning", null, USER_OBJ_TYPE.MOVEMENT, null, tail.edge.getID());
+      learnObj["newValue"] = coreObj.newUserObject("newValue", 500, 75, 25, item, "learning", null, USER_OBJ_TYPE.VALUE, true, null);
+      learnObj["newHeadPointer"] = coreObj.newUserObject("newHeadPointer", head.edge.getCoordinateX2(), head.edge.getCoordinateY2(), 10, null, "learning", null, USER_OBJ_TYPE.MOVEMENT, null, head.edge.getID());
+      learnObj["newTailPointer"] = coreObj.newUserObject("newTailPointer", tail.edge.getCoordinateX2(), tail.edge.getCoordinateY2(), 10, null, "learning", null, USER_OBJ_TYPE.MOVEMENT, null, tail.edge.getID());
       
       for (var key in mArray) {
         mArray[key].setIsValidTarget(true);
-        coreAnim.saveState();
+        coreObj.saveState();
       }
       
-      coreAnim.saveState("Use the grey circles to create the final state.");
-      coreAnim.play(0);
+      coreObj.saveState("Use the grey circles to create the final state.");
+      coreObj.play(0);
     } else {
       this.generatePseudocode(ENQUEUE);
       
       mArray[tail.value].setText(item);
-      coreAnim.saveState("Inserting the new value");
+      coreObj.saveState("Inserting the new value");
       
       tail.value++;
       tail.drawing.setFill(defaultProperties["shape"]["update"]["fill"]);
-      coreAnim.saveState();
+      coreObj.saveState();
       
       tail.edge.setIdObjectB(mArray[tail.value].getID());
       
       tail.drawing.setText(tail.value);
       tail.drawing.setFill(defaultProperties["shape"]["default"]["fill"]);
-      coreAnim.saveState("Update the tail pointer.");
+      coreObj.saveState("Update the tail pointer.");
     }
     
-    coreAnim.play();
+    coreObj.play();
   }
     
   this.dequeue = function () {
@@ -144,25 +144,25 @@ var QueueArray = function () {
       return false;
     }
 
-    coreAnim.clearLog();
-    coreAnim.newAction();
+    coreObj.clearLog();
+    coreObj.newAction();
     
     mArray[head.value].setFill(defaultProperties["shape"]["delete"]["fill"]);
-    coreAnim.saveState();
+    coreObj.saveState();
     
     mArray[head.value].setText(null);
     mArray[head.value].setFill(defaultProperties["shape"]["default"]["fill"]);
-    coreAnim.saveState("Dequeue the head position.");
+    coreObj.saveState("Dequeue the head position.");
     
     head.value++;
     head.drawing.setFill(defaultProperties["shape"]["update"]["fill"]);
-    coreAnim.saveState();
+    coreObj.saveState();
     
     head.edge.setIdObjectB(mArray[head.value].getID());
     
     head.drawing.setText(head.value);
     head.drawing.setFill(defaultProperties["shape"]["default"]["fill"]);
-    coreAnim.saveState("Update the tail pointer.");
+    coreObj.saveState("Update the tail pointer.");
     
     if (head.value == tail.value) {
       head.value = 0;
@@ -173,9 +173,9 @@ var QueueArray = function () {
       tail.drawing.setText(tail.value);
       tail.edge.setIdObjectB(mArray[tail.value].getID());
       
-      coreAnim.saveState();
+      coreObj.saveState();
     }
     
-    coreAnim.play();
+    coreObj.play();
   }
 }

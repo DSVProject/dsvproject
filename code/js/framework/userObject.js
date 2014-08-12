@@ -18,6 +18,7 @@
   * @param {!(String|Number)} id : the id of this object.
   * @param {!Number} cx : the cx coordinate of this object inside the svg element.
   * @param {!Number} cy : the cy coordinate of this object inside the svg element.
+  * @param {!Number} radius : the radius of this object.
   * @param {?String=} text : the inner text of this object, that will be displayed on the screen.
   * @param {?String=} shapeClass : the CSS class of the rect svg element.
   * @param {?String=} textClass : the CSS class of the text svg element (inside the shape).
