@@ -43,24 +43,22 @@ var Template = function(){
   
   // CREATE INITIAL ITEMS IF ANY
   coreObj.newStateList();
-  coreObj.saveState();
 
   var cap = 16;
   var top = new Pointer();
   var mArray = [];
   
   for (var i=0; i<16; i++){
-    mArray[i] = coreObj.newSquareObject(i, (i+1)*50, 300, null, i, null, null, null, null, EDGE_POSITION.TOP);  
+    mArray[i] = coreObj.newSquareObject(i, (i+1)*50, 300, null, i, null, null, null);  
   }
   
   top.value = 0;
-  top.drawing = coreObj.newSquareObject("top", 50, 50, 0, "top", null, null, null, EDGE_POSITION.BOTTOM, null);
+  top.drawing = coreObj.newSquareObject("top", 50, 50, 0, "top", null, null, null);
 
-  top.edge = coreObj.newEdgeObject("top", top.drawing.getID(), mArray[top.value].getID(), null, EDGE_TYPE.UNIDIRECTIONAL);
-  top.edge.setMarkerEnd(defaultProperties.marker.default.end);
+  top.edge = coreObj.newEdgeObject("top", top.drawing.getID(), mArray[top.value].getID(), null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.BOTTOM, EDGE_POSITION.TOP);
   
   coreObj.saveState();
-  coreObj.play(0);
+  coreObj.begin(0);
 
   // DEFAULT METHODS
   this.getCore = function () {

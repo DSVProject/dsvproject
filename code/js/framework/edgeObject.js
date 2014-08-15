@@ -20,12 +20,14 @@
   * @param {?String=} idObjectB : the id of the destination object. If null a small edge will be created following the orientation of the origin point.
   * @param {?String=} edgeClass : the CSS class of the line svg element.
   * @param {!Const} edgeType : a constant value (defined at 'animation/constant.js' : EDGE_TYPE) indicating wether the vertex is unidirectional (from A -> B), bidirectional or has no direction.
+  * @param {?Const=} outboundPoint : a constant value (defined at 'animation/constant.js' : EDGE_POSITION) indicating from which point of the shape the edge will originate. If null the CENTER position will be used.
+  * @param {?Const=} inboundPoint : a constant value (defined at 'animation/constant.js' : EDGE_POSITION) indicating at which point of the shape the edge will arrive. If null the CENTER position will be used.
   */
-var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeType) {
+var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeType, outboundPoint, inboundPoint) {
   var self = this;
 
   if (coreObj == null) {
-    throw new InvalidArgumentException("Invalid null parameter.");
+    throw new Error("Invalid null parameter.");
     return;
   }
 
@@ -44,9 +46,13 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
     
     "type": edgeType,
     
-    "markerStart": defaultProperties.marker.null.start,
+    "outboundPoint": outboundPoint != null ? outboundPoint : EDGE_POSITION.CENTER,
     
-    "markerEnd": defaultProperties.marker.null.end,
+    "inboundPoint": inboundPoint != null ? inboundPoint : EDGE_POSITION.CENTER,
+    
+    "markerStart": idObjectB != null ? defaultProperties.marker.start.default : defaultProperties.marker.start.null,
+    
+    "markerEnd": idObjectB != null ? defaultProperties.marker.end.default : defaultProperties.marker.end.null,
     
     "edge": {
       "class": edgeClass,
@@ -54,8 +60,8 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
       "y1": null,
       "x2": null,
       "y2": null,
-      "stroke": defaultProperties.edge.default.stroke,
-      "strokeWidth": defaultProperties.edge.default["stroke-width"]
+      "stroke": idObjectB != null ? defaultProperties.edge.stroke.default : defaultProperties.edge.stroke.null,
+      "strokeWidth": idObjectB != null ? defaultProperties.edge["stroke-width"].default : defaultProperties.edge["stroke-width"].null
     }
   }
 
@@ -105,11 +111,24 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
   
   /**
     * Set the id of the object that is the origin of the edge.
+    * The aspect of the edge will be changed according to the parameter sent:
+    *   -If null it will be red;
+    *   -If not null it will be black;
     *
     * @param {(String|Number)} newID : the id of the new origin.
     */
   this.setIdObjectB = function (newID) {
     this.propObj.idObjectB = newID;
+    
+    if (newID == null) {
+      this.propObj.edge.stroke = defaultProperties.edge.stroke.null;
+      this.propObj.edge.strokeWidth = defaultProperties.edge["stroke-width"].null;
+      this.propObj.markerEnd = defaultProperties.marker.end.null;
+    } else {
+      this.propObj.edge.stroke = defaultProperties.edge.stroke.default;
+      this.propObj.edge.strokeWidth = defaultProperties.edge["stroke-width"].default;
+      this.propObj.markerEnd = defaultProperties.marker.end.default;
+    }
     
     this.calculatePath();
   }
@@ -129,6 +148,40 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
   this.setType = function (newType) {
     if (newType == null) return;
     this.propObj.type = newType;
+  }
+  
+  /**
+    * Set from which point of the object the edge will originate.
+    *
+    * @param {!Const} newValue : a constant value (defined at 'animation/constant.js'), EDGE_POSITION.
+    */
+  this.setOutboundPoint = function (newValue) {
+    if (newValue == null) return;
+    this.propObj.outboundPoint = newValue;
+  }
+  
+  /**
+    * @return {Const} : the outboundPoint property.
+    */ 
+  this.getOutboundPoint = function () {
+    return this.propObj.outboundPoint;
+  }
+  
+  /**
+    * Set at which point of the object the edge will arrive.
+    *
+    * @param {!Const} newValue : a constant value (defined at 'animation/constant.js'), EDGE_POSITION.
+    */
+  this.setInboundPoint = function (newValue) {
+    if (newValue == null) return;
+    this.propObj.inboundPoint = newValue;
+  }
+  
+  /**
+    * @return {Const} : the inboundPoint property.
+    */ 
+  this.getInboundPoint = function () {
+    return this.propObj.inboundPoint;
   }
   
   /**
@@ -217,14 +270,14 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
     var point;
     
     try {
-      this.propObj.edge.x1 = this.coreObj.objectList[this.propObj.idObjectA].getEdgeCoordinateX(EDGE_INOUT.OUTGOING);
-      this.propObj.edge.y1 = this.coreObj.objectList[this.propObj.idObjectA].getEdgeCoordinateY(EDGE_INOUT.OUTGOING);
+      this.propObj.edge.x1 = this.coreObj.objectList[this.propObj.idObjectA].getEdgeCoordinateX(this.getOutboundPoint());
+      this.propObj.edge.y1 = this.coreObj.objectList[this.propObj.idObjectA].getEdgeCoordinateY(this.getOutboundPoint());
 
       if (this.propObj.idObjectB != null) {
-        this.propObj.edge.x2 = this.coreObj.objectList[this.propObj.idObjectB].getEdgeCoordinateX(EDGE_INOUT.INCOMING);
-        this.propObj.edge.y2 = this.coreObj.objectList[this.propObj.idObjectB].getEdgeCoordinateY(EDGE_INOUT.INCOMING);
+        this.propObj.edge.x2 = this.coreObj.objectList[this.propObj.idObjectB].getEdgeCoordinateX(this.getInboundPoint());
+        this.propObj.edge.y2 = this.coreObj.objectList[this.propObj.idObjectB].getEdgeCoordinateY(this.getInboundPoint());
       } else {
-        point = this.coreObj.objectList[this.propObj.idObjectA].getOutgoingPoint();
+        point = this.getOutboundPoint();
 
         if (point == EDGE_POSITION.CENTER) {
           this.propObj.edge.x2 = this.propObj.edge.x1;
@@ -250,10 +303,10 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
     * Draw this object attributes on the screen.
     * If the object is new, it will be generated; if any property has changed, it will be updated.
     *
-    * @param {!Number=} dur : the duration in miliseconds of this animation.
+    * @param {!Number=} duration : the duration in miliseconds of this animation.
     */
-  this.draw = function (dur) {
-    if (dur == null || isNaN(dur) || dur < 0) dur = DEFAULT_ANIMATION_DURATION;
+  this.draw = function (duration) {
+    if (duration == null || isNaN(duration) || duration < 0) duration = DEFAULT_ANIMATION_DURATION;
     
     var json = [];
     json.push(this.propObj);
@@ -264,7 +317,7 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
     edge.enter().append(SVG_LINE)        
         .attr("id", function (d) {return DEFAULT_IDS.SVG_ELEMENT.EDGE + d.id;});
     edge.transition()
-        .duration(dur)
+        .duration(duration)
         .attr("class", function (d) {return d.edge.class;})
         .attr("x1", function (d) {return d.edge.x1;})
         .attr("y1", function (d) {return d.edge.y1;})
@@ -286,10 +339,10 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
   /**
     * Remove this object from the screen.
     *
-    * @param {!Number=} dur : the duration in miliseconds of this animation.
+    * @param {!Number=} duration : the duration in miliseconds of this animation.
     */
-  this.remove = function (dur) {
-    if (dur == null || isNaN(dur) || dur < 0) dur = DEFAULT_ANIMATION_DURATION;
+  this.remove = function (duration) {
+    if (duration == null || isNaN(duration) || duration < 0) duration = DEFAULT_ANIMATION_DURATION;
     
     var json = [];
     json.push(this.propObj);
@@ -298,7 +351,7 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
         .data(json, function (d) {return d.id;});
     
     edge.transition()
-        .duration(dur)
+        .duration(duration)
         .remove();
   }
   

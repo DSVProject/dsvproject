@@ -58,9 +58,8 @@
             <div class="page-header">
               <h1>1. The Framework</h1>
             </div>
-            <p>This framework serves as a base to implement Data Structure Visualisations. It will provide tools to create graphic items, animate and manage them. It was built in a way that a person who wants to build a new visualisation doesn't need to  have knowledge about SVG or D3.</p>
-            <p>The objects were designed following the practices of Object Oriented Programming, which is familiar to many programmers, making the use of this kit easier.</p>
-            <p>The classes are meant to be used only to control the graphic part of the visualisation. The algorithms, internal structures, etc. must be keep a layer above, but don't worry about that now, it will all be explained next.</p>
+            <p>This framework serves as a base to implement <strong>Data Structure Visualisations</strong>, providing tools to create graphic items, animate and manage them. It was built in a way that anyone with some knowledge of <strong>Object Oriented Programming</strong> and <strong>JavaScript</strong> can use it, without having knowledge about <strong>SVG</strong> or <strong>D3</strong>.</p>
+            <p>The classes provided were designed to control the graphic part of the visualisation, and should be integrated with the algorithms of each data structure.</p>
             
             <h2>1.1. File Structure</h2>
             <p>You've cloned the project to your computer and now what? Let's understand how the framework directories are organised:</p>
@@ -70,11 +69,12 @@ DSVProject/
 │   ├── bootstrap/
 │   ├── d3/
 │   ├── js/
+│   │   ├── util.js
 │   │   ├── algorithms/
 │   │   │   ├── template.js
 │   │   │   ├── visualisation JS files
 │   │   ├── framework/
-│   │   │   ├── CoreObject.js
+│   │   │   ├── coreObject.js
 │   │   │   ├── squareObject.js
 │   │   │   ├── circleObject.js
 │   │   │   ├── edgeObject.js
@@ -87,6 +87,7 @@ DSVProject/
 │   ├── bootstrap/
 │   ├── css/
 │   │   ├── animation.css
+│   │   ├── template.css
 │   │   ├── Other CSS files
 │   ├── index.html
 │   ├── template.html
@@ -100,15 +101,16 @@ DSVProject/
 │   ├── .doc files
 └── readme
 </pre>
-            <p>Although it might look complex there's only 3 folders that you should worry about</p>
+            <p>Although it might look complex there are only 3 folders that you should worry about:</p>
             
             <ul>
               <li><strong>code/</strong> : where you'll place your visualisation .html file.</li>
               <li><strong>algorithms/</strong> : where you'll place your visualisation .js file.</li>
-              <li><strong>custom/</strong> : in case you decided to create a new shape or set of shapes using the existing basic ones.</li>
+              <li><strong>custom/</strong> : where you'll place your custom shape or set of shapes, in case you decided to create one.</li>
             </ul>
             
             <p>The .css file that controls the styling of the shapes if called <strong>animation.css</strong>.</p>
+            <p>The main website and the visualisation pages were built using <a href="http://getbootstrap.com">Boostrap</a>. The .css file that control the styling of the pages is called <strong>template.css</strong>, and the javascript functions related to the page behaviour are located inside <strong>util.js</strong>.</p>
             
           </section>
           
@@ -118,20 +120,20 @@ DSVProject/
             <div class="page-header">
               <h1>2. The Basic Items</h1>
             </div>
-            <p>Each item on the screen will be an instance of one of these items, for example, an array will be a combination of Squares positioned side by side, while a node will be a combination of a Square with an Edge. For this reason let's take a look on each of them to understand how they're meant to be used.</p>
+            <p>All visualisations will be built using instances of these items. For example, an array will be a combination of Squares positioned side by side, while a node will be a combination of a Square with an Edge. For this reason let's take a look on each of them to understand how they're meant to be used.</p>
           </section>
           
           <!-- SquareObject -->
           <section id="square-object">
             <h2>2.1. Square Object</h2>
-            <p>The square is one of the basic shapes (in SVG know as rect) and here's how it will look on the screen:</p>
+            <p>The square is one of the basic shapes and here's how it will look on the screen:</p>
             <img src="img/squareObject.png" alt="">
             <p>As you noticed by the annotations on the image this object is composed of 3 elements: a shape, an inner text and a label (the last two being optional) but we'll get into this a little ahead.</p>
             
             <h3>2.1.1. Constructor and Parameters</h3>
             <p>The class is called SquareObject, and to create an instance of a class in javascript all you have to do is the same that you would do in any other OO language:</p>
 <pre class="prettyprint linenums">
-var newObj = new SquareObject(coreObj, id, x, y, text, label, shapeClass, textClass, labelClass, outgoingPoint, incomingPoint);
+var newObj = new SquareObject(coreObj, id, x, y, text, label, shapeClass, textClass, labelClass);
 </pre>
             <p>Now let's understand all those parameters:</p>
             <ul>
@@ -144,8 +146,6 @@ var newObj = new SquareObject(coreObj, id, x, y, text, label, shapeClass, textCl
               <li><strong>shapeClass:</strong> the CSS class of the shape SVG element.</li>
               <li><strong>textClass:</strong> the CSS class of the text SVG element.</li>
               <li><strong>labelClass:</strong> the CSS class of the text SVG element.</li>
-              <li><strong>outgoingPoint:</strong> from which point of the shape edges will originate.</li>
-              <li><strong>incomingPoint:</strong> at which point in the shape edges will arrive.</li>
             </ul>
             <p>As you will be able to notice in the javadoc, some of this parameters are not obligatory (like text, label, classes), making it easy to customise a shape. Regarding the classes, it is always recommended to send "null" as parameter since all instances will inherit a default class, unless you would like it to have a different look.</p>
             <p>Now let's take a look of a few examples:</p>
@@ -163,9 +163,9 @@ this.coreObj = coreObj;
             
             <h4>2.1.2.2. Offset Values</h4>
 <pre class="prettyprint linenums">
-this.textAdjustX = defaultProperties.width / 2;
-this.textAdjustY = defaultProperties.height / 1.75;
-this.labelAdjustY = defaultProperties.height + 30;
+this.textAdjustX = defaultProperties.shape.width / 2;
+this.textAdjustY = defaultProperties.shape.height / 1.75;
+this.labelAdjustY = defaultProperties.shape.height + 30;
 </pre>
             <p>When drawing the properties onto the screen, the inner text and the label may need some positioning adjustments, which will be stored in these.</p>
             
@@ -178,23 +178,23 @@ this.propObj = {
     "class": shapeClass,
     "x": x,
     "y": y,
-    "width": defaultProperties.width,
-    "height": defaultProperties.height,
-    "fill": defaultProperties.shape.default.fill,
-    "fillOpacity": defaultProperties.shape.default["fill-opacity"],
-    "stroke": defaultProperties.shape.default.stroke,
-    "strokeWidth": defaultProperties.shape.default["stroke-width"]
+    "width": defaultProperties.shape.width,
+    "height": defaultProperties.shape.height,
+    "fill": defaultProperties.shape.fill.default,
+    "fillOpacity": defaultProperties.shape["fill-opacity"].default,
+    "stroke": defaultProperties.shape.stroke.default,
+    "strokeWidth": defaultProperties.shape["stroke-width"].default
   },
 
   "text": {
     "class": textClass,
     "x": x + this.textAdjustX,
     "y": y + this.textAdjustY,
-    "fill": defaultProperties.text.default.stroke,
-    "fontFamily": defaultProperties["font-family"],
-    "fontWeight": defaultProperties["font-weight"],
-    "fontSize": defaultProperties["font-size"],
-    "textAnchor": defaultProperties["text-anchor"],
+    "fill": defaultProperties.text.stroke.default,
+    "fontFamily": defaultProperties.text["font-family"],
+    "fontWeight": defaultProperties.text["font-weight"],
+    "fontSize": defaultProperties.text["font-size"],
+    "textAnchor": defaultProperties.text["text-anchor"],
     "text": text
   },
 
@@ -207,11 +207,7 @@ this.propObj = {
 
   "toRemove": false,
 
-  "isValidTarget": false,
-
-  "outgoingPoint": outgoingPoint != null ? outgoingPoint : EDGE_POSITION.CENTER,
-
-  "incomingPoint": incomingPoint != null ? incomingPoint : EDGE_POSITION.CENTER
+  "isValidTarget": false
 }
 </pre>
             <p>This is the most important field of this object. It is a property map that will store all the data regarding the shape, the text, the label and other variables used for functionality. When drawing this object on the screen these values will be taken into consideration.</p>
@@ -233,9 +229,9 @@ this.setShapeClass = function (newClass) {...}
 this.getShapeClass = function () {...}
 this.moveShape = function (x, y) {...}
 this.getCoordinateX = function () {...}
-this.getEdgeCoordinateX = function (inout) {...}
+this.getEdgeCoordinateX = function (point) {...}
 this.getCoordinateY = function () {...}
-this.getEdgeCoordinateY = function (inout) {...}
+this.getEdgeCoordinateY = function (point) {...}
 this.setWidth = function (newWidth) {...}
 this.getWidth = function () {...}
 this.setHeight = function (newHeight) {...}
@@ -256,13 +252,9 @@ this.setToRemove = function (bool) {...}
 this.getToRemove = function () {...}
 this.setIsValidTarget = function (bool) {...}
 this.getIsValidTarget = function () {...}
-this.setOutgoingPoint = function (newValue) {...}
-this.getOutgoingPoint = function () {...}
-this.setIncomingPoint = function (newValue) {...}
-this.getIncomingPoint = function () {...}
 this.addEdge = function (edgeObj) {...}
-this.draw = function (dur) {...}
-this.remove = function (dur) {...}
+this.draw = function (duration) {...}
+this.remove = function (duration) {...}
 this.cloneObject = function () {...}
 this.cloneProperties = function (prop) {...}
 this.cloneEdges = function (edges) {...}
@@ -328,7 +320,7 @@ this.cloneEdges = function (edges) {
             <h3>2.2.1. Constructor and Parameters</h3>
             <p>The class is called CircleObject, and to create an instance of a class in javascript all you have to do is the same that you would do in any other OO language:</p>
 <pre class="prettyprint linenums">
-var newObj = new CircleObject(coreObj, id, cx, cy, radius, text, label, shapeClass, textClass, labelClass, outgoingPoint, incomingPoint);
+var newObj = new CircleObject(coreObj, id, cx, cy, radius, text, label, shapeClass, textClass, labelClass);
 </pre>
             <p>Now let's understand all those parameters:</p>
             <ul>
@@ -342,8 +334,6 @@ var newObj = new CircleObject(coreObj, id, cx, cy, radius, text, label, shapeCla
               <li><strong>shapeClass:</strong> the CSS class of the shape SVG element.</li>
               <li><strong>textClass:</strong> the CSS class of the text SVG element.</li>
               <li><strong>labelClass:</strong> the CSS class of the text SVG element.</li>
-              <li><strong>outgoingPoint:</strong> from which point of the shape edges will originate.</li>
-              <li><strong>incomingPoint:</strong> at which point in the shape edges will arrive.</li>
             </ul>
             <p>As you will be able to notice in the javadoc, some of this parameters are not obligatory (like text, label, classes), making it easy to customise a shape. Regarding the classes, it is always recommended to send "null" as parameter since all instances will inherit a default class, unless you would like it to have a different look.</p>
             <p>Now let's take a look of a few examples:</p>
@@ -361,8 +351,8 @@ this.coreObj = coreObj;
             
             <h4>2.2.2.2. Offset Values</h4>
 <pre class="prettyprint linenums">
-this.textAdjust = defaultProperties["font-size"]/3;
-this.labelAdjust = defaultProperties.radius + 30;
+this.textAdjust = defaultProperties.text["font-size"]/3;
+this.labelAdjust = defaultProperties.shape.radius + 30;
 </pre>
             <p>When drawing the properties onto the screen, the inner text and the label may need some positioning adjustments, which will be stored in these.</p>
             
@@ -376,21 +366,21 @@ this.propObj = {
     "cx": cx,
     "cy": cy,
     "r": radius,
-    "fill": defaultProperties.shape.default.fill,
-    "fillOpacity": defaultProperties.shape.default["fill-opacity"],
-    "stroke": defaultProperties.shape.default.stroke,
-    "strokeWidth": defaultProperties.shape.default["stroke-width"]
+    "fill": defaultProperties.shape.fill.default,
+    "fillOpacity": defaultProperties.shape["fill-opacity"].default,
+    "stroke": defaultProperties.shape.stroke.default,
+    "strokeWidth": defaultProperties.shape["stroke-width"].default
   },
 
   "text": {
     "class": textClass,
     "x": cx,
     "y": cy + this.textAdjust,
-    "fill": defaultProperties.text.default.stroke,
-    "fontFamily": defaultProperties["font-family"],
-    "fontWeight": defaultProperties["font-weight"],
-    "fontSize": defaultProperties["font-size"],
-    "textAnchor": defaultProperties["text-anchor"],
+    "fill": defaultProperties.text.stroke.default,
+    "fontFamily": defaultProperties.text["font-family"],
+    "fontWeight": defaultProperties.text["font-weight"],
+    "fontSize": defaultProperties.text["font-size"],
+    "textAnchor": defaultProperties.text["text-anchor"],
     "text": text
   },
 
@@ -403,11 +393,7 @@ this.propObj = {
 
   "toRemove": false,
 
-  "isValidTarget": false,
-
-  "outgoingPoint": (outgoingPoint != null) ? outgoingPoint : EDGE_POSITION.CENTER,
-
-  "incomingPoint": (incomingPoint != null) ? incomingPoint : EDGE_POSITION.CENTER
+  "isValidTarget": false
 }
 </pre>
             <p>This is the most important field of this object. It is a property map that will store all the data regarding the shape, the text, the label and other variables used for functionality. When drawing this object on the screen these values will be taken into consideration.</p>
@@ -429,9 +415,9 @@ this.setShapeClass = function (newClass) {...}
 this.getShapeClass = function () {...}
 this.moveShape = function (x, y) {...}
 this.getCoordinateCX = function () {...}
-this.getEdgeCoordinateX = function (inout) {...}
+this.getEdgeCoordinateX = function (point) {...}
 this.getCoordinateCY = function () {...}
-this.getEdgeCoordinateY = function (inout) {...}
+this.getEdgeCoordinateY = function (point) {...}
 this.setRadius = function (newRadius) {...}
 this.getRadius = function () {...}
 this.setFill = function (newFill) {...}
@@ -450,13 +436,9 @@ this.setToRemove = function (bool) {...}
 this.getToRemove = function () {...}
 this.setIsValidTarget = function (bool) {...}
 this.getIsValidTarget = function () {...}
-this.setOutgoingPoint = function (newValue) {...}
-this.getOutgoingPoint = function () {...}
-this.setIncomingPoint = function (newValue) {...}
-this.getIncomingPoint = function () {...}
 this.addEdge = function (edgeObj) {...}
-this.draw = function (dur) {...}
-this.remove = function (dur) {...}
+this.draw = function (duration) {...}
+this.remove = function (duration) {...}
 this.cloneObject = function () {...}
 this.cloneProperties = function (prop) {...}
 this.cloneEdges = function (edges) {...}
@@ -529,7 +511,7 @@ this.cloneEdges = function (edges) {
             <h3>2.3.1. Constructor and Parameters</h3>
             <p>The class is called EdgeObject, and to create an instance of a class in javascript all you have to do is the same that you would do in any other OO language:</p>
 <pre class="prettyprint linenums">
-var newObj = new EdgeObject(coreObj, id, idObjectA, idObjectB, edgeClass, edgeType);
+var newObj = new EdgeObject(coreObj, id, idObjectA, idObjectB, edgeClass, edgeType, outboundPoint, inboundPoint);
 </pre>
             <p>Now let's understand all those parameters:</p>
             <ul>
@@ -539,6 +521,8 @@ var newObj = new EdgeObject(coreObj, id, idObjectA, idObjectB, edgeClass, edgeTy
               <li><strong>idObjectB:</strong> the id of the destination object. If null a small edge will be created following the orientation of the origin point (as seen in the square and circle examples).</li>
               <li><strong>edgeClass:</strong> the CSS class of the line svg element.</li>
               <li><strong>edgeType:</strong> indicates wether the edge is unidirectional (from A -> B), bidirectional or has no direction.</li>
+              <li><strong>outboundPoint:</strong> indicates from which position of the shape the edge will originate.</li>
+              <li><strong>inboundPoint:</strong> indicates at which position of the shape the edge will arrive.</li>
             </ul>
             <p>As you will be able to notice in the javadoc, some of this parameters are not obligatory (like idObjectB, class), making it easy to customise an edge. Regarding the class, it is always recommended to send "null" as parameter since all instances will inherit a default class, unless you would like it to have a different look.</p>
             
@@ -562,9 +546,13 @@ this.propObj = {
 
   "type": edgeType,
 
-  "markerStart": defaultProperties.marker.null.start,
+  "outboundPoint": outboundPoint != null ? outboundPoint : EDGE_POSITION.CENTER,
 
-  "markerEnd": defaultProperties.marker.null.end,
+  "inboundPoint": inboundPoint != null ? inboundPoint : EDGE_POSITION.CENTER,
+
+  "markerStart": idObjectB != null ? defaultProperties.marker.start.default : defaultProperties.marker.start.null,
+
+  "markerEnd": idObjectB != null ? defaultProperties.marker.end.default : defaultProperties.marker.end.null,
 
   "edge": {
     "class": edgeClass,
@@ -572,8 +560,8 @@ this.propObj = {
     "y1": null,
     "x2": null,
     "y2": null,
-    "stroke": defaultProperties.edge.default.stroke,
-    "strokeWidth": defaultProperties.edge.default["stroke-width"]
+    "stroke": idObjectB != null ? defaultProperties.edge.stroke.default : defaultProperties.edge.stroke.null,
+    "strokeWidth": idObjectB != null ? defaultProperties.edge["stroke-width"].default : defaultProperties.edge["stroke-width"].null
   }
 }
 </pre>
@@ -590,6 +578,10 @@ this.getIdObjectB = function () {...}
 this.setIdObjectB = function (newID) {...}
 this.getType = function () {...}
 this.setType = function (newType) {...}
+this.setOutboundPoint = function (newValue) {...}
+this.getOutboundPoint = function () {...}
+this.setInboundPoint = function (newValue) {...}
+this.getInboundPoint = function () {...}
 this.setMarkerStart = function (newMarker) {...}
 this.setMarkerEnd = function (newMarker) {...}
 this.setEdgeClass = function (newClass) {...}
@@ -600,8 +592,8 @@ this.getCoordinateY2 = function(){...}
 this.setStroke = function (newStroke) {...}
 this.setStrokeWidth = function (newStrokeWidth) {...}
 this.calculatePath = function () {...}
-this.draw = function (dur) {...}
-this.remove = function (dur) {...}
+this.draw = function (duration) {...}
+this.remove = function (duration) {...}
 this.cloneProperties = function (prop) {...}
 </pre>
             <p>Most of them are just getters and setters for the property map, but others require special attention. So let's understand them.</p>
@@ -641,6 +633,202 @@ this.cloneProperties = function (prop) {
           <!-- CoreObject -->
           <section id="constant-js">
             <h2>2.6. An important file: Constant.js</h2>
+            
+            <p>To improve code abstraction all default values and constants are defined in one single file. This make doing changes to the code a lot easier as changing the values here will affect all the framework. Normally, a parameter responsible for the aspec of an item will receive a value defined in this file.</p>
+            <p>Let's check some important items declared in this file:</p>
+            <ul>
+              <li><strong>Constant Enums</strong>: many constructors will receive a parameter 
+                <p>Heres the list containing all of them:</p>
+<pre class="prettyprint linenums">
+/**
+  * Values used by CoreAnimObject, to control the playing status of the animation.
+  *
+  * @const 
+  */
+const ANIMATION_STATUS = {
+  PAUSE: 0,
+  PLAY: 1,
+  STOP: -1
+};
+
+/**
+  * Values used when creating an instance of EdgeObject.
+  *
+  * @const 
+  */
+const EDGE_TYPE = {
+  UNDIRECTED: 0,
+  UNIDIRECTIONAL: 1,
+  BIDIRECTIONAL: 2
+};
+
+/**
+  * Values used when creating an instance of EdgeObject.
+  *
+  * @const 
+  */
+const EDGE_POSITION = {
+  CENTER: 0,
+  TOP: 1,
+  LEFT: 2,
+  BOTTOM: 3,
+  RIGHT: 4
+};
+
+/**
+  * Values used when creating an instance of UserObject.
+  *
+  * @const 
+  */
+const USER_OBJ_TYPE = {
+  VALUE: 0,
+  MOVEMENT: 1
+};
+</pre>
+              </li>
+              <li><strong>Default IDS, Classes and Properties</strong>: to improve code abstraction and keep the visual identity of the framework, many properties, classes and ids are defined here. 
+                <p>Heres the list containing all of them:</p>
+<pre class="prettyprint linenums">
+/**
+  * Default class names used across the framework, defined here to improve code abstraction.
+  *
+  * @const 
+  */
+const DEFAULT_CLASSES = {
+  SHAPE:"shape",
+  EDGE:"edge",
+  TEXT:{
+    INNER:"innerText",
+    LABEL:"labelText"
+  },
+  MARKER:"marker",
+  LEARNING_MODE:{
+    SHAPE:"learning",
+    ACTIVE:"active",
+    PLACE_HOLDER:"placeHolder",
+    OBJECT_SELECTED:"selected"
+  },
+  PAGE:{
+    PSEUDOCODE:{
+      HIGHLIGHT:"codeHighlight"
+    }
+  }
+}
+
+/**
+  * Default IDs used across the framework, defined here to improve code abstraction.
+  *
+  * @const 
+  */
+const DEFAULT_IDS = {
+  PAGE:{
+    LOG:"log",
+    VARIABLE:"variables",
+    PSEUDOCODE:"pseudocode",
+    LEARNING_MODE:"chk-learn",
+    ANIMATION_DURATION:"animation-duration",
+    ALERT_PLACEHOLDER:"alert_placeholder"
+  },
+  HTML_ELEMENT:{
+    PSEUDOCODE_LINE:"line"
+  },
+  SVG_GROUP:{
+    MAIN:"g-main",
+    MARKER:"g-marker",
+    SHAPE:"g-shape",
+    TEXT:"g-text",
+    LABEL:"g-label",
+    EDGE:"g-edge"
+  },
+  SVG_ELEMENT:{
+    SHAPE:"shape-",
+    USER_SHAPE:"u-shape-",
+    TEXT:"text-",
+    USER_TEXT:"u-text-",
+    LABEL:"label-",
+    EDGE:"edge-"
+  },
+  SVG_MARKER:{
+    START:{
+      DEFAULT:"reverseArrowDefault",
+      NULL:"reverseArrowNull"
+    },
+    END:{
+      DEFAULT:"arrowDefault",
+      NULL:"arrowNull"
+    }
+  }
+}
+
+/**
+  * Default properties used across the framework, defined here to improve code abstraction.
+  *
+  * @const 
+  */
+const defaultProperties = {
+  shape:{
+    "radius":25,
+    "width":50,
+    "height":50,
+    "stroke":{
+      "default":"black",
+      "draggable":"tomato"
+    },
+    "stroke-width":{
+      "default":2,
+      "draggable":2
+    },
+    "fill":{
+      "default":"white",
+      "draggable":"grey",
+      "update":"lightskyblue",
+      "delete":"tomato"
+    },
+    "fill-opacity":{
+      "default":1.0,
+      "draggable":0.2
+    }
+  },
+  text:{
+    "font-family":"sans-serif",
+    "font-size":18,
+    "text-anchor":"middle",
+    "stroke":{
+      "default":"black",
+      "innerTextBlack":"black",
+      "innerTextWhite":"ivory"
+    }
+  },
+  edge:{
+    "stroke":{
+      "default":"black",
+      "null":"tomato"
+    },
+    "stroke-width":{
+      "default":3,
+      "null":4
+    }
+  },
+  marker:{
+    "width":5,
+    "height":3,
+    "refX":{
+      "start":-7,
+      "end":7
+    },
+    "start":{
+      "default": "url(#reverseArrowDefault)",
+      "null": "url(#reverseArrowNull)"
+    },
+    "end":{
+      "default": "url(#arrowDefault)",
+      "null": "url(#arrowNull)"
+    }
+  }
+}
+</pre>
+              </li>
+            </ul>
           </section>
           
           <!-- Creating a New Visualisation
@@ -698,17 +886,17 @@ this.cloneProperties = function (prop) {
 &lt;!-- Template: Page Title --&gt; (line 7)
 &lt;!-- Template: Visualisation Title --&gt; (line 37)
 &lt;!-- Template: Method's buttons --&gt; (line 42)
-  &lt;!-- Template: Text input button (methods that require an input value) --&gt; (line 45)
+  &lt;!-- Template: Text input button (methods that require an input value) --&gt; (line 44)
     &lt;!-- Template: Textbox id, for future reference --&gt; (line 52)
       &lt;!-- Template: onclick function --&gt; (line 55)
   &lt;!-- Template: Normal button (methods that don't require an input value) --&gt; (line 64)
-  &lt;!-- Template: Learning Mode Button (If not available comment this button tag) --&gt; (line 69)
-&lt;!-- Template: Your Visualisation Scripts --&gt; (line 208)
-  // Template: Your js file instance and calls to methods. (line 212)
+  &lt;!-- Template: Learning Mode Buttons (If not available comment this div tag) --&gt; (line 69)
+&lt;!-- Template: Your Visualisation Scripts --&gt; (line 217)
+  // Template: Your js file instance and calls to methods. (line 221)
 </pre>
             <p>Below each of them you'll find the code that needs to be adapted for the new page.</p>
             
-            <h4>3.1.1.1 The Buttons</h4>
+            <h4>3.1.1.1. The Buttons</h4>
             <img src="img/buttons.png" alt="">
             <p>For the methods in our visualisations we only use two kinds of buttons: <strong>with (a)</strong> and <strong>without (b)</strong> text input.</p>
             <p>If a method requires an input, a text box (c) will appear, an the method will be executed after pressing the button. If no input is required the method will be executed immediatly.</p>
@@ -716,8 +904,8 @@ this.cloneProperties = function (prop) {
             <ul>
             <li>With text input:</li>
 <pre class="prettyprint linenums">
+&lt;!-- Template: Text input button (methods that require an input value) -->
 &lt;div class="btn-group">
-  &lt;!-- Template: Text input button (methods that require an input value) -->
   &lt;button type="button" class="btn btn-default navbar-btn dropdown-toggle" data-toggle="dropdown">
     Method Name &lt;span class="caret">&lt;/span>
   &lt;/button>
@@ -725,11 +913,11 @@ this.cloneProperties = function (prop) {
     &lt;form class="navbar-form">
       &lt;div class="input-group">
         &lt;!-- Template: Textbox id, for future reference -->
-        &lt;input id="txt-input" type="text" class="form-control">
+        &lt;input id="txt-input" type="text" class="form-control" maxlength="4">
         &lt;span class="input-group-btn">
           &lt;!-- Template: onclick function -->
           &lt;button class="btn btn-default" type="button" onclick="">
-            &lt;span class="glyphicon glyphicon-plus">&lt;/span>
+            &lt;span class="glyphicon glyphicon-ok">&lt;/span>
           &lt;/button>
         &lt;/span>
       &lt;/div>
@@ -744,18 +932,29 @@ this.cloneProperties = function (prop) {
 </pre>
             </ul>
 
-            <p>There is a third type of button that in most cases will be commented, unless you're also going to develop a learning mode for the current visualisation.</p>
+            <p>There is also the Learning Mode button group that in most cases will be commented, unless you're also going to develop a learning mode for the current visualisation.</p>
             <img src="img/learningModeButton.png" alt="">
             <p>Here is how its code looks like:</p>
 <pre class="prettyprint linenums">
-&lt;!-- Template: Learning Mode Button (If not available comment this button tag) -->
+&lt;!-- Template: Learning Mode Buttons (If not available comment this div tag) -->
 &lt;!--
-&lt;button type="button" id="chk-learn" class="btn btn-default navbar-btn popover-dismiss" data-toggle="button" data-popover="popover" data-html="true" data-placement="bottom" title="Learning Mode" data-content="Use this switch to toggle between the &lt;b>Exploration&lt;/b> and the &lt;b>Learning&lt;/b> modes.&lt;br/>&lt;br/>In Exploration mode animations will happen automatically.&lt;br/>In Learning mode you will have to create the final state of each method.">Learning Mode&lt;/button>
+&lt;div id="div-learning-buttons" class="btn-group popover-dismiss" data-popover="popover" data-html="true" data-placement="bottom" title="Learning Mode" data-content="Use this switch to toggle between the &lt;b>Exploration&lt;/b> and the &lt;b>Learning&lt;/b> modes.&lt;br/>&lt;br/>In Exploration mode animations will happen automatically.&lt;br/>In Learning mode you will have to create the final state of each method.">
+  &lt;button id="chk-answer-btn" type="button" disabled class="btn btn-default navbar-btn" data-toggle="tooltip" data-placement="bottom" title="Check Answer" onclick="">
+        &lt;span class="glyphicon glyphicon-check">&lt;/span>
+  &lt;/button>
+  &lt;button id="restart-btn" type="button" disabled class="btn btn-default navbar-btn" data-toggle="tooltip" data-placement="bottom" title="Restart" onclick="">
+        &lt;span class="glyphicon glyphicon-repeat">&lt;/span>
+  &lt;/button>
+  &lt;button id="cancel-btn" type="button" disabled class="btn btn-default navbar-btn" data-toggle="tooltip" data-placement="bottom" title="Cancel" onclick="">
+        &lt;span class="glyphicon glyphicon-remove">&lt;/span>
+  &lt;/button>
+  &lt;button type="button" id="chk-learn" class="btn btn-default navbar-btn" data-toggle="tooltip" data-placement="bottom" title="Toggle Mode">Learning Mode&lt;/button>
+&lt;/div>
 -->
 </pre>
             <p>To make it visible just remove the comment tags (&lt;!-- -->).</p>
             
-            <h4>3.1.1.2 The scrips</h4>
+            <h4>3.1.1.2. The scrips</h4>
             <p>The last thing to be changed in the html file is the scripts. You will have to make reference to the new file and create calls to your methods. For this example we're going to use the StackArray.html file.</p>
 
 <pre class="prettyprint linenums">
@@ -845,24 +1044,22 @@ var Template = function(){
   
   // CREATE INITIAL ITEMS IF ANY
   coreObj.newStateList();
-  coreObj.saveState();
 
   var cap = 16;
   var top = new Pointer();
   var mArray = [];
   
   for (var i=0; i&lt;16; i++){
-    mArray[i] = coreObj.newSquareObject(i, (i+1)*50, 300, null, i, null, null, null, null, EDGE_POSITION.TOP);  
+    mArray[i] = coreObj.newSquareObject(i, (i+1)*50, 300, null, i, null, null, null);  
   }
   
   top.value = 0;
-  top.drawing = coreObj.newSquareObject("top", 50, 50, 0, "top", null, null, null, EDGE_POSITION.BOTTOM, null);
+  top.drawing = coreObj.newSquareObject("top", 50, 50, 0, "top", null, null, null);
 
-  top.edge = coreObj.newEdgeObject("top", top.drawing.getID(), mArray[top.value].getID(), null, EDGE_TYPE.UNIDIRECTIONAL);
-  top.edge.setMarkerEnd(defaultProperties.marker.default.end);
+  top.edge = coreObj.newEdgeObject("top", top.drawing.getID(), mArray[top.value].getID(), null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.BOTTOM, EDGE_POSITION.TOP);
   
   coreObj.saveState();
-  coreObj.play(0);
+  coreObj.begin(0);
 
   // DEFAULT METHODS
   this.getCore = function () {
@@ -896,7 +1093,81 @@ var Template = function(){
             <p>Now let's understand what's happening in there.</p>
             
             <h4>3.1.2.1. Organising the data and the graphics</h4>
-            <p>As we've seen when studying CoreObject each graphic object created is returned to this class, enabling any necessary graphic changes.</p>
+            <p>As we've seen when studying CoreObject each graphic object created is returned to this class for you to manage. This will give you access to each instance, making it easier to do necessary graphic changes.</p>
+            <p>Let's pick a few examples to have an idea of how to manage all this:</p>
+            <ul>
+              <li><strong>Array:</strong> in certain cases it will be possible to run the algorithms using only the graphic part, like in Array implementations.
+<pre class="prettyprint linenums">
+for (var i=0; i&lt;16; i++){
+  mArray[i] = coreObj.newSquareObject(i, (i+1)*50, 300, null, i, null, null, null);  
+}
+</pre>
+                <p>Since you have the instance of your graphic object, to access its properties all you have to do is:</p>
+<pre class="prettyprint linenums">
+mArray[top.value].getText();
+      
+mArray[top.value].setText(item);
+</pre>
+                <p>Just like in other OO languages, using "." will grant access to the class methods.</p>
+              </li>
+              <li><strong>Node:</strong> in most of the cases an auxiliar data structure will be required. To explain this we will be using a Tree Node as example.
+                <p>Normally this is the content of a Node:</p>
+<pre class="prettyprint linenums">
+var Node = function () {
+  var value;
+  var key;
+  var leftChild;
+  var rightChild;
+}
+</pre>
+                <p>In these variables we're going to store the data refering to this Node, and the instances of its children. But we also need to keep track of the visual structures, so let's see what will change:</p>
+<pre class="prettyprint linenums">
+var Node = function () {
+  var value;
+  var key;
+  var leftChild;
+  var rightChild;
+  
+  var drawing;
+  var leftEdge;
+  var rightEdge;
+}
+</pre>
+                <p>We still have all the data variables, but now we also have variables to store instances of the graphic objects, that just like in the array example will enable us to make changes to the properties as we run our algorithms.</p>
+                <p>To make it even more clearer, let's take a look at this snipt:</p>
+<pre class="prettyprint linenums">
+this.root = new Node();
+
+root.value = newValue;
+root.key = newKey;
+root.leftChild = null;
+root.rightChild = null;
+
+root.drawing = coreObj.newCircleObject(newKey, this.getCX(), this.getCY(), defaultProperties.radius, newValue, null, null, null, null);
+root.leftEdge = coreObj.newEdgeObject(newKey + "l", root.drawing.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.CENTER, EDGE_POSITION.TOP);
+root.rightEdge = coreObj.newEdgeObject(newKey + "r", root.drawing.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.CENTER, EDGE_POSITION.TOP);
+</pre>
+                <p>In it we're creating a new Node and making it root of our tree. Now let's see what would happen if we would insert a new Node on the left subtree:</p>
+<pre class="prettyprint linenums">
+var newNode = new Node();
+
+newNode.value = newValue;
+newNode.key = newKey;
+newNode.leftChild = null;
+newNode.rightChild = null;
+
+newNode.drawing = coreObj.newCircleObject(newKey, this.getCX(), this.getCY(), defaultProperties.radius, newValue, null, null, null, null);
+newNode.leftEdge = coreObj.newEdgeObject(newKey + "l", root.drawing.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.CENTER, EDGE_POSITION.TOP);
+newNode.rightEdge = coreObj.newEdgeObject(newKey + "r", root.drawing.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.CENTER, EDGE_POSITION.TOP);
+
+this.root.leftChild = newNode;
+this.root.leftEdge.setIdObjectB(newNode.drawing.getID());
+</pre>
+                <p>We create a new node just as we did before, then we update the data (line 12) and then the graphics (line 13).</p>
+                
+                <p>By doing this we can keep the data and the graphics apart from each other, but still easy to manage and access then. In the tree example, you would be able to use recurssion to iterate through the tree by having pointers to the children (leftChild and rightChild) and while doing that you can change the edge properties to let the user know what's happening, by having an easy acces to leftEdge and rightEdge.</p>
+              </li>
+            </ul>
             
             <h4>3.1.2.2. Default variables</h4>
             <p>There are only four default variables that have to be declared:</p>
@@ -927,6 +1198,151 @@ var Template = function(){
           <!-- The Two Files -->
           <section id="custom-items">
             <h2>3.2. Custom Items</h2>
+            <p>The basic classes provided in this framework are meant to cover all necessary items to implement a data structure visualisation, but there is still room for customisation.</p>
+            
+            <h3>3.2.1. Custom Shapes</h3>
+            <p>Let's say that you want to create an object that is made of two squares, how would you do that? Creating two squares during run time can end up as a big headache, so let's look at the example below:</p>
+<pre class="prettyprint linenums">
+var DoubleSquareObject = function (coreObj, id, x, y, text1, text2, label, shapeClass, textClass, labelClass) {
+  var self = this;
+  
+  this.coreObj = coreObj;
+  
+  // ELEMENTS THAT COMPOSE THIS CUSTOM SHAPE
+  this.firstSquare = new SquareObject(this.coreObj, id + "-0", x, y, text1, label, shapeClass, textClass, labelClass);
+  this.secondSquare = new SquareObject(this.coreObj, id + "-1", x + this.firstSquare.getWidth(), y, text2, null, shapeClass, textClass, labelClass);
+  
+  // DEFAULT METHODS
+  
+  this.getAttributes = function () {
+    var json = [];
+    
+    json.push(this.firstSquare.getAttributes());
+    json.push(this.secondSquare.getAttributes());
+    
+    return json;
+  }
+  
+  this.draw = function (dur) {
+    this.firstSquare.draw();
+    this.secondSquare.draw();
+  }
+  
+  this.getToRemove = function () {
+    return this.firstSquare.getToRemove();
+  }
+  
+  this.setToRemove = function (bool) {
+    this.firstSquare.setToRemove(bool);
+    this.secondSquare.setToRemove(bool);
+  }
+  
+  this.cloneObject = function () {
+    var clone = new DoubleSquareObject(this.coreObj);
+    clone.cloneFirstSquare(this.firstSquare);
+    clone.cloneSecondSquare(this.secondSquare);
+    
+    return clone;
+  }
+  
+  this.cloneFirstSquare = function (source) {
+    this.firstSquare = source.cloneObject();
+  }
+    
+  this.cloneSecondSquare = function (source) {
+    this.secondSquare = source.cloneObject();
+  }
+  
+  // PARTICULAR METHODS
+  
+  this.moveShape = function (x, y) {
+    this.firstSquare.moveShape(x, y);
+    this.secondSquare.moveShape(x + this.firstSquare.getWidth(), y);
+  }
+}
+</pre>
+            <p>In it there are a few things to be noticed:</p>
+            <ul>
+              <li>Just as we had in regular shapes, we have have a field that we hold the instance of CoreObject that we're using, enabling interactions with other shapes (line 4).</li>
+              <li>We'll also have fields to hold the instances of the basic shapes that are composing this (lines 7 and 8).</li>
+              <li>TODO</li>
+            </ul>
+            
+            <p>The second step after creating your custom shape is to add it's constructor to <strong>CoreObject.js</strong>:</p>
+<pre class="prettyprint linenums">
+this.newDoubleSquareObject = function (id, x, y, text1, text2, label, shapeClass, textClass, labelClass) {
+  this.objectList[id] = new DoubleSquareObject(this, id, x, y, text1, text2, label, shapeClass, textClass, labelClass);
+
+  return this.objectList[id];
+}
+</pre>
+            <p>With this you'll be able to use and manage your custom shape just as easy as you did with the regular shapes:</p>
+<pre class="prettyprint linenums">
+var doubleSquare = coreAnim.newDoubleSquareObject("ds", 200, 200, "1", "2", null, null, null, null);
+</pre>
+            
+            <h3>3.2.2. Custom Sets</h3>
+            <p>Custom sets can be useful when creating initial shapes. If there's a lot of visualisations that will use an array why not create a custom set just for that? Let's see how the code of a custom set would look:</p>
+<pre class="prettyprint linenums">
+/**
+  * Defines a Pointer object, that contains:
+  *   {Number} value
+  *   {Object} drawing : an instace of one of the basic shapes (squareObject, nodeObject, etc)
+  *   {Object} edge : an instace of the edgeObject
+  */
+var Node = function () {
+  var item,
+    pointer,
+    drawing,
+    edge;
+}
+
+/**
+  * Defines an Array of Squares with pointers.
+  *
+  * @param {!CoreAnimObject} coreObj : instance of the CoreAnimObject class.
+  * @param {!Number} positions : number of positions of the array.
+  */
+var ArrayPointer = function (coreObj, positions) {
+  var self = this;
+  this.coreObj = coreObj;
+  
+  var mArray = [];
+  
+  for (var i=0; i&lt;positions; i++){
+    mArray[i] = new Node();
+    
+    mArray[i].item = null; 
+    mArray[i].drawing = coreObj.newSquareObject("a" + i, (i+1)*50, 400, null, i, null, null, null);
+    mArray[i].edge = coreObj.newEdgeObject("a" + i, mArray[i].drawing.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.TOP, EDGE_POSITION.BOTTOM);
+  }
+  
+  return mArray;
+}
+</pre>       
+            <p>In this example we're creating an array of Squares with pointers, and for this we'll make use of an auxiliar structure (Node, line 7). Than we'll make use of the instance of CoreObject passed as parameter to create all objects that we'll need.</p>
+            <p>The main difference between creating a custom shape and a custom set is that in the second case you'll send back all the shapes created for who called this function to manage, so you don't have to worry about creating the methods again.</p>
+            <p>Let's see an example of this:</p>
+<pre class="prettyprint linenums">
+var Hashtable = function () {
+  var self = this;
+  var coreObj = new CoreObject();
+  
+  coreObj.newStateList();
+  coreObj.saveState();
+  
+  var mArray;
+  
+  mArray = new ArrayPointer(coreObj, 15);
+  
+  coreObj.saveState();
+  
+  coreObj.play();
+}
+</pre>
+            <p>Which will result in:</p>
+            <img src="img/customSet.png" alt="">
+            <p>That makes the processes of creating initial shapes smoother and the code clearer.</p>
           </section>
           
           <!-- Learning Mode

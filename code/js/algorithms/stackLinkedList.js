@@ -6,50 +6,160 @@
   * or implied, of Trinity College Dublin.
   */
 
-// Defines a Stack object (Linked-List Implementation). Used to keep track of the object internally and to interact with the animations
+// Defines a Queue object (Linked-List Implementation). Used to keep track of the object internally and to interact with the animations
 
-var Node = function(){
-  var item;
-  var next;
+var Node = function () {
+  var item,
+    next,
+    drawing,
+    edge;
 }
 
-var StackLinkedList = function(){
-  //var anim = new StackLinkedListAnim();
+var StackLinkedList = function () {
+  var self = this;
+  var coreObj = new CoreObject();
+  
+  const PUSH = 0,
+        POP = 1;
 
-  var first = null;
+  var top = null;
   var N = 0;
+  var counterID = 0;
   
-  /*
-  this.getAnim = function(){
-    return anim;
-  }
-  */
-  this.init = function() {
-    var first = null;
-    var N = 0;
-    
-    //anim.empty();
-  }
-    
-  this.isEmpty = function() { return first == null; }
+  var topD = coreObj.newSquareObject("top", 50, 200, "Top", null, null, null, "pointer");
+  var edgeTopD = coreObj.newEdgeObject("top", topD.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.RIGHT, EDGE_POSITION.LEFT);
+
+  coreObj.newStateList();
   
-  this.size = function() { return N; }
+  coreObj.saveState();
+  coreObj.begin(0);
+  
+  this.getCore = function () {
+    return coreObj;
+  }
+  
+  this.generatePseudocode = function (command) {
+    coreObj.clearPseudocode();
+    
+    switch (command) {
+        case PUSH:
+          coreObj.addPseudocodeLine(0, "Node temp = value;");
+          coreObj.addPseudocodeLine(1, "top = temp;");
+          coreObj.addPseudocodeLine(2, "top.next = oldtop;");
+          break;
+        case POP:
+          coreObj.addPseudocodeLine(0, "top = top.next;");
+          coreObj.addPseudocodeLine(1, "if (isEmpty()) top = null;");
+          break;
+    }
+  }
+  
+  this.init = function () {
+    coreObj.newStateList();
+    
+    top = null;
+    N = 0;
+    counterID = 0;
+
+    edgeTopD.setIdObjectB(null);
+    
+    coreObj.removeAll("node");
+    
+    coreObj.saveState();
+    coreObj.begin();
+  }
+
+  this.isEmpty = function () { return top == null; }
+  
+  this.size = function () { return N; }
           
-  this.push = function(item) { 
-    var oldfirst = first;
-    first = new Node();
-    first.item = item;
-    first.next = oldfirst;
-    N++;
+  this.push = function(item) {
+    if (item.trim() == "") {
+      coreObj.displayAlert("The input should not be empty.");
+      return false;
+    }
+
+    this.generatePseudocode(PUSH);
+
+    var oldtop = top;
+
+    top = new Node();
+    top.item = item;
+    top.next = oldtop;
+    top.drawing = coreObj.newSquareObject(++counterID, 150, 200, item, null, "node", null, null);
+	top.edge = coreObj.newEdgeObject(counterID, top.drawing.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.BOTTOM, EDGE_POSITION.TOP);
+
+    coreObj.saveState("Inserting new node.", 0);
+
+    edgeTopD.setIdObjectB(top.drawing.getID());
+
+    coreObj.saveState("Update the top pointer.", 1);
+
+    top.drawing.moveShape(250, 100);
     
-    //anim.enqueue()
+    var iterator = oldtop;
+    
+    while(iterator != null) {
+      iterator.drawing.moveShape(iterator.drawing.getCoordinateX(), iterator.drawing.getCoordinateY()+100);
+      
+      iterator = iterator.next;
+    }
+    
+    coreObj.saveState();
+
+    if (oldtop != null) {
+      top.edge.setIdObjectB(oldtop.drawing.getID());
+      
+      oldtop.drawing.setLabel();
+      
+      coreObj.saveState("Update the pointer of the previous node.", 2);
+    }
+
+    N++;
+    coreObj.begin();
   }
   
   this.pop = function() {
-    var item = first.item;
-    first = first.next;
+    if (this.isEmpty()) {
+      return false;
+      coreObj.displayAlert("The stack is already empty.");
+    }
+    
+    this.generatePseudocode(POP);
+    
+    var item = top.item;
+    
+    coreObj.removeShape(top.drawing.getID());
+    coreObj.saveState();
+
+    top = top.next;
+    
+    if (top != null){
+      edgeTopD.setIdObjectB(top.drawing.getID());
+      top.edge.setIdObjectB(null);
+      coreObj.saveState("Pop the top position.", 0);
+    }
+    
+    var iterator = top;
+    
+    while(iterator != null) {
+      iterator.drawing.moveShape(iterator.drawing.getCoordinateX(), iterator.drawing.getCoordinateY()-100);
+      
+      iterator = iterator.next;
+    }
+    
+    coreObj.saveState();
+    
+    if (this.isEmpty()){
+      top = null;
+      
+      edgeTopD.setIdObjectB(null);
+      coreObj.saveState("Update the top pointer.", 1);
+    }
+    
     N--;
     
+    coreObj.begin();
     return item;
   }
 }

@@ -23,14 +23,12 @@
   * @param {?String=} shapeClass : the CSS class of the shape svg element.
   * @param {?String=} textClass : the CSS class of the text svg element (inside the shape).
   * @param {?String=} labelClass : the CSS class of the text svg element (underneath the shape).
-  * @param {?Const=} outgoingPoint : a constant value (defined at 'animation/constant.js' : EDGE_POSITION) indicating from which point of the shape the edge will originate. If null the CENTER position will be used.
-  * @param {?Const=} incomingPoint : a constant value (defined at 'animation/constant.js' : EDGE_POSITION) indicating at which point of the shape the edge will arrive. If null the CENTER position will be used.
   */
-var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textClass, labelClass, outgoingPoint, incomingPoint) {
+var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textClass, labelClass) {
   var self = this;
   
   if (coreObj == null) {
-    throw new InvalidArgumentException("Invalid null parameter.");
+    throw new Error("Invalid null parameter.");
     return;
   }
   
@@ -39,9 +37,9 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
   /**
     * Offset values for the text elements.
     */
-  this.textAdjustX = defaultProperties.width / 2;
-  this.textAdjustY = defaultProperties.height / 1.75;
-  this.labelAdjustY = defaultProperties.height + 30;
+  this.textAdjustX = defaultProperties.shape.width / 2;
+  this.textAdjustY = defaultProperties.shape.height / 1.75;
+  this.labelAdjustY = defaultProperties.shape.height + 30;
   
   /**
     * This object map of attributes.
@@ -53,23 +51,23 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
       "class": shapeClass,
       "x": x,
       "y": y,
-      "width": defaultProperties.width,
-      "height": defaultProperties.height,
-      "fill": defaultProperties.shape.default.fill,
-      "fillOpacity": defaultProperties.shape.default["fill-opacity"],
-      "stroke": defaultProperties.shape.default.stroke,
-      "strokeWidth": defaultProperties.shape.default["stroke-width"]
+      "width": defaultProperties.shape.width,
+      "height": defaultProperties.shape.height,
+      "fill": defaultProperties.shape.fill.default,
+      "fillOpacity": defaultProperties.shape["fill-opacity"].default,
+      "stroke": defaultProperties.shape.stroke.default,
+      "strokeWidth": defaultProperties.shape["stroke-width"].default
     },
 
     "text": {
       "class": textClass,
       "x": x + this.textAdjustX,
       "y": y + this.textAdjustY,
-      "fill": defaultProperties.text.default.stroke,
-      "fontFamily": defaultProperties["font-family"],
-      "fontWeight": defaultProperties["font-weight"],
-      "fontSize": defaultProperties["font-size"],
-      "textAnchor": defaultProperties["text-anchor"],
+      "fill": defaultProperties.text.stroke.default,
+      "fontFamily": defaultProperties.text["font-family"],
+      "fontWeight": defaultProperties.text["font-weight"],
+      "fontSize": defaultProperties.text["font-size"],
+      "textAnchor": defaultProperties.text["text-anchor"],
       "text": text
     },
     
@@ -82,11 +80,7 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
     
     "toRemove": false,
     
-    "isValidTarget": false,
-    
-    "outgoingPoint": outgoingPoint != null ? outgoingPoint : EDGE_POSITION.CENTER,
-    
-    "incomingPoint": incomingPoint != null ? incomingPoint : EDGE_POSITION.CENTER
+    "isValidTarget": false
   }
   
   /**
@@ -158,14 +152,13 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
   }
   
   /**
-    * @param {!Const} inout : if who is calling this function is either origin or destination (const defined at 'animation/constant.js' : EDGE_INOUT).
+    * @param {!Const} point : at which position the Edge who is calling this function is going to be placed (const defined at 'animation/constant.js' : EDGE_POSITION).
     *
     * @return {Number} : the x coordinate of the shape svg element, with offset adjust (for edge use).
     */
-  this.getEdgeCoordinateX = function (inout) {
+  this.getEdgeCoordinateX = function (point) {
     var coord = this.propObj.shape.x;
-    var point = (inout == EDGE_INOUT.INCOMING) ? this.propObj.incomingPoint : this.propObj.outgoingPoint;
-    
+
     if (point == EDGE_POSITION.RIGHT) {
       return coord + this.propObj.shape.width;
     } else if (point == EDGE_POSITION.LEFT) { 
@@ -183,14 +176,13 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
   }
   
   /**
-    * @param {!Const} inout : if who is calling this function is either origin or destination (const defined at 'animation/constant.js' : EDGE_INOUT).
+    * @param {!Const} point : at which position the Edge who is calling this function is going to be placed (const defined at 'animation/constant.js' : EDGE_POSITION).
     *
     * @return {Number} : the y coordinate of the shape svg element, with offset adjust (for edge use).
     */
-  this.getEdgeCoordinateY = function (inout) {
+  this.getEdgeCoordinateY = function (point) {
     var coord = this.propObj.shape.y;
-    var point = (inout == EDGE_INOUT.INCOMING) ? this.propObj.incomingPoint : this.propObj.outgoingPoint;
-    
+
     if (point == EDGE_POSITION.TOP) {
       return coord;
     } else if (point == EDGE_POSITION.BOTTOM) { 
@@ -384,40 +376,6 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
   }
   
   /**
-    * Set from which point of the object the edge will originate.
-    *
-    * @param {!Const} newValue : a constant value (defined at 'animation/constant.js'), EDGE_POSITION.
-    */
-  this.setOutgoingPoint = function (newValue) {
-    if (newValue == null) return;
-    this.propObj.outgoingPoint = newValue;
-  }
-  
-  /**
-    * @return {Const} : the outgoingPoint property.
-    */ 
-  this.getOutgoingPoint = function () {
-    return this.propObj.outgoingPoint;
-  }
-  
-  /**
-    * Set at which point of the object the edge will arrive.
-    *
-    * @param {!Const} newValue : a constant value (defined at 'animation/constant.js'), EDGE_POSITION.
-    */
-  this.setIncomingPoint = function (newValue) {
-    if (newValue == null) return;
-    this.propObj.incomingPoint = newValue;
-  }
-  
-  /**
-    * @return {Const} : the incomingPoint property.
-    */ 
-  this.getIncomingPoint = function () {
-    return this.propObj.incomingPoint;
-  }
-  
-  /**
     * Add an EdgeObject to this object edgeList[].
     *
     * @param {!EdgeObject} edgeObj : the instance of the EdgeObject.
@@ -431,10 +389,10 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
     * Draw this object attributes on the screen.
     * If the object is new, it will be generated; if any property has changed, it will be updated.
     *
-    * @param {!Number=} dur : the duration in miliseconds of this animation.
+    * @param {!Number=} duration : the duration in miliseconds of this animation.
     */
-  this.draw = function (dur) {
-    if(dur == null || isNaN(dur) || dur < 0) dur = DEFAULT_ANIMATION_DURATION;
+  this.draw = function (duration) {
+    if(duration == null || isNaN(duration) || duration < 0) duration = DEFAULT_ANIMATION_DURATION;
     
     var json = [];
     json.push(this.propObj);
@@ -445,7 +403,7 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
     shape.enter().append(SVG_RECT)        
         .attr("id", function (d) {return DEFAULT_IDS.SVG_ELEMENT.SHAPE + d.id;});
     shape.transition()
-        .duration(dur)
+        .duration(duration)
         .attr("class", function (d) {return d.shape.class})
         .attr("x", function (d) {return d.shape.x;})
         .attr("y", function (d) {return d.shape.y;})
@@ -462,7 +420,7 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
     text.enter().append(SVG_TEXT)
         .attr("id", function (d) {return DEFAULT_IDS.SVG_ELEMENT.TEXT + d.id; });
     text.transition()
-        .duration(dur)
+        .duration(duration)
         .attr("class", function (d) {return d.text.class})
         .attr("x", function (d) {return d.text.x;})
         .attr("y", function (d) {return d.text.y;})
@@ -479,24 +437,24 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
     label.enter().append(SVG_TEXT)
         .attr("id", function (d) {return DEFAULT_IDS.SVG_ELEMENT.LABEL + d.id;})
     label.transition()
-        .duration(dur)
+        .duration(duration)
         .attr("class", function (d) {return d.label.class;})
         .attr("x", function (d) {return d.label.x;})
         .attr("y", function (d) {return d.label.y;})
         .text(function (d) { return d.label.text; });
     
     for(var key in this.edgeList){
-      this.edgeList[key].draw(dur);
+      this.edgeList[key].draw(duration);
     }
   }
   
   /**
     * Remove this object from the screen.
     *
-    * @param {!Number=} dur : the duration in miliseconds of this animation.
+    * @param {!Number=} duration : the duration in miliseconds of this animation.
     */
-  this.remove = function (dur) {
-    if(dur == null || isNaN(dur) || dur < 0) dur = DEFAULT_ANIMATION_DURATION;
+  this.remove = function (duration) {
+    if(duration == null || isNaN(duration) || duration < 0) duration = DEFAULT_ANIMATION_DURATION;
     
     var json = [];
     json.push(this.propObj);
@@ -505,25 +463,25 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
         .data(json, function (d) {return d.id;});
     
     shape.transition()
-        .duration(dur)
+        .duration(duration)
         .remove();
     
     var label = d3.select("#" + DEFAULT_IDS.SVG_GROUP.LABEL).selectAll(SVG_TEXT)
         .data(json, function (d) {return d.id;});
         
     label.transition()
-        .duration(dur)
+        .duration(duration)
         .remove();
     
     var text = d3.select("#" + DEFAULT_IDS.SVG_GROUP.TEXT).selectAll(SVG_TEXT)
         .data(json, function (d) {return d.id;});
         
     text.transition()
-        .duration(dur)
+        .duration(duration)
         .remove();
     
     for (var key in this.edgeList) {
-      this.edgeList[key].remove(dur); 
+      this.edgeList[key].remove(duration); 
     }
   }
   
@@ -586,6 +544,7 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
         .attr("r", 10)
         .on("click", function (d) {
           var activeObject = self.coreObj.getActiveUserObject();
+          var activeObject = self.coreObj.getActiveUserObject();
           var activeObjectText = activeObject.getText();
           
           if (activeObject.getType() == USER_OBJ_TYPE.VALUE) {
@@ -598,9 +557,13 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
             self.draw();
           } else if (activeObject.getType() == USER_OBJ_TYPE.MOVEMENT) {
             var edge = self.coreObj.getUserObjectBindedItem(activeObject.getBindedObjID());
-
+            
             edge.setIdObjectB(self.propObj.id);
             edge.draw();
+            
+            // REMOVE THIS
+            self.coreObj.objectList[edge.getIdObjectA()].setText(self.propObj.label.text);
+            self.coreObj.objectList[edge.getIdObjectA()].draw();
             
             activeObject.moveShape(edge.getCoordinateX2(), edge.getCoordinateY2());
             activeObject.redraw();

@@ -52,21 +52,23 @@
     <div id="viz"></div>
     <div id="log"></div>
     
-    <script src="js/util.js"></script>
-    <script src="js/animation/constant.js"></script>
-    <script src="js/animation/svg.js"></script>
-    <script src="js/animation/coreAnimObject.js"></script>
-    <script src="js/animation/squareObject.js"></script>
-    <script src="js/animation/doubleSquareObject.js"></script>
-    <script src="js/animation/edgeObject.js"></script>
+    <script type="text/javascript" src="js/util.js"></script>
+    <script type="text/javascript" src="js/framework/constant.js"></script>
+    <script type="text/javascript" src="js/framework/svg.js"></script>
+    <script type="text/javascript" src="js/framework/coreObject.js"></script>
+    <script type="text/javascript" src="js/framework/userObject.js"></script>
+    <script type="text/javascript" src="js/framework/squareObject.js"></script>
+    <script type="text/javascript" src="js/framework/circleObject.js"></script>
+    <script type="text/javascript" src="js/framework/edgeObject.js"></script>
+    
+    <script type="text/javascript" src="js/custom/doubleSquareObject.js"></script>
     
     <script type="text/javascript">
-      var coreAnim = new CoreAnimObject();
-      coreAnim.init();
+      var coreAnim = new CoreObject();
       coreAnim.newStateList();
       coreAnim.saveState();
 
-      var ds = coreAnim.newDoubleSquareObject("ds", 200, 200, "1", "2", null, "test");
+      var ds = new DoubleSquareObject(coreAnim, "ds", 200, 200, "1", "2", null, null, null, null);
       
       coreAnim.saveState();
       coreAnim.play(0);

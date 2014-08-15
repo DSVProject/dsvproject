@@ -34,25 +34,21 @@ var StackArray = function(){
   
   // CREATE INITIAL ITEMS IF ANY
   coreObj.newStateList();
-  coreObj.saveState();
 
   var cap = 16;
   var top = new Pointer();
   var mArray = [];
   
   for (var i=0; i<16; i++){
-    mArray[i] = coreObj.newSquareObject(i, (i+1)*50, 300, null, i, null, null, null, null, EDGE_POSITION.TOP);  
+    mArray[i] = coreObj.newSquareObject(i, (i+1)*50, 300, null, i, null, null, null);  
   }
   
   top.value = 0;
-  top.drawing = coreObj.newSquareObject("top", 50, 50, 0, "top", null, null, null, EDGE_POSITION.BOTTOM, null);
-  //top.edge = coreObj.newEdgeObject("top", top.drawing.getID(), top.drawing.getCoordinateX() + 25, top.drawing.getCoordinateY() + 100, mArray[0].getCoordinateX() + 25, mArray[0].getCoordinateY(), EDGE_TYPE.UNIDIRECTIONAL);
-  
-  top.edge = coreObj.newEdgeObject("top", top.drawing.getID(), mArray[top.value].getID(), null, EDGE_TYPE.UNIDIRECTIONAL);
-  top.edge.setMarkerEnd(defaultProperties.marker.default.end);
+  top.drawing = coreObj.newSquareObject("top", 50, 50, 0, "top", null, null, null);
+  top.edge = coreObj.newEdgeObject("top", top.drawing.getID(), mArray[top.value].getID(), null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.BOTTOM, EDGE_POSITION.TOP);
   
   coreObj.saveState();
-  coreObj.play(0);
+  coreObj.begin(0);
 
   // METHODS
   this.getCore = function () {
@@ -77,32 +73,32 @@ var StackArray = function(){
   
   this.init = function() {
     coreObj.clearLog();
-    coreObj.saveState();
+    //coreObj.saveState();
     
     top.value = 0;
     top.drawing.setText(top.value);
     top.edge.setIdObjectB(mArray[0].getID());
-    //top.edge.moveEdgeEnd(mArray[0].getCoordinateX() + 25, mArray[0].getCoordinateY());
     
     for(var i=0; i<16; i++){
       mArray[i].setText(null);
     }
     
     coreObj.saveState();
-    coreObj.play(coreObj.getAnimationDuration());
+    coreObj.begin();
   }
   
   this.isEmpty = function () { return top.value == 0; }
   
   this.push = function (item) {
-    if (top.value >= cap && item == "") {
+    if (top.value >= cap || item == "") {
       return false;
     }
     
-    coreObj.clearLog();
-    coreObj.newAction();
-    //coreObj.saveState();
+    if (coreObj.newActionEnabled() == false) return false;
     
+    coreObj.clearLog();
+    
+    /*
     if (coreObj.isLearningMode()){
       coreObj.clearPseudocode();
       
@@ -127,21 +123,46 @@ var StackArray = function(){
       top.drawing.setFill(defaultProperties["shape"]["update"]["fill"]);
       coreObj.saveState();
       
-      //top.edge.moveEdgeEnd(mArray[top.value].getCoordinateX() + 25, mArray[top.value].getCoordinateY());
       top.edge.setIdObjectB(mArray[top.value].getID());
-      
       top.drawing.setText(top.value);
       top.drawing.setFill(defaultProperties["shape"]["default"]["fill"]);
       coreObj.saveState("Update the top pointer.", 1);
       
-      //top.drawing.moveShape(500, 50);
-      //coreObj.saveState();
-      
       coreObj.play(coreObj.getAnimationDuration());
+    }*/
+    
+    if (coreObj.isLearningMode()){
+      coreObj.clearPseudocode();
+      
+      learnObj["newValue"] = coreObj.newUserObject("newValue", 500, 75, 25, item, "learning", null, USER_OBJ_TYPE.VALUE, true, null);
+      learnObj["newTopPointer"] = coreObj.newUserObject("newTopPointer", top.edge.getCoordinateX2(), top.edge.getCoordinateY2(), 10, null, "learning", null, USER_OBJ_TYPE.MOVEMENT, null, top.edge.getID());
+      
+      for (var key in mArray) {
+        mArray[key].setIsValidTarget(true);
+      }
+      
+      coreObj.learnState();
     }
     
-    coreObj.printVariableWatch("top", top.value);
-    coreObj.printVariableWatch("isEmpty", self.isEmpty());
+    mArray[top.value].setText(item);
+    coreObj.saveState("Inserting the new value", 0);
+
+    top.value++;
+    top.drawing.setFill(defaultProperties["shape"]["fill"]["update"]);
+    coreObj.saveState();
+
+    top.edge.setIdObjectB(mArray[top.value].getID());
+    top.drawing.setText(top.value);
+    top.drawing.setFill(defaultProperties["shape"]["fill"]["default"]);
+    coreObj.saveVariableToWatch("top", top.value);
+    coreObj.saveVariableToWatch("isEmpty", this.isEmpty());
+    coreObj.saveState("Update the top pointer.", 1);
+    
+    if (!coreObj.isLearningMode()){
+      this.generatePseudocode(PUSH);
+      
+      coreObj.begin();
+    }
     
     return true;
   }
@@ -152,30 +173,31 @@ var StackArray = function(){
     }
     
     coreObj.clearLog();
-    coreObj.newAction();
+    //coreObj.newAction();
     this.generatePseudocode(POP);
     //coreObj.saveState();
     
     top.value--;
     
-    top.drawing.setFill(defaultProperties["shape"]["update"]["fill"]);
+    top.drawing.setFill(defaultProperties["shape"]["fill"]["update"]);
     coreObj.saveState();
     
-    //top.edge.moveEdgeEnd(mArray[top.value].getCoordinateX() + 25, mArray[top.value].getCoordinateY());
     top.edge.setIdObjectB(mArray[top.value].getID());
     
     top.drawing.setText(top.value);
-    top.drawing.setFill(defaultProperties["shape"]["default"]["fill"]);
+    top.drawing.setFill(defaultProperties["shape"]["fill"]["default"]);
+    coreObj.saveVariableToWatch("top", top.value);
+    coreObj.saveVariableToWatch("isEmpty", this.isEmpty());
     coreObj.saveState("Update the top pointer.", 0);
     
-    mArray[top.value].setFill(defaultProperties["shape"]["delete"]["fill"]);
+    mArray[top.value].setFill(defaultProperties["shape"]["fill"]["delete"]);
     coreObj.saveState(null, 1);
     
     mArray[top.value].setText(null);
-    mArray[top.value].setFill(defaultProperties["shape"]["default"]["fill"]);
+    mArray[top.value].setFill(defaultProperties["shape"]["fill"]["default"]);
     coreObj.saveState("Pop the top position.", 2);
     
-    coreObj.play(coreObj.getAnimationDuration());
+    coreObj.begin();
     
     return true;
   }

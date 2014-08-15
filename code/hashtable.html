@@ -44,13 +44,33 @@
               <div class="btn-group">
                 <!-- Template: Text input button (methods that require an input value) -->
                 <button type="button" class="btn btn-default navbar-btn dropdown-toggle" data-toggle="dropdown">
-                  Push <span class="caret"></span>
+                  Insert <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" role="menu">
                   <form class="navbar-form">
                     <div class="input-group">
                       <!-- Template: Textbox id, for future reference -->
-                      <input id="txt-input" type="text" class="form-control">
+                      <input id="txt-input-insert" type="text" class="form-control">
+                      <span class="input-group-btn">
+                        <!-- Template: onclick function -->
+                        <button class="btn btn-default" type="button" onclick="">
+                          <span class="glyphicon glyphicon-plus"></span>
+                        </button>
+                      </span>
+                    </div>
+                  </form>
+                </ul>
+              </div>
+              <div class="btn-group">
+                <!-- Template: Text input button (methods that require an input value) -->
+                <button type="button" class="btn btn-default navbar-btn dropdown-toggle" data-toggle="dropdown">
+                  Delete <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                  <form class="navbar-form">
+                    <div class="input-group">
+                      <!-- Template: Textbox id, for future reference -->
+                      <input id="txt-input-delete" type="text" class="form-control">
                       <span class="input-group-btn">
                         <!-- Template: onclick function -->
                         <button class="btn btn-default" type="button" onclick="">
@@ -62,7 +82,6 @@
                 </ul>
               </div>
               <!-- Template: Normal button (methods that don't require an input value) -->
-              <button type="button" class="btn btn-default navbar-btn" onclick="">Pop</button>
               <button type="button" class="btn btn-default navbar-btn" onclick="">Clear</button>
             </div>
           </ul>

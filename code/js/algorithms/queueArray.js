@@ -25,9 +25,6 @@ var QueueArray = function () {
   var self = this;
   var coreObj = new CoreObject();
   
-  coreObj.newStateList();
-  coreObj.saveState();
-  
   var learnObj = [];
 
   var cap = 16;
@@ -38,24 +35,24 @@ var QueueArray = function () {
   const ENQUEUE = 0,
         DEQUEUE = 1;
   
+  coreObj.newStateList();
+  
   for (var i=0; i<16; i++){
-    mArray[i] = coreObj.newSquareObject(i, (i+1)*50, 300, null, i, null, null, null, null, EDGE_POSITION.TOP);  
+    mArray[i] = coreObj.newSquareObject(i, (i+1)*50, 300, null, i, null, null, null);  
   }
   
   head.value = 0;
-  head.drawing = coreObj.newSquareObject("head", 50, 50, 0, "head", null, null, null, EDGE_POSITION.BOTTOM, null);
-  head.edge = coreObj.newEdgeObject("head", head.drawing.getID(), mArray[head.value].getID(), null, EDGE_TYPE.UNIDIRECTIONAL);
-  head.edge.setMarkerEnd(defaultProperties.marker.default.end);
+  head.drawing = coreObj.newSquareObject("head", 50, 50, 0, "head", null, null, null);
+  head.edge = coreObj.newEdgeObject("head", head.drawing.getID(), mArray[head.value].getID(), null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.BOTTOM, EDGE_POSITION.TOP);
   
   tail.value = 0
-  tail.drawing = coreObj.newSquareObject("tail", 150, 50, 0, "tail", null, null, null, EDGE_POSITION.BOTTOM, null);
-  tail.edge = coreObj.newEdgeObject("tail", tail.drawing.getID(), mArray[tail.value].getID(), null, EDGE_TYPE.UNIDIRECTIONAL);
-  tail.edge.setMarkerEnd(defaultProperties.marker.default.end);
+  tail.drawing = coreObj.newSquareObject("tail", 150, 50, 0, "tail", null, null, null);
+  tail.edge = coreObj.newEdgeObject("tail", tail.drawing.getID(), mArray[tail.value].getID(), null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.BOTTOM, EDGE_POSITION.TOP);
 
   coreObj.saveState();
-  coreObj.play(0);
+  coreObj.begin(0);
 
-  this.getAnim = function () {
+  this.getCore = function () {
     return coreObj;
   }
   
@@ -64,20 +61,20 @@ var QueueArray = function () {
     
     switch (command) {
         case ENQUEUE:
-          coreObj.addPseudocodeLine(0, "Array[top] = value;");
-          coreObj.addPseudocodeLine(1, "top++;");
+          coreObj.addPseudocodeLine(0, "Array[tail] = value;");
+          coreObj.addPseudocodeLine(1, "tail++;");
           break;
         case DEQUEUE:
-          coreObj.addPseudocodeLine(0, "top--;");
-          coreObj.addPseudocodeLine(1, "Value = Array[top];");
-          coreObj.addPseudocodeLine(2, "Array[top] = '';");
+          coreObj.addPseudocodeLine(0, "Value = Array[head];");
+          coreObj.addPseudocodeLine(1, "Array[head] = '';");
+          coreObj.addPseudocodeLine(2, "head++;");
+          coreObj.addPseudocodeLine(3, "if (head == tail) head = 0; tail = 0;");
           break;
     }
   }
 
   this.init = function () {
-    coreObj.clearLog();
-    coreObj.saveState();
+    coreObj.newStateList();
     
     head.value = 0;
     head.drawing.setText(head.value);
@@ -92,77 +89,63 @@ var QueueArray = function () {
     }
     
     coreObj.saveState();
-    coreObj.play();
+    coreObj.begin();
   }
 
   this.isEmpty = function () { return tail.item === 0; }
           
   this.enqueue = function (item) {
-    if (tail.value >= cap && item == "") {
+    if (tail.value >= cap || item.trim() == "") {
+      coreObj.displayAlert("The input should not be empty.");
       return false;
     }
     
-    coreObj.clearLog();
-    coreObj.newAction();
+    this.generatePseudocode(ENQUEUE);
+
+    mArray[tail.value].setText(item);
+    coreObj.saveState("Inserting the new value", 0);
+
+    tail.value++;
+    tail.drawing.setFill(defaultProperties["shape"]["fill"]["update"]);
+    coreObj.saveState();
+
+    tail.edge.setIdObjectB(mArray[tail.value].getID());
+
+    tail.drawing.setText(tail.value);
+    tail.drawing.setFill(defaultProperties["shape"]["fill"]["default"]);
+    coreObj.saveVariableToWatch("head", head.value);
+    coreObj.saveVariableToWatch("tail", tail.value);
+    coreObj.saveState("Update the tail pointer.", 1);
     
-    if (coreObj.isLearningMode()){
-      coreObj.clearPseudocode();
-      
-      learnObj["newValue"] = coreObj.newUserObject("newValue", 500, 75, 25, item, "learning", null, USER_OBJ_TYPE.VALUE, true, null);
-      learnObj["newHeadPointer"] = coreObj.newUserObject("newHeadPointer", head.edge.getCoordinateX2(), head.edge.getCoordinateY2(), 10, null, "learning", null, USER_OBJ_TYPE.MOVEMENT, null, head.edge.getID());
-      learnObj["newTailPointer"] = coreObj.newUserObject("newTailPointer", tail.edge.getCoordinateX2(), tail.edge.getCoordinateY2(), 10, null, "learning", null, USER_OBJ_TYPE.MOVEMENT, null, tail.edge.getID());
-      
-      for (var key in mArray) {
-        mArray[key].setIsValidTarget(true);
-        coreObj.saveState();
-      }
-      
-      coreObj.saveState("Use the grey circles to create the final state.");
-      coreObj.play(0);
-    } else {
-      this.generatePseudocode(ENQUEUE);
-      
-      mArray[tail.value].setText(item);
-      coreObj.saveState("Inserting the new value");
-      
-      tail.value++;
-      tail.drawing.setFill(defaultProperties["shape"]["update"]["fill"]);
-      coreObj.saveState();
-      
-      tail.edge.setIdObjectB(mArray[tail.value].getID());
-      
-      tail.drawing.setText(tail.value);
-      tail.drawing.setFill(defaultProperties["shape"]["default"]["fill"]);
-      coreObj.saveState("Update the tail pointer.");
-    }
-    
-    coreObj.play();
+    coreObj.begin();
   }
     
   this.dequeue = function () {
     if (this.isEmpty()) {
+      coreObj.displayAlert("The queue is already empty.");
       return false;
     }
-
-    coreObj.clearLog();
-    coreObj.newAction();
     
-    mArray[head.value].setFill(defaultProperties["shape"]["delete"]["fill"]);
-    coreObj.saveState();
+    this.generatePseudocode(DEQUEUE);
+    
+    mArray[head.value].setFill(defaultProperties["shape"]["fill"]["delete"]);
+    coreObj.saveState(null, 0);
     
     mArray[head.value].setText(null);
-    mArray[head.value].setFill(defaultProperties["shape"]["default"]["fill"]);
-    coreObj.saveState("Dequeue the head position.");
+    mArray[head.value].setFill(defaultProperties["shape"]["fill"]["default"]);
+    coreObj.saveState("Dequeue the head position.", 1);
     
     head.value++;
-    head.drawing.setFill(defaultProperties["shape"]["update"]["fill"]);
+    head.drawing.setFill(defaultProperties["shape"]["fill"]["update"]);
     coreObj.saveState();
     
     head.edge.setIdObjectB(mArray[head.value].getID());
     
     head.drawing.setText(head.value);
-    head.drawing.setFill(defaultProperties["shape"]["default"]["fill"]);
-    coreObj.saveState("Update the tail pointer.");
+    head.drawing.setFill(defaultProperties["shape"]["fill"]["default"]);
+    coreObj.saveVariableToWatch("head", head.value);
+    coreObj.saveVariableToWatch("tail", tail.value);
+    coreObj.saveState("Update the head pointer.", 2);
     
     if (head.value == tail.value) {
       head.value = 0;
@@ -173,9 +156,11 @@ var QueueArray = function () {
       tail.drawing.setText(tail.value);
       tail.edge.setIdObjectB(mArray[tail.value].getID());
       
-      coreObj.saveState();
+      coreObj.saveVariableToWatch("head", head.value);
+      coreObj.saveVariableToWatch("tail", tail.value);
+      coreObj.saveState(null, 3);
     }
     
-    coreObj.play();
+    coreObj.begin();
   }
 }

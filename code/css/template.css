@@ -76,3 +76,8 @@ code {
   background: #505050;
   opacity: 0.9;
 }
+
+#alert_placeholder {
+  position: absolute;
+  z-index: 1;
+}

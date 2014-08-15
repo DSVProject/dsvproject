@@ -33,7 +33,7 @@ const EDGE_TYPE = {
 };
 
 /**
-  * Values used when creating an instance of shapes (SquareObject, CircleObject).
+  * Values used when creating an instance of EdgeObject.
   *
   * @const 
   */
@@ -43,16 +43,6 @@ const EDGE_POSITION = {
   LEFT: 2,
   BOTTOM: 3,
   RIGHT: 4
-};
-
-/**
-  * Values used when calculating the path of an edge.
-  *
-  * @const 
-  */
-const EDGE_INOUT = {
-  INCOMING: 0,
-  OUTGOING: 1
 };
 
 /**
@@ -79,6 +69,7 @@ const DEFAULT_CLASSES = {
   },
   MARKER:"marker",
   LEARNING_MODE:{
+    SHAPE:"learning",
     ACTIVE:"active",
     PLACE_HOLDER:"placeHolder",
     OBJECT_SELECTED:"selected"
@@ -101,7 +92,8 @@ const DEFAULT_IDS = {
     VARIABLE:"variables",
     PSEUDOCODE:"pseudocode",
     LEARNING_MODE:"chk-learn",
-    ANIMATION_DURATION:"animation-duration"
+    ANIMATION_DURATION:"animation-duration",
+    ALERT_PLACEHOLDER:"alert_placeholder"
   },
   HTML_ELEMENT:{
     PSEUDOCODE_LINE:"line"
@@ -121,6 +113,16 @@ const DEFAULT_IDS = {
     USER_TEXT:"u-text-",
     LABEL:"label-",
     EDGE:"edge-"
+  },
+  SVG_MARKER:{
+    START:{
+      DEFAULT:"reverseArrowDefault",
+      NULL:"reverseArrowNull"
+    },
+    END:{
+      DEFAULT:"arrowDefault",
+      NULL:"arrowNull"
+    }
   }
 }
 
@@ -130,15 +132,10 @@ const DEFAULT_IDS = {
   * @const 
   */
 const defaultProperties = {
-  "radius":25,
-  "width":50,
-  "height":50,
-  "font-family":"sans-serif",
-  "font-size":18,
-  "text-anchor":"middle",
-  
-  /*
-  "shape":{
+  shape:{
+    "radius":25,
+    "width":50,
+    "height":50,
     "stroke":{
       "default":"black",
       "draggable":"tomato"
@@ -149,64 +146,49 @@ const defaultProperties = {
     },
     "fill":{
       "default":"white",
-      "draggable":"grey"
+      "draggable":"grey",
+      "update":"lightskyblue",
+      "delete":"tomato"
     },
     "fill-opacity":{
       "default":1.0,
       "draggable":0.2
     }
-  }
-  */
-  
-  "shape":{
-    "default":{
-      "stroke":"black",
-      "stroke-width":2,
-      "fill":"white",
-      "fill-opacity":1.0
-    },
-    "draggable":{
-      "stroke":"tomato",
-      "stroke-width":2,
-      "fill":"grey",
-      "fill-opacity":0.2
-    },
-    "update":{
-      "fill":"lightskyblue"
-    },
-    "delete":{
-      "fill":"tomato"
+  },
+  text:{
+    "font-family":"sans-serif",
+    "font-size":18,
+    "text-anchor":"middle",
+    "stroke":{
+      "default":"black",
+      "innerTextBlack":"black",
+      "innerTextWhite":"ivory"
     }
   },
-  "text":{
-    "default":{
-      "stroke":"black"
+  edge:{
+    "stroke":{
+      "default":"black",
+      "null":"tomato"
     },
-    "innerTextBlack":{
-      "stroke":"black"
-    },
-    "innerTextWhite":{
-      "stroke":"ivory"
+    "stroke-width":{
+      "default":3,
+      "null":4
     }
   },
-  "edge":{
-    "default":{
-      "stroke":"black",
-      "stroke-width":3
+  marker:{
+    "width":5,
+    "height":3,
+    "refX":{
+      "start":-7,
+      "end":7
     },
-    "null":{
-      "stroke":"tomato",
-      "stroke-width":5
-    }
-  },
-  "marker":{
-    "null":{
-      "start": "url(#reverseArrowNull)",
-      "end": "url(#arrowNull)"
+    "start":{
+      "default": "url(#reverseArrowDefault)",
+      "null": "url(#reverseArrowNull)"
     },
-    "default":{
-      "start": "url(#reverseArrowDefault)",
-      "end": "url(#arrowDefault)"
+    "end":{
+      "default": "url(#arrowDefault)",
+      "null": "url(#arrowNull)"
     }
   }
 }

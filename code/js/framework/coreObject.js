@@ -31,11 +31,14 @@ var CoreObject = function () {
   this.stateCount = 0;       // Total count of states
   this.stateAnimation = 0;   // Used for the media controls
   
-  this.actionArray = {};    // Checkpoints of user actions (used for undo and redo functions)
+  this.actionArray = [];    // Checkpoints of user actions (used for undo and redo functions)
   this.actionCount = 0;     // Count of user actions
   
   // Variable to control animation playing
   this.animationStatus = ANIMATION_STATUS.STOP;
+  
+  // Array to store variables that will be printed in the Variable Watch Panel
+  this.variableWatchList = [];
   
   /**
     * Creates the groups that will contain all the graphic elements.
@@ -74,48 +77,48 @@ var CoreObject = function () {
     var markerGroup = d3.select("#" + DEFAULT_IDS.SVG_GROUP.MARKER);
     
     markerGroup.append(SVG_MARKER)
-        .attr("id", "arrowNull")
+        .attr("id", DEFAULT_IDS.SVG_MARKER.END.NULL)
         .attr("orient", "auto")
-        .attr("markerWidth", "5")
-        .attr("markerHeight", "3")
-        .attr("refX", "7")
+        .attr("markerWidth", defaultProperties.marker.width)
+        .attr("markerHeight", defaultProperties.marker.height)
+        .attr("refX", defaultProperties.marker.refX.end)
         .attr("viewBox", "0 -5 10 10")
         .append("path")
             .attr("d", "M0,-5 L10,0 L0,5")
-            .attr("fill", defaultProperties.edge.null.stroke);
+            .attr("fill", defaultProperties.edge.stroke.null);
     
     markerGroup.append(SVG_MARKER)
-        .attr("id", "arrowDefault")
+        .attr("id", DEFAULT_IDS.SVG_MARKER.END.DEFAULT)
         .attr("orient", "auto")
-        .attr("markerWidth", "5")
-        .attr("markerHeight", "3")
-        .attr("refX", "7")
+        .attr("markerWidth", defaultProperties.marker.width)
+        .attr("markerHeight", defaultProperties.marker.height)
+        .attr("refX", defaultProperties.marker.refX.end)
         .attr("viewBox", "0 -5 10 10")
         .append("path")
             .attr("d", "M0,-5 L10,0 L0,5")
-            .attr("fill", defaultProperties.edge.default.stroke);
+            .attr("fill", defaultProperties.edge.stroke.default);
     
     markerGroup.append(SVG_MARKER)
-        .attr("id", "reverseArrowNull")
+        .attr("id", DEFAULT_IDS.SVG_MARKER.START.NULL)
         .attr("orient", "auto")
-        .attr("markerWidth", "5")
-        .attr("markerHeight", "3")
-        .attr("refX", "-7")
+        .attr("markerWidth", defaultProperties.marker.width)
+        .attr("markerHeight", defaultProperties.marker.height)
+        .attr("refX", defaultProperties.marker.refX.start)
         .attr("viewBox", "-10 -5 10 10")
         .append("path")
             .attr("d", "M0,-5 L-10,0 L0,5")
-            .attr("fill", defaultProperties.edge.null.stroke);
+            .attr("fill", defaultProperties.edge.stroke.null);
     
     markerGroup.append(SVG_MARKER)
-        .attr("id", "reverseArrowDefault")
+        .attr("id", DEFAULT_IDS.SVG_MARKER.START.DEFAULT)
         .attr("orient", "auto")
-        .attr("markerWidth", "5")
-        .attr("markerHeight", "3")
-        .attr("refX", "-7")
+        .attr("markerWidth", defaultProperties.marker.width)
+        .attr("markerHeight", defaultProperties.marker.height)
+        .attr("refX", defaultProperties.marker.refX.start)
         .attr("viewBox", "-10 -5 10 10")
         .append("path")
             .attr("d", "M0,-5 L-10,0 L0,5")
-            .attr("fill", defaultProperties.edge.default.stroke);
+            .attr("fill", defaultProperties.edge.stroke.default);
   }
   
   /**
@@ -129,6 +132,40 @@ var CoreObject = function () {
     var state = {
       data : null,
       status : null,
+      variables : null,
+      pseudocodeLine : null
+    };
+    var newList = []; // The copy of the current objectList
+    var copy;  // The instance for the cloned Object
+    
+    for (var key in this.objectList){
+      copy = this.objectList[key].cloneObject();
+      newList[key] = copy;
+    }
+    
+    // Each state will hold the "data" which is a copy of objectList, a "status" which will appear on the log
+    // and a "pseudocodeLine" that will be highlighted on running time.
+    state.data = newList;
+    state.status = status;
+    state.variables = clone(self.variableWatchList);
+    state.pseudocodeLine = pseudocodeLine;
+    
+    // When assigning a state for a position in this array you should use parseInt, otherwise when using other
+    // variables (such as stateAnimation) to access the content, the function will return undefined.
+    this.stateList[parseInt(this.stateCount)] = state;
+    this.stateCount++;
+    this.variableWatchList = [];
+  }
+  
+  /**
+    * Creates a learn state, that will be used to check the answer at a later stage.
+    *
+    */
+  this.learnState = function () {
+    // The current state being created
+    var state = {
+      data : null,
+      status : null,
       pseudocodeLine : null
     };
     var newList = []; // The copy of the current objectList
@@ -138,17 +175,12 @@ var CoreObject = function () {
       clone = this.objectList[key].cloneObject();
       newList[key] = clone; 
     }
-    
-    // Each state will hold the "data" which is a copy of objectList, a "status" which will appear on the log
-    // and a "pseudocodeLine" that will be highlighted on running time.
+    state.status = "Use the grey circles to create the final state.";
     state.data = newList;
-    state.status = status;
-    state.pseudocodeLine = pseudocodeLine;
     
-    // When assigning a state for a position in this array you should use parseInt, otherwise when using other
-    // variables (such as stateAnimation) to access the content, the function will return undefined.
-    this.stateList[parseInt(this.stateCount)] = state;
-    this.stateCount++;
+    this.stateList["learn"] = state;
+    
+    this.draw(state, 0);
   }
   
   /**
@@ -158,17 +190,29 @@ var CoreObject = function () {
     this.stateList = [];
     this.stateCount = 0; 
     this.stateAnimation = 0; 
-    this.actionArray = {};
-    this.actionArray = 0;
+    this.actionArray = [];
+    this.actionCount = 0;
   }
   
   /**
-    * Create a checkpoint of each user action, used for the undo and redo.
+    * This function will begin the animation. When executing a method, this will be the last instruction called, after saving all the necessary states.
+    *
+    * @param {?Number=} duration : the duration in miliseconds of the entire animation, if null the default animation duration value will be used.
     */
-  this.newAction = function () {
-    this.actionArray[this.actionCount] = this.stateCount;
+  this.begin = function (duration) {
+    var copyList = [];
+    
+    for (var key in this.objectList){
+      copy = this.objectList[key].cloneObject();
+      copyList[key] = copy;
+    }
+    
+    this.actionArray[this.actionCount] = copyList;
+    
     this.actionCount++;
-    this.saveState();
+    this.clearLog();
+    this.clearVariableWatch();
+    this.play(duration);
   }
   
   /**
@@ -185,6 +229,10 @@ var CoreObject = function () {
     
     if (typeof currentState.status != 'undefined') {
       self.printLog(currentState.status);
+    }
+    
+    if (Object.keys(currentState.variables).length > 0) {
+      self.printVariableWatch(currentState.variables)
     }
     
     if (typeof currentState.pseudocodeLine != 'undefined') {
@@ -222,9 +270,10 @@ var CoreObject = function () {
   /**
     * Draw the next state of the stateList
     *
-    * @param {?Number=} duration : the duration in miliseconds of the entire animation, if null the default animation duration value will be used.
+    * @param {?Number=} duration : the duration in miliseconds of the entire animation, if null the function getAnimationDuration will be called.
     */
   this.next = function (duration) {
+    if (duration == null || isNaN(duration) || duration < 0) duration = this.getAnimationDuration();
     if (this.stateAnimation < 0) this.stateAnimation = 0;
     
     this.stateAnimation++;
@@ -270,10 +319,11 @@ var CoreObject = function () {
     if (duration == null || isNaN(duration) || duration < 0) duration = this.getAnimationDuration();
     if (this.stateList == null) return;
     if (this.animationStatus != ANIMATION_STATUS.PLAY) this.animationStatus = ANIMATION_STATUS.PLAY;
+    /*
     if (typeof this.stateList[parseInt(this.stateAnimation)] == 'undefined') {
       this.stateAnimation = this.actionArray[0];
     }
-    
+    */
     this.draw(this.stateList[parseInt(this.stateAnimation)], duration);
     
     setTimeout(function(){
@@ -298,18 +348,28 @@ var CoreObject = function () {
     
     if (this.actionCount < 0) this.actionCount = 0;
     
-    this.stateCount = this.actionArray[this.actionCount];
+    for (var key in this.objectList) {
+      if (typeof this.actionArray[this.actionCount - 1][key] == 'undefined') {
+        this.objectList[key].remove();
+        delete this.objectList[key];
+      } else {
+        this.objectList[key].cloneProperties(this.actionArray[this.actionCount - 1][key].getAttributes());
+        this.objectList[key].cloneEdges(this.actionArray[this.actionCount - 1][key].getEdges());
+      }
+    }
     
-    this.draw(this.stateList[parseInt(this.stateCount)], 0);  
+    this.saveState();
+    
+    this.play(0); 
   }
   
   /**
     * Undo the previous action.
     */
   this.redo = function (duration) {
-    if (iterationCurrent < 0) iterationCurrent = 0;
+    if (this.actionCount < 0) this.actionCount = 0;
     
-    iterationCurrent++;
+    this.actionCount++;
     
     if (typeof actionArray[iterationCurrent] != 'undefined') {
       stateCount = parseInt(actionArray[iterationCurrent]);
@@ -348,27 +408,37 @@ var CoreObject = function () {
   }
   
   /**
-    * Print a variable value to the Variable Watch pannel.
+    * Save the current value of a variable to be printed on the Variable Watch panel.
     *
     * @param {!String} variableName : the name of the variable to be printed.
     * @param {!(String|Number)} variableValue : the current value of the variable.
     */
-  this.printVariableWatch = function (variableName, variableValue) {
+  this.saveVariableToWatch = function (variableName, variableValue) {
     if (variableName == "" || variableName == null) return;
     
-    var variable = [{
+    var variable = {
       name: variableName,
       value: variableValue
-    }];
-      
-    var varLines = d3.select("#" + DEFAULT_IDS.PAGE.VARIABLE).selectAll("tr")
-        .data(variable, function (d) {return d.name;});
+    };
     
-    var varItems = varLines.enter()
+    self.variableWatchList.push(variable);
+  }
+  
+  /**
+    * Print all saved variables to the Variable Watch panel.
+    *
+    * @param {!String} variableName : the name of the variable to be printed.
+    * @param {!(String|Number)} variableValue : the current value of the variable.
+    */
+  this.printVariableWatch = function (variablesObj) {
+    var varLines = d3.select("#" + DEFAULT_IDS.PAGE.VARIABLE).selectAll("tr")
+        .data(variablesObj, function (d) {return d.name;});
+    
+    varLines.enter()
         .append("tr")
         .append("td");
     
-    varItems.transition()
+    varLines.transition()
         .text(function (d) {return d.name + " : " + d.value;});
   }
   
@@ -416,6 +486,32 @@ var CoreObject = function () {
     */
   this.isLearningMode = function () {
     return $("#" + DEFAULT_IDS.PAGE.LEARNING_MODE).hasClass(DEFAULT_CLASSES.LEARNING_MODE.ACTIVE);
+  }
+  
+  /**
+    * If any UserObject exists no new action is enabled until the current one is finished.
+    *
+    * @return {Boolean} : false if a UserObject exists, true other wise.
+    */
+  this.newActionEnabled = function () {
+    for (var key in this.objectList) {
+      if (this.objectList[key] instanceof UserObject) {
+        this.displayAlert("Please finish or cancel the current action before making any further changes.");
+        
+        return false;
+      }
+    }
+    
+    return true;
+  }
+  
+  /**
+    * Display an error alert.
+    *
+    * @param {!String} message: the message to be displayed inside the alert.
+    */
+  this.displayAlert = function (message) {
+    $('#' + DEFAULT_IDS.PAGE.ALERT_PLACEHOLDER).html('<div class="alert alert-danger alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>' + message + '</div>')
   }
   
   // FUNCTIONS CALLED FROM INSIDE SHAPE INSTANCES
@@ -520,13 +616,11 @@ var CoreObject = function () {
     * @param {?String=} shapeClass : the CSS class of the shape svg element.
     * @param {?String=} textClass : the CSS class of the text svg element (inside the shape).
     * @param {?String=} labelClass : the CSS class of the text svg element (underneath the shape).
-    * @param {?Const=} outgoingPoint : a constant value (defined at 'animation/constant.js' : EDGE_POSITION) indicating from which point of the shape the edge will originate. If null the CENTER position will be used.
-    * @param {?Const=} incomingPoint : a constant value (defined at 'animation/constant.js' : EDGE_POSITION) indicating at which point of the shape the edge will arrive. If null the CENTER position will be used.
     *
     * @return {SquareObject} : the new object.
     */
-  this.newSquareObject = function (id, x, y, text, label, shapeClass, textClass, labelClass, outgoingPoint, incomingPoint) {
-    this.objectList[id] = new SquareObject(this, id, x, y, text, label, shapeClass, textClass, labelClass, outgoingPoint, incomingPoint);
+  this.newSquareObject = function (id, x, y, text, label, shapeClass, textClass, labelClass) {
+    this.objectList[id] = new SquareObject(this, id, x, y, text, label, shapeClass, textClass, labelClass);
     
     return this.objectList[id];
   }
@@ -543,13 +637,11 @@ var CoreObject = function () {
     * @param {?String=} shapeClass : the CSS class of the rect svg element.
     * @param {?String=} textClass : the CSS class of the text svg element (inside the shape).
     * @param {?String=} labelClass : the CSS class of the text svg element (underneath the shape).
-    * @param {?Const=} outgoingPoint : a constant value (defined at 'animation/constant.js') indicating from which point of the shape the edge will originate. If null the CENTER position will be used.
-    * @param {?Const=} incomingPoint : a constant value (defined at 'animation/constant.js') indicating at which point of the shape the edge will arrive. If null the CENTER position will be used.
     *
     * @return {CircleObject} : the new object.
     */
-  this.newCircleObject = function (id, cx, cy, radius, text, label, shapeClass, textClass, labelClass, outgoingPoint, incomingPoint) {
-    this.objectList[id] = new CircleObject(this, id, cx, cy, radius, text, label, shapeClass, textClass, labelClass, outgoingPoint, incomingPoint);
+  this.newCircleObject = function (id, cx, cy, radius, text, label, shapeClass, textClass, labelClass) {
+    this.objectList[id] = new CircleObject(this, id, cx, cy, radius, text, label, shapeClass, textClass, labelClass);
     
     return this.objectList[id];
   }
@@ -584,11 +676,13 @@ var CoreObject = function () {
     * @param {?String=} idObjectB : the id of the destination object. If null a small edge will be created following the orientation of the origin point.
     * @param {?String=} edgeClass : the CSS class of the line svg element.
     * @param {!Const} edgeType : a constant value (defined at 'animation/constant.js' : EDGE_TYPE) indicating wether the vertex is unidirectional (from A -> B), bidirectional or has no direction.
+    * @param {?Const=} outboundPoint : a constant value (defined at 'animation/constant.js' : EDGE_POSITION) indicating from which point of the shape the edge will originate. If null the CENTER position will be used.
+  * @param {?Const=} inboundPoint : a constant value (defined at 'animation/constant.js' : EDGE_POSITION) indicating at which point of the shape the edge will arrive. If null the CENTER position will be used.
     *
     * @return {EdgeObject} : the new object.
     */
-  this.newEdgeObject = function (id, idObjectA, idObjectB, edgeClass, edgeType) {
-    var newEdge = new EdgeObject(this, id, idObjectA, idObjectB, edgeClass, edgeType);
+  this.newEdgeObject = function (id, idObjectA, idObjectB, edgeClass, edgeType, outboundPoint, inboundPoint) {
+    var newEdge = new EdgeObject(this, id, idObjectA, idObjectB, edgeClass, edgeType, outboundPoint, inboundPoint);
     
     this.objectList[idObjectA].addEdge(newEdge);
     
@@ -612,7 +706,7 @@ var CoreObject = function () {
     */
   this.removeAll = function (selectedClass, duration) {
     for (var key in this.objectList) { 
-      if (this.objectList[key].getRectClass() == selectedClass) {
+      if (this.objectList[key].getShapeClass() == selectedClass) {
         
         this.objectList[key].setToRemove(true);
       }

@@ -46,6 +46,10 @@ d3.selection.prototype.moveToFront = function() {
 
 // THE CODE BELOW IS USED IN THE HTML PAGES. DO NOT REMOVE.
 
+$.fn.toggleDisabled = function () {
+  return this.each(function () { this.disabled = !this.disabled; });
+}
+
 /**
   * Show or hide the help popovers.
   */
@@ -53,7 +57,7 @@ $('#help-btn').on('click', function () {
   $("#div-control-buttons").popover('toggle');
   $("#div-panels").popover('toggle');
   $("#div-media-buttons").popover('toggle');
-  $("#chk-learn").popover('toggle');
+  $("#div-learning-buttons").popover('toggle');
 });
 
 /**
@@ -85,6 +89,12 @@ $('#pseudocode-btn').on('click', function () {
   */
 $('#chk-learn').on('click', function () {
   $(this).toggleClass('btn-default btn-success');
+  $(this).toggleClass('active');
+  
+  $('#chk-answer-btn').toggleDisabled();
+  $('#restart-btn').toggleDisabled();
+  $('#cancel-btn').toggleDisabled();
+  $('#div-media-buttons :input').toggleDisabled();
 });
 
 $('.dropdown-menu').find('form').click(function (e) {

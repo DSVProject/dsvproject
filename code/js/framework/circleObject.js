@@ -24,14 +24,12 @@
   * @param {?String=} shapeClass : the CSS class of the rect svg element.
   * @param {?String=} textClass : the CSS class of the text svg element (inside the shape).
   * @param {?String=} labelClass : the CSS class of the text svg element (underneath the shape).
-  * @param {?Const=} outgoingPoint : a constant value (defined at 'animation/constant.js') indicating from which point of the shape the edge will originate. If null the CENTER position will be used.
-  * @param {?Const=} incomingPoint : a constant value (defined at 'animation/constant.js') indicating at which point of the shape the edge will arrive. If null the CENTER position will be used.
   */
-var CircleObject = function (coreObj, id, cx, cy, radius, text, label, shapeClass, textClass, labelClass, outgoingPoint, incomingPoint) {
+var CircleObject = function (coreObj, id, cx, cy, radius, text, label, shapeClass, textClass, labelClass) {
   var self = this;
 
   if (coreObj == null) {
-    throw new InvalidArgumentException("Invalid null parameter.");
+    throw new Error("Invalid null parameter.");
     return;
   }
 
@@ -40,8 +38,8 @@ var CircleObject = function (coreObj, id, cx, cy, radius, text, label, shapeClas
   /**
     * Offset values for the text elements.
     */
-  this.textAdjust = defaultProperties["font-size"]/3;
-  this.labelAdjust = defaultProperties.radius + 30;
+  this.textAdjust = defaultProperties.text["font-size"]/3;
+  this.labelAdjust = defaultProperties.shape.radius + 30;
 
   /**
     * This object map of attributes.
@@ -54,21 +52,21 @@ var CircleObject = function (coreObj, id, cx, cy, radius, text, label, shapeClas
       "cx": cx,
       "cy": cy,
       "r": radius,
-      "fill": defaultProperties.shape.default.fill,
-      "fillOpacity": defaultProperties.shape.default["fill-opacity"],
-      "stroke": defaultProperties.shape.default.stroke,
-      "strokeWidth": defaultProperties.shape.default["stroke-width"]
+      "fill": defaultProperties.shape.fill.default,
+      "fillOpacity": defaultProperties.shape["fill-opacity"].default,
+      "stroke": defaultProperties.shape.stroke.default,
+      "strokeWidth": defaultProperties.shape["stroke-width"].default
     },
 
     "text": {
       "class": textClass,
       "x": cx,
       "y": cy + this.textAdjust,
-      "fill": defaultProperties.text.default.stroke,
-      "fontFamily": defaultProperties["font-family"],
-      "fontWeight": defaultProperties["font-weight"],
-      "fontSize": defaultProperties["font-size"],
-      "textAnchor": defaultProperties["text-anchor"],
+      "fill": defaultProperties.text.stroke.default,
+      "fontFamily": defaultProperties.text["font-family"],
+      "fontWeight": defaultProperties.text["font-weight"],
+      "fontSize": defaultProperties.text["font-size"],
+      "textAnchor": defaultProperties.text["text-anchor"],
       "text": text
     },
     
@@ -81,11 +79,7 @@ var CircleObject = function (coreObj, id, cx, cy, radius, text, label, shapeClas
     
     "toRemove": false,
     
-    "isValidTarget": false,
-    
-    "outgoingPoint": (outgoingPoint != null) ? outgoingPoint : EDGE_POSITION.CENTER,
-    
-    "incomingPoint": (incomingPoint != null) ? incomingPoint : EDGE_POSITION.CENTER
+    "isValidTarget": false
   }
   
   /**
@@ -157,13 +151,12 @@ var CircleObject = function (coreObj, id, cx, cy, radius, text, label, shapeClas
   }
   
   /**
-    * @param {!Const} inout : if who is calling this function is either origin or destination (const defined at 'animation/constant.js' : EDGE_INOUT).
+    * @param {!Const} point : at which position the Edge who is calling this function is going to be placed (const defined at 'animation/constant.js' : EDGE_POSITION).
     *
     * @return {Number} : the x coordinate of the shape svg element, with offset adjust (for edge use).
     */
-  this.getEdgeCoordinateX = function (inout) {
+  this.getEdgeCoordinateX = function (point) {
     var coord = this.propObj.shape.cx;
-    var point = (inout == EDGE_INOUT.INCOMING) ? this.propObj.incomingPoint : this.propObj.outgoingPoint;
     
     if (point == EDGE_POSITION.RIGHT) {
       return coord + this.propObj.shape.r;
@@ -182,13 +175,12 @@ var CircleObject = function (coreObj, id, cx, cy, radius, text, label, shapeClas
   }
   
   /**
-    * @param {!Const} inout : if who is calling this function is either origin or destination (const defined at 'animation/constant.js' : EDGE_INOUT).
+    * @param {!Const} point : at which position the Edge who is calling this function is going to be placed (const defined at 'animation/constant.js' : EDGE_POSITION).
     *
     * @return {Number} : the y coordinate of the shape svg element, with offset adjust (for edge use).
     */
-  this.getEdgeCoordinateY = function (inout) {
+  this.getEdgeCoordinateY = function (point) {
     var coord = this.propObj.shape.cy;
-    var point = (inout == EDGE_INOUT.INCOMING) ? this.propObj.incomingPoint : this.propObj.outgoingPoint;
     
     if (point == EDGE_POSITION.TOP) {
       return coord - this.propObj.shape.r;
@@ -366,40 +358,6 @@ var CircleObject = function (coreObj, id, cx, cy, radius, text, label, shapeClas
   }
   
   /**
-    * Set from which point of the object the edge will originate.
-    *
-    * @param {!Const} newValue : a constant value (defined at 'animation/constant.js'), EDGE_POSITION.
-    */
-  this.setOutgoingPoint = function (newValue) {
-    if (newValue == null) return;
-    this.propObj.outgoingPoint = newValue;
-  }
-  
-  /**
-    * @return {Const} : the outgoingPoint property.
-    */ 
-  this.getOutgoingPoint = function () {
-    return this.propObj.outgoingPoint;
-  }
-  
-  /**
-    * Set at which point of the object the edge will arrive.
-    *
-    * @param {!Const} newValue : a constant value (defined at 'animation/constant.js'), EDGE_POSITION.
-    */
-  this.setIncomingPoint = function (newValue) {
-    if (newValue == null) return;
-    this.propObj.incomingPoint = newValue;
-  }
-  
-  /**
-    * @return {Const} : the incomingPoint property.
-    */ 
-  this.getIncomingPoint = function () {
-    return this.propObj.incomingPoint;
-  }
-  
-  /**
     * Add an EdgeObject to this object edgeList[].
     *
     * @param {!EdgeObject} edgeObj : the instance of the EdgeObject.
@@ -413,10 +371,10 @@ var CircleObject = function (coreObj, id, cx, cy, radius, text, label, shapeClas
     * Draw this object attributes on the screen.
     * If the object is new, it will be generated; if any property has changed, it will be updated.
     *
-    * @param {!Number=} dur : the duration in miliseconds of this animation.
+    * @param {!Number=} duration : the duration in miliseconds of this animation.
     */
-  this.draw = function (dur) {    
-    if(dur == null || isNaN(dur) || dur < 0) dur = DEFAULT_ANIMATION_DURATION;
+  this.draw = function (duration) {    
+    if(duration == null || isNaN(duration) || duration < 0) duration = DEFAULT_ANIMATION_DURATION;
     
     var json = [];
     json.push(this.propObj);
@@ -427,7 +385,7 @@ var CircleObject = function (coreObj, id, cx, cy, radius, text, label, shapeClas
     shape.enter().append(SVG_CIRCLE)        
         .attr("id", function (d) {return DEFAULT_IDS.SVG_ELEMENT.SHAPE + d.id;});
     shape.transition()
-        .duration(dur)
+        .duration(duration)
         .attr("class", function (d) {return d.shape.class;})
         .attr("cx", function (d) {return d.shape.cx;})
         .attr("cy", function (d) {return d.shape.cy;})
@@ -443,7 +401,7 @@ var CircleObject = function (coreObj, id, cx, cy, radius, text, label, shapeClas
     text.enter().append(SVG_TEXT)
         .attr("id", function (d) {return DEFAULT_IDS.SVG_ELEMENT.TEXT + d.id; });
     text.transition()
-        .duration(dur)
+        .duration(duration)
         .attr("class", function (d) {return d.text.class})
         .attr("x", function (d) {return d.text.x;})
         .attr("y", function (d) {return d.text.y;})
@@ -460,13 +418,14 @@ var CircleObject = function (coreObj, id, cx, cy, radius, text, label, shapeClas
     label.enter().append(SVG_TEXT)
         .attr("id", function (d) {return DEFAULT_IDS.SVG_ELEMENT.LABEL + d.id;})
     label.transition()
+        .duration(duration)
         .attr("class", function (d) {return d.label.class;})
         .attr("x", function (d) {return d.label.x;})
         .attr("y", function (d) {return d.label.y;})
         .text(function (d) { return d.label.text; });
     
     for(var key in this.edgeList){
-      this.edgeList[key].draw(dur);
+      this.edgeList[key].draw(duration);
     }
   }
   
@@ -475,8 +434,8 @@ var CircleObject = function (coreObj, id, cx, cy, radius, text, label, shapeClas
     *
     * @param {!Number=} dur : the duration in miliseconds of this animation.
     */
-  this.remove = function (dur) {
-    if(dur == null || isNaN(dur) || dur < 0) dur = DEFAULT_ANIMATION_DURATION;
+  this.remove = function (duration) {
+    if(duration == null || isNaN(duration) || dur < 0) duration = DEFAULT_ANIMATION_DURATION;
     
     var json = [];
     json.push(this.propObj);
@@ -485,18 +444,25 @@ var CircleObject = function (coreObj, id, cx, cy, radius, text, label, shapeClas
         .data(json, function (d) {return d.id;});
     
     shape.transition()
-        .duration(dur)
+        .duration(duration)
+        .remove();
+    
+    var label = d3.select("#" + DEFAULT_IDS.SVG_GROUP.LABEL).selectAll(SVG_TEXT)
+        .data(json, function (d) {return d.id;});
+        
+    label.transition()
+        .duration(duration)
         .remove();
     
     var text = d3.select("#" + DEFAULT_IDS.SVG_GROUP_TEXT).selectAll(SVG_TEXT)
         .data(json, function (d) {return d.id;});
         
     text.transition()
-        .duration(dur)
+        .duration(duration)
         .remove();
     
     for (var key in this.edgeList) {
-      this.edgeList[key].remove(dur); 
+      this.edgeList[key].remove(duration); 
     }
   }
   
