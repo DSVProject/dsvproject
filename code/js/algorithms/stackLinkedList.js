@@ -136,7 +136,6 @@ var StackLinkedList = function () {
     
     if (top != null){
       edgeTopD.setIdObjectB(top.drawing.getID());
-      top.edge.setIdObjectB(null);
       coreObj.saveState("Pop the top position.", 0);
     }
     
