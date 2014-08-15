@@ -37,8 +37,9 @@ var CoreObject = function () {
   // Variable to control animation playing
   this.animationStatus = ANIMATION_STATUS.STOP;
   
-  // Array to store variables that will be printed in the Variable Watch Panel
+  // Arrays to store variables and log messages that will be printed in the panels
   this.variableWatchList = [];
+  this.logList = [];
   
   /**
     * Creates the groups that will contain all the graphic elements.
@@ -124,29 +125,32 @@ var CoreObject = function () {
   /**
     * Creates a snapshot of the current state of all the objects on the screen.
     *
-    * @param {?String=} status : an optional message about the changes, that will appear on the screen log.
+    * @param {?String=} logMessage : an optional message about the changes, that will appear on the screen log.
     * @param {?Number=} pseudocodeLine : the pseudocode line to be highlighted during the exuction of this iteration.
     */
-  this.saveState = function (status, pseudocodeLine) {
+  this.saveState = function (logMessage, pseudocodeLine) {
     // The current state being created
     var state = {
       data : null,
-      status : null,
+      log : null,
       variables : null,
       pseudocodeLine : null
     };
     var newList = []; // The copy of the current objectList
     var copy;  // The instance for the cloned Object
     
+    // Create a "snapshot" of the current state of objectList[]
     for (var key in this.objectList){
       copy = this.objectList[key].cloneObject();
       newList[key] = copy;
     }
     
+    this.saveLogMessageToList(logMessage);
+    
     // Each state will hold the "data" which is a copy of objectList, a "status" which will appear on the log
     // and a "pseudocodeLine" that will be highlighted on running time.
     state.data = newList;
-    state.status = status;
+    state.log = clone(self.logList);
     state.variables = clone(self.variableWatchList);
     state.pseudocodeLine = pseudocodeLine;
     
@@ -165,7 +169,7 @@ var CoreObject = function () {
     // The current state being created
     var state = {
       data : null,
-      status : null,
+      log : null,
       pseudocodeLine : null
     };
     var newList = []; // The copy of the current objectList
@@ -175,8 +179,12 @@ var CoreObject = function () {
       clone = this.objectList[key].cloneObject();
       newList[key] = clone; 
     }
-    state.status = "Use the grey circles to create the final state.";
+    
     state.data = newList;
+    
+    this.saveLogMessageToList("Use the grey circles to create the final state.")
+    
+    state.log = clone(this.logList);
     
     this.stateList["learn"] = state;
     
@@ -202,14 +210,14 @@ var CoreObject = function () {
   this.begin = function (duration) {
     var copyList = [];
     
+    // Create "checkpoints" of the actions to enable undo and redo
     for (var key in this.objectList){
       copy = this.objectList[key].cloneObject();
       copyList[key] = copy;
     }
-    
     this.actionArray[this.actionCount] = copyList;
-    
     this.actionCount++;
+    
     this.clearLog();
     this.clearVariableWatch();
     this.play(duration);
@@ -227,8 +235,8 @@ var CoreObject = function () {
     
     if(duration == null || isNaN(duration) || duration < 0) duration = DEFAULT_ANIMATION_DURATION;
     
-    if (typeof currentState.status != 'undefined') {
-      self.printLog(currentState.status);
+    if (typeof currentState.log != 'undefined') {
+      self.printLog(currentState.log);
     }
     
     if (Object.keys(currentState.variables).length > 0) {
@@ -302,7 +310,7 @@ var CoreObject = function () {
     
     if (this.stateAnimation < 0) this.stateAnimation = 0;
     
-    $('#log tr:last-child').remove()
+    //$('#log tr:last-child').remove()
     
     if (this.stateAnimation < Object.keys(this.stateList).length) {
       this.animationStatus = ANIMATION_STATUS.PAUSE;
@@ -380,23 +388,43 @@ var CoreObject = function () {
   /**
     * Clear the message log panel.
     */
-  this.clearLog = function(){
+  this.clearLog = function () {
+    this.logList = [];
+    
     d3.select("#" + DEFAULT_IDS.PAGE.LOG).selectAll("tr")
         .remove();
   }
   
   /**
-    * Print a message on the log panel.
+    * Save a message to be printed on the log panel
     *
-    * @param {!String} message : the message to be printed.
+    * @param {!String} message : the message to be saved.
     */
-  this.printLog = function (message) {
-    if (message == "" || message == null) return;
-      
-    d3.select("#" + DEFAULT_IDS.PAGE.LOG)
+  this.saveLogMessageToList = function (message) {
+    var log = {
+      message: message,
+    };
+    this.logList.push(log);
+  }
+  
+  /**
+    * Print all saved messages to the log panel.
+    *
+    * @param {Array} variablesObj : the value of this.variableWatchList;
+    */
+  this.printLog = function (logObj) {
+    var varLines = d3.select("#" + DEFAULT_IDS.PAGE.LOG).selectAll("tr")
+        .data(logObj, function (d) {return d.message;});
+    
+    varLines.enter()
         .append("tr")
-        .append("td")
-        .text(message);
+        .append("td");
+    
+    varLines.transition()
+        .text(function (d) {return d.message;});
+    
+    varLines.exit()
+        .remove();
   }
   
   /**
@@ -427,8 +455,7 @@ var CoreObject = function () {
   /**
     * Print all saved variables to the Variable Watch panel.
     *
-    * @param {!String} variableName : the name of the variable to be printed.
-    * @param {!(String|Number)} variableValue : the current value of the variable.
+    * @param {Array} variablesObj : the value of this.variableWatchList;
     */
   this.printVariableWatch = function (variablesObj) {
     var varLines = d3.select("#" + DEFAULT_IDS.PAGE.VARIABLE).selectAll("tr")
