@@ -56,6 +56,20 @@ const USER_OBJ_TYPE = {
 };
 
 /**
+  * Values used when creating an instance of EdgeObject, for the learning mode to determine which object will be created.
+  * The names stand for the type and how many edges.
+  *
+  * @const 
+  */
+const USER_TYPE_OBJ_CREATED = {
+  CIRCLE_EDGE_0: 0,
+  CIRCLE_EDGE_1: 1,
+  CIRCLE_EDGE_2: 2,
+  SQUARE_EDGE_0: 3,
+  SQUARE_EDGE_1: 4,
+};
+
+/**
   * Default class names used across the framework, defined here to improve code abstraction.
   *
   * @const 
@@ -112,7 +126,8 @@ const DEFAULT_IDS = {
     TEXT:"text-",
     USER_TEXT:"u-text-",
     LABEL:"label-",
-    EDGE:"edge-"
+    EDGE:"edge-",
+    USER_NEW_OBJ:"protoObj"
   },
   SVG_MARKER:{
     START:{

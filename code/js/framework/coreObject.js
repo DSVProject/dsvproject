@@ -535,12 +535,13 @@ var CoreObject = function () {
     * @param {?String=} edgeClass : the CSS class of the line svg element.
     * @param {!Const} edgeType : a constant value (defined at 'animation/constant.js' : EDGE_TYPE) indicating wether the vertex is unidirectional (from A -> B), bidirectional or has no direction.
     * @param {?Const=} outboundPoint : a constant value (defined at 'animation/constant.js' : EDGE_POSITION) indicating from which point of the shape the edge will originate. If null the CENTER position will be used.
-  * @param {?Const=} inboundPoint : a constant value (defined at 'animation/constant.js' : EDGE_POSITION) indicating at which point of the shape the edge will arrive. If null the CENTER position will be used.
+    * @param {?Const=} inboundPoint : a constant value (defined at 'animation/constant.js' : EDGE_POSITION) indicating at which point of the shape the edge will arrive. If null the CENTER position will be used.
+    * @param {?Const=} typeObjCreated : a constant value (defined at 'animation/constant.js' : USER_TYPE_OBJ_CREATED) indicating which object should be created to insert a new value in the learning mode.
     *
     * @return {EdgeObject} : the new object.
     */
-  this.newEdgeObject = function (id, idObjectA, idObjectB, edgeClass, edgeType, outboundPoint, inboundPoint) {
-    var newEdge = new EdgeObject(this, id, idObjectA, idObjectB, edgeClass, edgeType, outboundPoint, inboundPoint);
+  this.newEdgeObject = function (id, idObjectA, idObjectB, edgeClass, edgeType, outboundPoint, inboundPoint, typeObjCreated) {
+    var newEdge = new EdgeObject(this, id, idObjectA, idObjectB, edgeClass, edgeType, outboundPoint, inboundPoint, typeObjCreated);
     
     this.objectList[idObjectA].addEdge(newEdge);
     
@@ -585,6 +586,12 @@ var CoreObject = function () {
       
       if (this.objectList[key].getIsValidTarget() == true) {
         this.objectList[key].createPlaceHolder(allowSwap);
+      }
+      
+      for (var edgeKey in this.objectList[key].edgeList) {
+        if (this.objectList[key].edgeList[edgeKey].getIsValidTarget() == true) {
+          this.objectList[key].edgeList[edgeKey].createPlaceHolder();
+        } 
       }
     }
   }

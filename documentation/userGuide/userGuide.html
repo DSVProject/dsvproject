@@ -512,7 +512,7 @@ this.cloneEdges = function (edges) {
             <h3>2.3.1. Constructor and Parameters</h3>
             <p>The class is called EdgeObject, and to create an instance of a class in javascript all you have to do is the same that you would do in any other OO language:</p>
 <pre class="prettyprint linenums">
-var newObj = new EdgeObject(coreObj, id, idObjectA, idObjectB, edgeClass, edgeType, outboundPoint, inboundPoint);
+var newObj = new EdgeObject(coreObj, id, idObjectA, idObjectB, edgeClass, edgeType, outboundPoint, inboundPoint, typeObjCreated);
 </pre>
             <p>Now let's understand all those parameters:</p>
             <ul>
@@ -524,6 +524,7 @@ var newObj = new EdgeObject(coreObj, id, idObjectA, idObjectB, edgeClass, edgeTy
               <li><strong>edgeType:</strong> indicates wether the edge is unidirectional (from A -> B), bidirectional or has no direction.</li>
               <li><strong>outboundPoint:</strong> indicates from which position of the shape the edge will originate.</li>
               <li><strong>inboundPoint:</strong> indicates at which position of the shape the edge will arrive.</li>
+              <li><strong>typeObjCreated:</strong> when the edge is a valid target for the learning mode, this property indicates which type of object will be created at the end of this edge.</li>
             </ul>
             <p>As you will be able to notice in the javadoc, some of this parameters are not obligatory (like idObjectB, class), making it easy to customise an edge. Regarding the class, it is always recommended to send "null" as parameter since all instances will inherit a default class, unless you would like it to have a different look.</p>
             
@@ -563,7 +564,11 @@ this.propObj = {
     "y2": null,
     "stroke": idObjectB != null ? defaultProperties.edge.stroke.default : defaultProperties.edge.stroke.null,
     "strokeWidth": idObjectB != null ? defaultProperties.edge["stroke-width"].default : defaultProperties.edge["stroke-width"].null
-  }
+  },
+    
+  "isValidTarget": false,
+
+  "typeObjCreated": typeObjCreated
 }
 </pre>
             <p>This is the most important field of this object. It is a property map that will store all the data regarding the edge and other variables used for functionality. When drawing this object on the screen these values will be taken into consideration.</p>
@@ -592,10 +597,13 @@ this.getCoordinateX2 = function(){...}
 this.getCoordinateY2 = function(){...}
 this.setStroke = function (newStroke) {...}
 this.setStrokeWidth = function (newStrokeWidth) {...}
+this.setIsValidTarget = function (bool) {...}
+this.getIsValidTarget = function () {...}
 this.calculatePath = function () {...}
 this.draw = function (duration) {...}
 this.remove = function (duration) {...}
 this.cloneProperties = function (prop) {...}
+this.createPlaceHolder = function () {...}
 </pre>
             <p>Most of them are just getters and setters for the property map and when creating your own visualisation they are the only ones you should worry. The other methods are used internally by the framework, so heres a brief explanation on them:</p>
             
@@ -618,6 +626,9 @@ this.cloneProperties = function (prop) {
 }
 </pre>
             <p>Shapes that possesses edges will call this function when cloning their edges. This will return a deep copy of this object properties, without the memory references.</p>
+            
+            <h4>2.2.3.5. Place holders (Learning Mode)</h4>
+            <p>This method is only important when creating a visualisation with Learning Mode enabled. If this object is classified as a valid target for the Learning Mode interaction a place holder will be created with behavourial functions to be called responding to user actions, making changes to this and other object properties.</p>   
             
           </section>
           
@@ -889,12 +900,13 @@ this.newUserObject = function (id, cx, cy, radius, text, shapeClass, textClass, 
   * @param {?String=} edgeClass : the CSS class of the line svg element.
   * @param {!Const} edgeType : a constant value (defined at 'animation/constant.js' : EDGE_TYPE) indicating wether the vertex is unidirectional (from A -> B), bidirectional or has no direction.
   * @param {?Const=} outboundPoint : a constant value (defined at 'animation/constant.js' : EDGE_POSITION) indicating from which point of the shape the edge will originate. If null the CENTER position will be used.
-* @param {?Const=} inboundPoint : a constant value (defined at 'animation/constant.js' : EDGE_POSITION) indicating at which point of the shape the edge will arrive. If null the CENTER position will be used.
+  * @param {?Const=} inboundPoint : a constant value (defined at 'animation/constant.js' : EDGE_POSITION) indicating at which point of the shape the edge will arrive. If null the CENTER position will be used.
+  * @param {?Const=} typeObjCreated : a constant value (defined at 'animation/constant.js' : USER_TYPE_OBJ_CREATED) indicating which object should be created to insert a new value in the learning mode.
   *
   * @return {EdgeObject} : the new object.
   */
-this.newEdgeObject = function (id, idObjectA, idObjectB, edgeClass, edgeType, outboundPoint, inboundPoint) {
-  var newEdge = new EdgeObject(this, id, idObjectA, idObjectB, edgeClass, edgeType, outboundPoint, inboundPoint);
+this.newEdgeObject = function (id, idObjectA, idObjectB, edgeClass, edgeType, outboundPoint, inboundPoint, typeObjCreated) {
+  var newEdge = new EdgeObject(this, id, idObjectA, idObjectB, edgeClass, edgeType, outboundPoint, inboundPoint, typeObjCreated);
 
   this.objectList[idObjectA].addEdge(newEdge);
 
@@ -1014,6 +1026,20 @@ const USER_OBJ_TYPE = {
   VALUE: 0,
   MOVEMENT: 1
 };
+
+/**
+  * Values used when creating an instance of EdgeObject, for the learning mode to determine which object will be created.
+  * The names stand for the type and how many edges.
+  *
+  * @const 
+  */
+const USER_TYPE_OBJ_CREATED = {
+  CIRCLE_EDGE_0: 0,
+  CIRCLE_EDGE_1: 1,
+  CIRCLE_EDGE_2: 2,
+  SQUARE_EDGE_0: 3,
+  SQUARE_EDGE_1: 4,
+};
 </pre>
               </li>
               <li><strong>Default IDS, Classes and Properties</strong>: to improve code abstraction and keep the visual identity of the framework, many properties, classes and ids are defined here. 
@@ -1076,7 +1102,8 @@ const DEFAULT_IDS = {
     TEXT:"text-",
     USER_TEXT:"u-text-",
     LABEL:"label-",
-    EDGE:"edge-"
+    EDGE:"edge-",
+    USER_NEW_OBJ:"protoObj"
   },
   SVG_MARKER:{
     START:{

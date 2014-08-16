@@ -22,8 +22,9 @@
   * @param {!Const} edgeType : a constant value (defined at 'animation/constant.js' : EDGE_TYPE) indicating wether the vertex is unidirectional (from A -> B), bidirectional or has no direction.
   * @param {?Const=} outboundPoint : a constant value (defined at 'animation/constant.js' : EDGE_POSITION) indicating from which point of the shape the edge will originate. If null the CENTER position will be used.
   * @param {?Const=} inboundPoint : a constant value (defined at 'animation/constant.js' : EDGE_POSITION) indicating at which point of the shape the edge will arrive. If null the CENTER position will be used.
+  * @param {?Const=} typeObjCreated : a constant value (defined at 'animation/constant.js' : USER_TYPE_OBJ_CREATED) indicating which object should be created to insert a new value in the learning mode.
   */
-var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeType, outboundPoint, inboundPoint) {
+var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeType, outboundPoint, inboundPoint, typeObjCreated) {
   var self = this;
 
   if (coreObj == null) {
@@ -62,7 +63,11 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
       "y2": null,
       "stroke": idObjectB != null ? defaultProperties.edge.stroke.default : defaultProperties.edge.stroke.null,
       "strokeWidth": idObjectB != null ? defaultProperties.edge["stroke-width"].default : defaultProperties.edge["stroke-width"].null
-    }
+    },
+    
+    "isValidTarget": false,
+    
+    "typeObjCreated": typeObjCreated
   }
 
   /**
@@ -264,6 +269,23 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
   }
   
   /**
+    * Set this object as a valid target for the learning mode interactions.
+    *
+    * @param {!Boolean} bool : if true, the object will be a valid target.
+    */
+  this.setIsValidTarget = function (bool) {
+    if (bool == null) return;
+    this.propObj.isValidTarget = bool;
+  }
+  
+  /**
+    * @return {Boolean} : the isValidTarget property.
+    */ 
+  this.getIsValidTarget = function () {
+    return this.propObj.isValidTarget;
+  }
+  
+  /**
     * Update the coordinates of this path, based on the movement of the objects it is binded to.
     */
   this.calculatePath = function () {
@@ -364,6 +386,59 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
   this.cloneProperties = function (prop) {
     this.propObj = clone(prop);
     this.calculatePath();
+  }
+  
+  /**
+    * When in the Learning Mode, objects on the screen classified as valid targets will have place holders. This function creates them.
+    * When clicked, the place holder will apply the changes according to the UserObject who created them:
+    *     -If it was a VALUE UserObject, a new object will be created at the end of this edge.
+    *     -If it was a MOVEMENT UserObject nothing will happen. 
+    */
+  this.createPlaceHolder = function () {
+    d3.select("#" + DEFAULT_IDS.SVG_GROUP.SHAPE)
+        .append(SVG_CIRCLE)
+        .attr("class", DEFAULT_CLASSES.LEARNING_MODE.PLACE_HOLDER)
+        .attr("cx", self.getCoordinateX2())
+        .attr("cy", self.getCoordinateY2())
+        .attr("r", 10)
+        .on("click", function (d) {
+          var activeObject = self.coreObj.getActiveUserObject();
+          var activeObjectText = activeObject.getText();
+          var newObj = {
+            drawing: null,
+            edge1: null,
+            edge2: null
+          };
+          
+          if (activeObject.getType() == USER_OBJ_TYPE.VALUE) {
+            if (self.propObj.typeObjCreated == USER_TYPE_OBJ_CREATED.SQUARE_EDGE_0) {
+
+
+            } else if (self.propObj.typeObjCreated == USER_TYPE_OBJ_CREATED.SQUARE_EDGE_1) {
+              newObj.drawing = new SquareObject(self.coreObj, DEFAULT_IDS.SVG_ELEMENT.USER_NEW_OBJ, self.getCoordinateX2(), self.getCoordinateY2() - 25, activeObjectText, null, null, null, null);
+              newObj.edge1 = new EdgeObject(self.coreObj, DEFAULT_IDS.SVG_ELEMENT.USER_NEW_OBJ, newObj.drawing.getID(), null, null, self.getType(), self.getOutboundPoint(), self.getInboundPoint(), null);
+            } else if (self.propObj.typeObjCreated == USER_TYPE_OBJ_CREATED.CIRCLE_EDGE_0) {
+
+            } else if (self.propObj.typeObjCreated == USER_TYPE_OBJ_CREATED.CIRCLE_EDGE_1) {
+
+            } else if (self.propObj.typeObjCreated == USER_TYPE_OBJ_CREATED.CIRCLE_EDGE_2) {
+
+            }
+            
+            newObj.drawing.draw();
+            if (newObj.edge1 != null) newObj.edge1.draw();
+            if (newObj.edge2 != null) newObj.edge2.draw();
+            
+            activeObject.setText();
+            activeObject.redraw();
+            
+            self.setIdObjectB(newObj.drawing.getID());
+            self.draw();
+          }
+          
+          self.coreObj.setActiveUserObject();
+          self.coreObj.removePlaceHolders();
+        });
   }
 
   // CODE TO BE EXECUTED BY CONSTRUCTOR

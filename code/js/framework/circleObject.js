@@ -141,6 +141,10 @@ var CircleObject = function (coreObj, id, cx, cy, radius, text, label, shapeClas
     
     this.propObj.label.x = cx;
     this.propObj.label.y = cy + this.labelAdjust;
+    
+    for (var key in this.edgeList) {
+      this.edgeList[key].calculatePath();
+    }
   }
   
   /**

@@ -142,6 +142,10 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
     
     this.propObj.label.x = x + this.textAdjustX;
     this.propObj.label.y = y + this.labelAdjustY;
+    
+    for (var key in this.edgeList) {
+      this.edgeList[key].calculatePath();
+    }
   }
   
   /**
@@ -543,7 +547,6 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
         .attr("cy", this.propObj.shape.y + this.textAdjustY)
         .attr("r", 10)
         .on("click", function (d) {
-          var activeObject = self.coreObj.getActiveUserObject();
           var activeObject = self.coreObj.getActiveUserObject();
           var activeObjectText = activeObject.getText();
           

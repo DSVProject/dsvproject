@@ -19,6 +19,9 @@ var QueueLinkedList = function () {
   var self = this;
   var coreObj = new CoreObject();
   
+  // ARRAY TO STORE LEARNING MODE OBJECTS
+  var learnObj = [];
+  
   const ENQUEUE = 0,
         DEQUEUE = 1;
 
@@ -87,45 +90,66 @@ var QueueLinkedList = function () {
 
     this.generatePseudocode(ENQUEUE);
 
-    var oldlast = last;
-    
-    if (oldlast != null) oldlast.drawing.setLabel("oldLast");
+    if (coreObj.isLearningMode()) {
+      coreObj.clearPseudocode();
+      
+      learnObj["newValue"] = coreObj.newUserObject("newValue", 500, 75, 25, item, "learning", null, USER_OBJ_TYPE.VALUE, true, null);
+      
+      var iterator = first;
+      while(iterator != null) {
+        iterator.drawing.setIsValidTarget(true);
+        
+        if (iterator.edge.getIdObjectB() == null) {
+          iterator.edge.setIsValidTarget(true);
+        }
 
-    last = new Node();
-    last.item = item;
-    last.next = null;
-    last.drawing = coreObj.newSquareObject(++counterID, 200, 200, item, null, "node", null, null);
-	last.edge = coreObj.newEdgeObject(counterID, last.drawing.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.RIGHT, EDGE_POSITION.LEFT);
-
-    coreObj.saveState("Inserting new node.", 0);
-
-    edgeLastD.setIdObjectB(last.drawing.getID());
-
-    coreObj.saveState("Update the last pointer.", 1);
-
-    last.drawing.moveShape((N+1)*100, 300);
-    coreObj.saveState();
-
-    if (this.isEmpty()) {
-      first = last;
-
-      edgeFirstD.setIdObjectB(last.drawing.getID());
-
-      coreObj.saveState("If the list was empty, update the first pointer too.", 2);
+        iterator = iterator.next;
+      }
+      
+      coreObj.saveState("Use the grey circles to create the final state.");
+      coreObj.begin(0);
+      
     } else {
-      oldlast.next = last;
-    }
+      var oldlast = last;
+    
+      if (oldlast != null) oldlast.drawing.setLabel("oldLast");
 
-    if (oldlast != null) {
-      oldlast.edge.setIdObjectB(last.drawing.getID());
-      
-      oldlast.drawing.setLabel();
-      
-      coreObj.saveState("Update the pointer of the previous node.", 3)
-    }
+      last = new Node();
+      last.item = item;
+      last.next = null;
+      last.drawing = coreObj.newSquareObject(++counterID, 200, 200, item, null, "node", null, null);
+      last.edge = coreObj.newEdgeObject(counterID, last.drawing.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.RIGHT, EDGE_POSITION.LEFT, USER_TYPE_OBJ_CREATED.SQUARE_EDGE_1);
 
-    N++;
-    coreObj.begin();
+      coreObj.saveState("Inserting new node.", 0);
+
+      edgeLastD.setIdObjectB(last.drawing.getID());
+
+      coreObj.saveState("Update the last pointer.", 1);
+
+      last.drawing.moveShape((N+1)*100, 300);
+      coreObj.saveState();
+
+      if (this.isEmpty()) {
+        first = last;
+
+        edgeFirstD.setIdObjectB(last.drawing.getID());
+
+        coreObj.saveState("If the list was empty, update the first pointer too.", 2);
+      } else {
+        oldlast.next = last;
+      }
+
+      if (oldlast != null) {
+        oldlast.edge.setIdObjectB(last.drawing.getID());
+
+        oldlast.drawing.setLabel();
+
+        coreObj.saveState("Update the pointer of the previous node.", 3)
+      }
+
+      N++;
+      coreObj.begin();
+    }
   }
   
   this.dequeue = function() {
