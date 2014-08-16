@@ -59,6 +59,7 @@
               <h1>1. The Framework</h1>
             </div>
             <p>This framework serves as a base to implement <strong>Data Structure Visualisations</strong>, providing tools to create graphic items, animate and manage them. It was built in a way that anyone with some knowledge of <strong>Object Oriented Programming</strong> and <strong>JavaScript</strong> can use it, without having knowledge about <strong>SVG</strong> or <strong>D3</strong>.</p>
+            <p>In this user guide we'll begin by studying each class and then we will proceed to learn how to use them to create a visualisation.</p>
             <p>The classes provided were designed to control the graphic part of the visualisation, and should be integrated with the algorithms of each data structure.</p>
             
             <h2>1.1. File Structure</h2>
@@ -260,7 +261,7 @@ this.cloneProperties = function (prop) {...}
 this.cloneEdges = function (edges) {...}
 this.createPlaceHolder = function (allowSwap) {...}
 </pre>
-            <p>Most of them are just getters and setters for the property map, but others require special attention. So let's understand them.</p>
+            <p>Most of them are just getters and setters for the property map and when creating your own visualisation they are the only ones you should worry. The other methods are used internally by the framework, so heres a brief explanation on them:</p>
             
             <h4>2.1.3.1. Add Edge</h4>
             <p>This method will add an instance of EdgeObject to this object edgeList[]. Edges are always stored in the origin object, even if the edge is bidirectional.</p>
@@ -444,7 +445,7 @@ this.cloneProperties = function (prop) {...}
 this.cloneEdges = function (edges) {...}
 this.createPlaceHolder = function (allowSwap) {...}
 </pre>
-            <p>Most of them are just getters and setters for the property map, but others require special attention. So let's understand them.</p>
+            <p>Most of them are just getters and setters for the property map and when creating your own visualisation they are the only ones you should worry. The other methods are used internally by the framework, so heres a brief explanation on them:</p>
             
             <h4>2.2.3.1. Add Edge</h4>
             <p>This method will add an instance of EdgeObject to this object edgeList[]. Edges are always stored in the origin object, even if the edge is bidirectional.</p>
@@ -596,7 +597,7 @@ this.draw = function (duration) {...}
 this.remove = function (duration) {...}
 this.cloneProperties = function (prop) {...}
 </pre>
-            <p>Most of them are just getters and setters for the property map, but others require special attention. So let's understand them.</p>
+            <p>Most of them are just getters and setters for the property map and when creating your own visualisation they are the only ones you should worry. The other methods are used internally by the framework, so heres a brief explanation on them:</p>
             
             <h4>2.3.3.1. setIdObjectA</h4>
             <p>As we've mentioned earlier the instance of this object is added to ObjectA's edgeList[], so when changing this object (in a tree rotation for example) a special function will be called, that will take care of removing the edge from the old object edgeList[] and adding it to the new one.</p>
@@ -628,9 +629,338 @@ this.cloneProperties = function (prop) {
           <!-- CoreObject -->
           <section id="core-object">
             <h2>2.5. Managing all this: Core Object</h2>
+            <p><strong>CoreObject.js</strong> is the most important file of this framework. It works as an interface between all the other classes and your javascript file containing the data structure's algorithm. In this sections we will study all Core methods and understand when their use.</p>
+            
+            <h3>2.5.1. Constructor</h3>
+            <p>This class shall be instantiated in any algorithm javascipt file without any parameters, like this:</p>
+<pre class="prettyprint linenums">
+var coreObj = new CoreObject();
+</pre>
+            <p>With this instance you'll make use of this class to realise all other graphical changes.</p>
+            
+            <h3>2.5.2. Fields</h3>
+            <p>All fields, except for objectList are for private use. Let's understand each of them:</p>
+            <ul>
+              <li>
+<pre class="prettyprint">
+this.objectList = [];
+</pre>
+                <p>This array will store instances of all existing objects.</p>
+              </li>
+              <li>
+<pre class="prettyprint">
+this.stateList = [];
+</pre>
+                <p>This array will store all states used to create a step-by-step animation.</p>
+              </li>
+              <li>
+<pre class="prettyprint">
+this.stateCount = 0;
+this.stateAnimation = 0;
+</pre>
+                <p><strong>stateCount</strong> stores how many states exists while <strong>stateAnimation</strong> store which step is currently on the screen.</p>
+              </li>
+              <li>
+<pre class="prettyprint">
+this.actionArray = [];
+this.actionCount = 0;
+</pre>
+                <p><strong>actionArray</strong> is used to store "checkpoints" of each action executed by the user. This enables methods like <strong>undo</strong> and <strong>redo</strong>. <strong>actionCount</strong> tells us how many actions are stored.</p>
+              </li>
+              <li>
+<pre class="prettyprint">
+this.animationStatus = ANIMATION_STATUS.STOP;
+</pre>
+                <p>This variable is used to control the playing status of the animation.</p>
+              </li>
+              <li>
+<pre class="prettyprint">
+this.variableWatchList = [];
+this.logList = [];
+</pre>
+                <p>Those two arrays are used to manage the content of the <strong>log panel</strong> and the <strong>variable watch panel</strong>.</p>
+              </li>
+            </ul>
+            
+            <h3>2.5.3. Validation Methods</h3>
+            <p>Summary:</p>
+<pre class="prettyprint linenums">
+this.isLearningMode = function () {...}
+this.newActionEnabled = function () {...}
+this.displayAlert = function (message) {...}
+</pre>
+            <h4>2.5.3.1. isLearningMode</h4>
+            <p>This function will return wether the Learning Mode is active or not. In a visualisation where the Learning Mode is implemented, this function shall be called in your algorithm javascript file, when calling the methods and then run the correspondent set of code according to what this function returned.</p>
+<pre class="prettyprint linenums">
+if (coreObj.isLearningMode()){
+  // create learning mode objects
+} else {
+  // run default method
+}
+</pre>
+    
+            <h4>2.5.3.2. newActionEnabled</h4>
+            <p>When using the Learning Mode, the user should complete or cancel the current action before making any further changes. This function shall be called when trying to run any method; it return false if any UserObject exists, and the code should be interrupted, preventing more actions from happening.</p>
+<pre class="prettyprint linenums">
+this.push = function (item) {
+  if (top.value >= cap || item.trim() == "") {
+    return false;
+  }
+
+  if (coreObj.newActionEnabled() == false) return false;
+
+  ...
+}
+</pre>
+            
+            <h4>2.5.3.3. displayAlert</h4>
+            <p>If some condition was not satisfied and you want to alert the user you should call this function, sending the message as parameter.</p>
+<pre class="prettyprint linenums">
+coreObj.displayAlert("Please finish or cancel the current action before making any further changes.");
+</pre>
+            <p>Which will result in (displayed at the top of the screen):</p>
+            <img src="img/alert.png" alt ="">
+            
+            <h3>2.5.4. Animation Methods</h3>
+            <h4>2.5.4.1. State Methods</h4>
+            <p>To have a step-by-step animation of the algorithms we make use of "states". Just like in state machines, we save the current state of each existing object in a given time, creating a series of snapshots so we can iterate through them later.</p>
+            <p>When a visualisation page is called the state list should be initialised, like this:</p>
+<pre class="prettyprint linenums">
+var StackArray = function(){
+  var self = this;
+  var coreObj = new CoreObject();
+  
+  coreObj.newStateList();
+
+  ...
+}
+</pre>
+            <p>This will initialise all variables used for controling the states.</p>
+            
+            <p>Then it's time to begin saving states, but first let's understand what composes a state:</p>
+<pre class="prettyprint">
+var state = {
+  data : null,
+  log : null,
+  variables : null,
+  pseudocodeLine : null
+};
+</pre>
+            <ul>
+              <li><strong>data</strong> will store the copy of all existing objects with their current state.</li>
+              <li><strong>log</strong> will store a copy of the log messages displayed in this state.</li>
+              <li><strong>variables</strong> will store a copy of the variable values in this state.</li>
+              <li><strong>pseudocodeLine</strong> will store which pseudocode line should be highlighted in this state.</li>
+            </ul>
+            <p>Now let's see how the states should be saved in order to make an animation. To do this we'll use the <strong>enqueue</strong> method, from a Queue Array Implementation:</p>
+<pre class="prettyprint linenums">
+this.enqueue = function (item) {
+  if (tail.value >= cap || item.trim() == "") {
+    coreObj.displayAlert("The input should not be empty.");
+    return false;
+  }
+
+  this.generatePseudocode(ENQUEUE);
+
+  mArray[tail.value].setText(item);
+  coreObj.saveState("Inserting the new value", 0);
+
+  tail.value++;
+  tail.drawing.setFill(defaultProperties["shape"]["fill"]["update"]);
+  coreObj.saveState();
+
+  tail.edge.setIdObjectB(mArray[tail.value].getID());
+
+  tail.drawing.setText(tail.value);
+  tail.drawing.setFill(defaultProperties["shape"]["fill"]["default"]);
+  coreObj.saveVariableToWatch("head", head.value);
+  coreObj.saveVariableToWatch("tail", tail.value);
+  coreObj.saveState("Update the tail pointer.", 1);
+
+  coreObj.begin();
+}
+</pre>
+            <p>To save a state only two things are required, both being optional: a <strong>message</strong> that will be printed on the log panel, and which <strong>pseudocode line</strong> that will be highlighted. <strong>Variables</strong> should be saved separately (as seen in lines 20 and 21), this allows the programmer to save as many variables as he want.</p>
+            
+            <h4>2.5.4.2. Control Methods</h4>
+            <p>After you've saved all desired states is time to play with them. In order to do this there's only one function that you have to call:</p>
+<pre class="prettyprint">
+coreObj.begin();
+</pre>
+            <p>This function will begin playing the states related to the last action performed.</p>
+            
+            <p>Functions such as <strong>play</strong>, <strong>pause</strong>, <strong>next</strong>, <strong>previous</strong> are called straight from the HTML file, to iterate through the steps of the animation, and they all will call <strong>draw</strong>, sending the a state to be displayed on the screen.</p>
+            <p>All this functions take into consideration the user speed preference, which is accessible with the <strong>getAnimationDuration</strong> function.</p>
+            
+            <h4>2.5.4.3. Panel Methods</h4>
+            <p>Here's the list of all the core functions that interact with the panels:</p>
+<pre class="prettyprint linenums">
+this.clearLog = function () {...}
+this.saveLogMessageToList = function (message) {...}
+this.printLog = function (logObj) {...}
+this.clearVariableWatch = function(){...}
+this.saveVariableToWatch = function (variableName, variableValue) {...}
+this.printVariableWatch = function (variablesObj) {...}
+this.clearPseudocode = function () {...}
+this.addPseudocodeLine = function (id, instruction) {...}
+this.highlightPseudocode = function (lineNumber) {...}
+</pre>
+            <p>But when creating your own visualisation you'll only have to call 3 of them:</p>
+            <ul>
+              <li><strong>saveVariableToWatch</strong>: to save the current state of a variable, to be displayed in the Variable Watch Panel.</li>
+              <li><strong>clearPseudocode</strong>: before running a method, to display the right set of instructions.</li>
+              <li><strong>addPseudocodeLine</strong>: when creating sets of pseudocode.</li>
+            </ul>
+            <p>All other methods are called internaly in the core, so you don't have to worry.</p>
+            
+            <h3>2.5.5. Object Constructor Methods</h3>
+            <p>All basic items that we've studied before must be created or deleted using the active instance of CoreObject, which will return the just created instance reference to the algorithm javascript file. This will make it possible for the core to manage and organise all existing objects, making the framework more consistent. With the reference that is returned you will be able to interact with each instance, applying any desired graphic changes.</p>
+            <p>Here's how these functions look like:</p>
+<pre class="prettyprint linenums">
+/**
+    * Create a square graphic element.
+    *
+    * @param {!(String|Number)} id : the id of this object.
+    * @param {!Number} x : the x coordinate of this object inside the svg element.
+    * @param {!Number} y : the y coordinate of this object inside the svg element.
+    * @param {?String=} text : the inner text of this object, that will be displayed on the screen.
+    * @param {?String=} label : the text underneath this object, that will be displayed on the screen.
+    * @param {?String=} shapeClass : the CSS class of the shape svg element.
+    * @param {?String=} textClass : the CSS class of the text svg element (inside the shape).
+    * @param {?String=} labelClass : the CSS class of the text svg element (underneath the shape).
+    *
+    * @return {SquareObject} : the new object.
+    */
+this.newSquareObject = function (id, x, y, text, label, shapeClass, textClass, labelClass) {
+  this.objectList[id] = new SquareObject(this, id, x, y, text, label, shapeClass, textClass, labelClass);
+
+  return this.objectList[id];
+}
+
+/**
+  * Create a circle graphic element.
+  *
+  * @param {!(String|Number)} id : the id of this object.
+  * @param {!Number} cx : the cx coordinate of this object inside the svg element.
+  * @param {!Number} cy : the cy coordinate of this object inside the svg element.
+  * @param {!Number} radius : the radius of this object.
+  * @param {?String=} text : the inner text of this object, that will be displayed on the screen.
+  * @param {?String=} label : the text underneath this object, that will be displayed on the screen.
+  * @param {?String=} shapeClass : the CSS class of the rect svg element.
+  * @param {?String=} textClass : the CSS class of the text svg element (inside the shape).
+  * @param {?String=} labelClass : the CSS class of the text svg element (underneath the shape).
+  *
+  * @return {CircleObject} : the new object.
+  */
+this.newCircleObject = function (id, cx, cy, radius, text, label, shapeClass, textClass, labelClass) {
+  this.objectList[id] = new CircleObject(this, id, cx, cy, radius, text, label, shapeClass, textClass, labelClass);
+
+  return this.objectList[id];
+}
+
+/**
+  * Create a user graphic element (used for the learning mode).
+  *
+  * @param {!(String|Number)} id : the id of this object.
+  * @param {!Number} cx : the cx coordinate of this object inside the svg element.
+  * @param {!Number} cy : the cy coordinate of this object inside the svg element.
+  * @param {!Number} radius : the radius of this object.
+  * @param {?String=} text : the inner text of this object, that will be displayed on the screen.
+  * @param {?String=} shapeClass : the CSS class of the rect svg element.
+  * @param {?String=} textClass : the CSS class of the text svg element (inside the shape).
+  * @param {!Const} type : the type of this userObject (defined at 'animation/constant.js' : USER_OBJ_TYPE).
+  * @param {!Bool=} allowSwap: if this instance is a VALUE type object, this parameter should be passed. If true, this object's text will be swapped during the interactions.
+  * @param {!(String|Number)=} bindedObjID : if this instance is a MOVEMENT type object, it should be binded to another object.
+  *
+  * @return {userObject} : the new object.
+  */
+this.newUserObject = function (id, cx, cy, radius, text, shapeClass, textClass, type, allowSwap, bindedObjID) {
+  this.objectList[id] = new UserObject(this, id, cx, cy, radius, text, shapeClass, textClass, type, allowSwap, bindedObjID);
+
+  return this.objectList[id];
+}
+
+/**
+  * Create an edge graphic element, that will be stored in the origin object edgelist[].
+  *
+  * @param {!(String|Number)} id : the id of this object.
+  * @param {!String} idObjectA : the id of the origin object.
+  * @param {?String=} idObjectB : the id of the destination object. If null a small edge will be created following the orientation of the origin point.
+  * @param {?String=} edgeClass : the CSS class of the line svg element.
+  * @param {!Const} edgeType : a constant value (defined at 'animation/constant.js' : EDGE_TYPE) indicating wether the vertex is unidirectional (from A -> B), bidirectional or has no direction.
+  * @param {?Const=} outboundPoint : a constant value (defined at 'animation/constant.js' : EDGE_POSITION) indicating from which point of the shape the edge will originate. If null the CENTER position will be used.
+* @param {?Const=} inboundPoint : a constant value (defined at 'animation/constant.js' : EDGE_POSITION) indicating at which point of the shape the edge will arrive. If null the CENTER position will be used.
+  *
+  * @return {EdgeObject} : the new object.
+  */
+this.newEdgeObject = function (id, idObjectA, idObjectB, edgeClass, edgeType, outboundPoint, inboundPoint) {
+  var newEdge = new EdgeObject(this, id, idObjectA, idObjectB, edgeClass, edgeType, outboundPoint, inboundPoint);
+
+  this.objectList[idObjectA].addEdge(newEdge);
+
+  return newEdge;
+}
+</pre>
+            <p>To better understand this let's look at an example:</p>
+<pre class="prettyprint linenums">
+this.push = function(item) {
+  ...
+  
+  top = new Node();
+  top.item = item;
+  top.next = oldtop;
+  top.drawing = coreObj.newSquareObject(++counterID, 150, 200, item, null, "node", null, null);
+  top.edge = coreObj.newEdgeObject(counterID, top.drawing.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.BOTTOM, EDGE_POSITION.TOP);
+
+  coreObj.saveState("Inserting new node.", 0);
+
+  ...
+}
+</pre>
+            
+            <p>For deletions we have those two functions:</p>
+<pre class="prettyprint linenums">
+/**
+  * Set a flag for the object to be removed on the next draw action.
+  *
+  * @param {!(String|Number)} id : the id of the item to be removed.
+  */
+this.removeShape = function (id) {
+  this.objectList[id].setToRemove(true);
+}
+
+/**
+  * Set a flag for all objects of the selected class to be removed on the next draw action.
+  *
+  * @param {String} selectedClass : the class of the items to be removed.
+  * @param {Number} duration : the duration of the animation.
+  */
+this.removeAll = function (selectedClass, duration) {
+  for (var key in this.objectList) { 
+    if (this.objectList[key].getShapeClass() == selectedClass) {
+
+      this.objectList[key].setToRemove(true);
+    }
+  }
+}
+</pre>
+            <p>The first one is used to delete a single item, while the second will delete all items that match the provided class (for example deleting all nodes when clearing a linked list visualisation).</p>
+            
+            <!--
+            <h3>2.5.6. Object Interaction Methods</h3>
+            <p>There are some methods that are called from the basic shapes to interact with other shapes, but mediated by the core. When creating a new visualisation you don't have to use any of these functions but let's take a look to understand what each of them do:</p>
+            
+            <h3>2.5.7. Other Methods</h3>
+            <p>Summary:</p>
+<pre class="prettyprint linenums">
+this.createGroups = function () {...}
+this.createMarkers = function () {...}
+</pre>
+            <p>These methods are called from constructor. They will create all necessary SVG groups and other elements, used to better organise the HTML DOM.</p>
+          -->
           </section>
           
-          <!-- CoreObject -->
+          <!-- Constant.js -->
           <section id="constant-js">
             <h2>2.6. An important file: Constant.js</h2>
             

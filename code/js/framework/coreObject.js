@@ -42,90 +42,55 @@ var CoreObject = function () {
   this.logList = [];
   
   /**
-    * Creates the groups that will contain all the graphic elements.
+    * Verify if the Learning Mode is active.
+    *
+    * @return {Boolean} : true if "#chk-learn" has class "active", false other wise.
     */
-  this.createGroups = function () {
-    var markerGroup = d3.select("#" + DEFAULT_IDS.SVG_GROUP.MAIN)
-        .append("g")
-        .attr("id", DEFAULT_IDS.SVG_GROUP.MARKER)
-        .attr("class", DEFAULT_CLASSES.MARKER);
-    
-    var edgeGroup = d3.select("#" + DEFAULT_IDS.SVG_GROUP.MAIN)
-        .append("g")
-        .attr("id", DEFAULT_IDS.SVG_GROUP.EDGE)
-        .attr("class", DEFAULT_CLASSES.EDGE);
-        
-    var labelGroup = d3.select("#" + DEFAULT_IDS.SVG_GROUP.MAIN)
-        .append("g")
-        .attr("id", DEFAULT_IDS.SVG_GROUP.LABEL)
-        .attr("class", DEFAULT_CLASSES.TEXT.LABEL);
-             
-    var shapeGroup = d3.select("#" + DEFAULT_IDS.SVG_GROUP.MAIN)
-        .append("g")
-        .attr("id", DEFAULT_IDS.SVG_GROUP.SHAPE)
-        .attr("class", DEFAULT_CLASSES.SHAPE);
-      
-    var textGroup = d3.select("#" + DEFAULT_IDS.SVG_GROUP.MAIN)
-        .append("g")
-        .attr("id", DEFAULT_IDS.SVG_GROUP.TEXT)
-        .attr("class", DEFAULT_CLASSES.TEXT.INNER);
+  this.isLearningMode = function () {
+    return $("#" + DEFAULT_IDS.PAGE.LEARNING_MODE).hasClass(DEFAULT_CLASSES.LEARNING_MODE.ACTIVE);
   }
   
   /**
-    * Creates the marker object references, to be used by the edges.
+    * If any UserObject exists no new action is enabled until the current one is finished.
+    *
+    * @return {Boolean} : false if a UserObject exists, true other wise.
     */
-  this.createMarkers = function () {
-    var markerGroup = d3.select("#" + DEFAULT_IDS.SVG_GROUP.MARKER);
+  this.newActionEnabled = function () {
+    for (var key in this.objectList) {
+      if (this.objectList[key] instanceof UserObject) {
+        this.displayAlert("Please finish or cancel the current action before making any further changes.");
+        
+        return false;
+      }
+    }
     
-    markerGroup.append(SVG_MARKER)
-        .attr("id", DEFAULT_IDS.SVG_MARKER.END.NULL)
-        .attr("orient", "auto")
-        .attr("markerWidth", defaultProperties.marker.width)
-        .attr("markerHeight", defaultProperties.marker.height)
-        .attr("refX", defaultProperties.marker.refX.end)
-        .attr("viewBox", "0 -5 10 10")
-        .append("path")
-            .attr("d", "M0,-5 L10,0 L0,5")
-            .attr("fill", defaultProperties.edge.stroke.null);
-    
-    markerGroup.append(SVG_MARKER)
-        .attr("id", DEFAULT_IDS.SVG_MARKER.END.DEFAULT)
-        .attr("orient", "auto")
-        .attr("markerWidth", defaultProperties.marker.width)
-        .attr("markerHeight", defaultProperties.marker.height)
-        .attr("refX", defaultProperties.marker.refX.end)
-        .attr("viewBox", "0 -5 10 10")
-        .append("path")
-            .attr("d", "M0,-5 L10,0 L0,5")
-            .attr("fill", defaultProperties.edge.stroke.default);
-    
-    markerGroup.append(SVG_MARKER)
-        .attr("id", DEFAULT_IDS.SVG_MARKER.START.NULL)
-        .attr("orient", "auto")
-        .attr("markerWidth", defaultProperties.marker.width)
-        .attr("markerHeight", defaultProperties.marker.height)
-        .attr("refX", defaultProperties.marker.refX.start)
-        .attr("viewBox", "-10 -5 10 10")
-        .append("path")
-            .attr("d", "M0,-5 L-10,0 L0,5")
-            .attr("fill", defaultProperties.edge.stroke.null);
-    
-    markerGroup.append(SVG_MARKER)
-        .attr("id", DEFAULT_IDS.SVG_MARKER.START.DEFAULT)
-        .attr("orient", "auto")
-        .attr("markerWidth", defaultProperties.marker.width)
-        .attr("markerHeight", defaultProperties.marker.height)
-        .attr("refX", defaultProperties.marker.refX.start)
-        .attr("viewBox", "-10 -5 10 10")
-        .append("path")
-            .attr("d", "M0,-5 L-10,0 L0,5")
-            .attr("fill", defaultProperties.edge.stroke.default);
+    return true;
+  }
+  
+  /**
+    * Display an error alert.
+    *
+    * @param {!String} message: the message to be displayed inside the alert.
+    */
+  this.displayAlert = function (message) {
+    $('#' + DEFAULT_IDS.PAGE.ALERT_PLACEHOLDER).html('<div class="alert alert-danger alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>' + message + '</div>')
+  }
+  
+  /**
+    * Reset the state list, used when reseting all actions.
+    */
+  this.newStateList = function () {
+    this.stateList = [];
+    this.stateCount = 0; 
+    this.stateAnimation = 0; 
+    this.actionArray = [];
+    this.actionCount = 0;
   }
   
   /**
     * Creates a snapshot of the current state of all the objects on the screen.
     *
-    * @param {?String=} logMessage : an optional message about the changes, that will appear on the screen log.
+    * @param {?String=} logMessage : an optional message about the changes, that will appear on the log panel.
     * @param {?Number=} pseudocodeLine : the pseudocode line to be highlighted during the exuction of this iteration.
     */
   this.saveState = function (logMessage, pseudocodeLine) {
@@ -136,10 +101,10 @@ var CoreObject = function () {
       variables : null,
       pseudocodeLine : null
     };
-    var newList = []; // The copy of the current objectList
-    var copy;  // The instance for the cloned Object
     
     // Create a "snapshot" of the current state of objectList[]
+    var newList = []; // The copy of the current objectList
+    var copy;  // The instance for the cloned Object
     for (var key in this.objectList){
       copy = this.objectList[key].cloneObject();
       newList[key] = copy;
@@ -147,17 +112,20 @@ var CoreObject = function () {
     
     this.saveLogMessageToList(logMessage);
     
-    // Each state will hold the "data" which is a copy of objectList, a "status" which will appear on the log
-    // and a "pseudocodeLine" that will be highlighted on running time.
+    // Save each item to this state
     state.data = newList;
     state.log = clone(self.logList);
     state.variables = clone(self.variableWatchList);
     state.pseudocodeLine = pseudocodeLine;
     
-    // When assigning a state for a position in this array you should use parseInt, otherwise when using other
+    // Save the generated state to the list.
+    // Important: When assigning a state for a position in this array you should use parseInt, otherwise when using other
     // variables (such as stateAnimation) to access the content, the function will return undefined.
     this.stateList[parseInt(this.stateCount)] = state;
+    
+    // Update the stateCount
     this.stateCount++;
+    
     this.variableWatchList = [];
   }
   
@@ -172,9 +140,9 @@ var CoreObject = function () {
       log : null,
       pseudocodeLine : null
     };
+    
     var newList = []; // The copy of the current objectList
     var clone;  // The instance for the cloned Object
-    
     for (var key in this.objectList){
       clone = this.objectList[key].cloneObject();
       newList[key] = clone; 
@@ -191,15 +159,15 @@ var CoreObject = function () {
     this.draw(state, 0);
   }
   
+  // ANIMATION METHODS
+  
   /**
-    * Reset the state list, used when reseting all actions.
+    * @return {Number} : the duration in miliseconds of each animation, based on user's choice.
     */
-  this.newStateList = function () {
-    this.stateList = [];
-    this.stateCount = 0; 
-    this.stateAnimation = 0; 
-    this.actionArray = [];
-    this.actionCount = 0;
+  this.getAnimationDuration = function () {
+    var dur = $('#' + DEFAULT_IDS.PAGE.ANIMATION_DURATION).val();
+    
+    return 1100 - dur;
   }
   
   /**
@@ -235,6 +203,7 @@ var CoreObject = function () {
     
     if(duration == null || isNaN(duration) || duration < 0) duration = DEFAULT_ANIMATION_DURATION;
     
+    // Update the panels
     if (typeof currentState.log != 'undefined') {
       self.printLog(currentState.log);
     }
@@ -247,6 +216,7 @@ var CoreObject = function () {
       self.highlightPseudocode(currentState.pseudocodeLine);
     }
     
+    // Draw the objects
     for (var key in currentObjectList){
       if (currentObjectList[key].getToRemove()){
         currentObjectList[key].remove(0);
@@ -310,8 +280,6 @@ var CoreObject = function () {
     
     if (this.stateAnimation < 0) this.stateAnimation = 0;
     
-    //$('#log tr:last-child').remove()
-    
     if (this.stateAnimation < Object.keys(this.stateList).length) {
       this.animationStatus = ANIMATION_STATUS.PAUSE;
       this.draw(this.stateList[parseInt(this.stateAnimation)], 0);  
@@ -327,25 +295,12 @@ var CoreObject = function () {
     if (duration == null || isNaN(duration) || duration < 0) duration = this.getAnimationDuration();
     if (this.stateList == null) return;
     if (this.animationStatus != ANIMATION_STATUS.PLAY) this.animationStatus = ANIMATION_STATUS.PLAY;
-    /*
-    if (typeof this.stateList[parseInt(this.stateAnimation)] == 'undefined') {
-      this.stateAnimation = this.actionArray[0];
-    }
-    */
+    
     this.draw(this.stateList[parseInt(this.stateAnimation)], duration);
     
     setTimeout(function(){
       self.next(duration);
     }, duration);
-  }
-  
-  /**
-    * @return {Number} : the duration in miliseconds of each animation, based on user's choice.
-    */
-  this.getAnimationDuration = function () {
-    var dur = $('#' + DEFAULT_IDS.PAGE.ANIMATION_DURATION).val();
-    
-    return 1100 - dur;
   }
   
   /**
@@ -410,7 +365,7 @@ var CoreObject = function () {
   /**
     * Print all saved messages to the log panel.
     *
-    * @param {Array} variablesObj : the value of this.variableWatchList;
+    * @param {Array} logObj : the value of this.logList;
     */
   this.printLog = function (logObj) {
     var varLines = d3.select("#" + DEFAULT_IDS.PAGE.LOG).selectAll("tr")
@@ -504,130 +459,6 @@ var CoreObject = function () {
     
     d3.select("#" + DEFAULT_IDS.HTML_ELEMENT.PSEUDOCODE_LINE + lineNumber)
         .classed(DEFAULT_CLASSES.PAGE.PSEUDOCODE.HIGHLIGHT, "true");
-  }
-  
-  /**
-    * Verify if the Learning Mode is active.
-    *
-    * @return {Boolean} : true if "#chk-learn" has class "active", false other wise.
-    */
-  this.isLearningMode = function () {
-    return $("#" + DEFAULT_IDS.PAGE.LEARNING_MODE).hasClass(DEFAULT_CLASSES.LEARNING_MODE.ACTIVE);
-  }
-  
-  /**
-    * If any UserObject exists no new action is enabled until the current one is finished.
-    *
-    * @return {Boolean} : false if a UserObject exists, true other wise.
-    */
-  this.newActionEnabled = function () {
-    for (var key in this.objectList) {
-      if (this.objectList[key] instanceof UserObject) {
-        this.displayAlert("Please finish or cancel the current action before making any further changes.");
-        
-        return false;
-      }
-    }
-    
-    return true;
-  }
-  
-  /**
-    * Display an error alert.
-    *
-    * @param {!String} message: the message to be displayed inside the alert.
-    */
-  this.displayAlert = function (message) {
-    $('#' + DEFAULT_IDS.PAGE.ALERT_PLACEHOLDER).html('<div class="alert alert-danger alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>' + message + '</div>')
-  }
-  
-  // FUNCTIONS CALLED FROM INSIDE SHAPE INSTANCES
-  
-  /**
-    * Iterate through the objects classified as valid targets creating a place holder on them.
-    * This function should only be called from inside an UserObject instance.
-    *
-    * @param {!Bool} allowSwap: if true this object's text will be swapped with the active UserObject's text (only for VALUE UserObject).
-    */
-  this.createPlaceHolders = function (allowSwap) {
-    for (var key in this.objectList) {
-      if (this.objectList[key] instanceof UserObject) continue; // skips the userObject as they are never valid targets.
-      
-      if (this.objectList[key].getIsValidTarget() == true) {
-        this.objectList[key].createPlaceHolder(allowSwap);
-      }
-    }
-  }
-  
-  /**
-    * Remove all the place holders.
-    * This function is only called from other object instances.
-    */
-  this.removePlaceHolders = function () {
-    d3.selectAll("." + DEFAULT_CLASSES.LEARNING_MODE.PLACE_HOLDER)
-        .remove();
-  }
-  
-  /**
-    * Change the userObject which is currently active.
-    * This function should only be called from inside an UserObject instance.
-    *
-    * @param {?String=} id : the id of the object. If null all the objects will be set as inactive.
-    */
-  this.setActiveUserObject = function (id) {
-    if (id != null) {
-      this.objectList[id].setIsActive(true);
-    } else {
-      for (var key in this.objectList) {
-        if (this.objectList[key] instanceof UserObject) this.objectList[key].setIsActive(false);
-      }
-    }
-  }
-  
-  /**
-    * This function should only be called from inside object instances.
-    *
-    * @return {userObject} : the userObject which active. Null if there's any.
-    */
-  this.getActiveUserObject = function () {
-    for (var key in this.objectList) {
-      if (this.objectList[key] instanceof UserObject) {
-        if (this.objectList[key].getIsActive() == true) {
-          return this.objectList[key];
-        }
-      }
-    }
-    return null;
-  }
-  
-  /**
-    * @param {!(String|Number)} id : the id of the binded object.
-    *
-    * @return {EdgeObject} : the edgeObject that is binded to the userObject.
-    */
-  this.getUserObjectBindedItem = function (id) {
-    for (var key in this.objectList) {
-      if (Object.keys(this.objectList[key].edgeList).length > 0) {
-        for (var edgeKey in this.objectList[key].edgeList) {
-          if (this.objectList[key].edgeList[edgeKey].getID() == id) return this.objectList[key].edgeList[edgeKey];
-        }
-      }
-    }
-    return null;
-  }
-  
-  /**
-    * Move an edge object from one shape object to another. This function is only called from inside an edgeObject instance.
-    *
-    * @param {!(String|Number)} oldObjID : the id of the object to have the edge removed.
-    * @param {!(String|Number)} newObjID : the id of the object to have the edge added.
-    * @param {!(String|Number)} edgeID : the id of the edge object.
-    */
-  this.updateEdgeList = function (oldObjID, newObjID, edgeID) {
-    var edge = this.objectList[oldObjID].edgeList[edgeID];
-    
-    this.objectList[oldObjID].edgeList[edgeID].remove();
-    this.objectList[newObjID].addEdge(edge); 
   }
   
   // OBJECT CONSTRUCTORS
@@ -740,7 +571,176 @@ var CoreObject = function () {
     }
   }
   
+  // FUNCTIONS CALLED FROM INSIDE SHAPE INSTANCES
+  
+  /**
+    * Iterate through the objects classified as valid targets creating a place holder on them.
+    * This function should only be called from inside an UserObject instance.
+    *
+    * @param {!Bool} allowSwap: if true this object's text will be swapped with the active UserObject's text (only for VALUE UserObject).
+    */
+  this.createPlaceHolders = function (allowSwap) {
+    for (var key in this.objectList) {
+      if (this.objectList[key] instanceof UserObject) continue; // skips the userObject as they are never valid targets.
+      
+      if (this.objectList[key].getIsValidTarget() == true) {
+        this.objectList[key].createPlaceHolder(allowSwap);
+      }
+    }
+  }
+  
+  /**
+    * Remove all the place holders.
+    * This function is only called from other object instances.
+    */
+  this.removePlaceHolders = function () {
+    d3.selectAll("." + DEFAULT_CLASSES.LEARNING_MODE.PLACE_HOLDER)
+        .remove();
+  }
+  
+  /**
+    * Change the userObject which is currently active.
+    * This function should only be called from inside an UserObject instance.
+    *
+    * @param {?String=} id : the id of the object. If null all the objects will be set as inactive.
+    */
+  this.setActiveUserObject = function (id) {
+    if (id != null) {
+      this.objectList[id].setIsActive(true);
+    } else {
+      for (var key in this.objectList) {
+        if (this.objectList[key] instanceof UserObject) this.objectList[key].setIsActive(false);
+      }
+    }
+  }
+  
+  /**
+    * This function should only be called from inside object instances.
+    *
+    * @return {userObject} : the userObject which active. Null if there's any.
+    */
+  this.getActiveUserObject = function () {
+    for (var key in this.objectList) {
+      if (this.objectList[key] instanceof UserObject) {
+        if (this.objectList[key].getIsActive() == true) {
+          return this.objectList[key];
+        }
+      }
+    }
+    return null;
+  }
+  
+  /**
+    * @param {!(String|Number)} id : the id of the binded object.
+    *
+    * @return {EdgeObject} : the edgeObject that is binded to the userObject.
+    */
+  this.getUserObjectBindedItem = function (id) {
+    for (var key in this.objectList) {
+      if (Object.keys(this.objectList[key].edgeList).length > 0) {
+        for (var edgeKey in this.objectList[key].edgeList) {
+          if (this.objectList[key].edgeList[edgeKey].getID() == id) return this.objectList[key].edgeList[edgeKey];
+        }
+      }
+    }
+    return null;
+  }
+  
+  /**
+    * Move an edge object from one shape object to another. This function is only called from inside an edgeObject instance.
+    *
+    * @param {!(String|Number)} oldObjID : the id of the object to have the edge removed.
+    * @param {!(String|Number)} newObjID : the id of the object to have the edge added.
+    * @param {!(String|Number)} edgeID : the id of the edge object.
+    */
+  this.updateEdgeList = function (oldObjID, newObjID, edgeID) {
+    var edge = this.objectList[oldObjID].edgeList[edgeID];
+    
+    this.objectList[oldObjID].edgeList[edgeID].remove();
+    this.objectList[newObjID].addEdge(edge); 
+  }
+  
   // CODE TO BE EXECUTED BY CONSTRUCTOR
+  /**
+    * Creates the groups that will contain all the graphic elements.
+    */
+  this.createGroups = function () {
+    var markerGroup = d3.select("#" + DEFAULT_IDS.SVG_GROUP.MAIN)
+        .append("g")
+        .attr("id", DEFAULT_IDS.SVG_GROUP.MARKER)
+        .attr("class", DEFAULT_CLASSES.MARKER);
+    
+    var edgeGroup = d3.select("#" + DEFAULT_IDS.SVG_GROUP.MAIN)
+        .append("g")
+        .attr("id", DEFAULT_IDS.SVG_GROUP.EDGE)
+        .attr("class", DEFAULT_CLASSES.EDGE);
+        
+    var labelGroup = d3.select("#" + DEFAULT_IDS.SVG_GROUP.MAIN)
+        .append("g")
+        .attr("id", DEFAULT_IDS.SVG_GROUP.LABEL)
+        .attr("class", DEFAULT_CLASSES.TEXT.LABEL);
+             
+    var shapeGroup = d3.select("#" + DEFAULT_IDS.SVG_GROUP.MAIN)
+        .append("g")
+        .attr("id", DEFAULT_IDS.SVG_GROUP.SHAPE)
+        .attr("class", DEFAULT_CLASSES.SHAPE);
+      
+    var textGroup = d3.select("#" + DEFAULT_IDS.SVG_GROUP.MAIN)
+        .append("g")
+        .attr("id", DEFAULT_IDS.SVG_GROUP.TEXT)
+        .attr("class", DEFAULT_CLASSES.TEXT.INNER);
+  }
+  
+  /**
+    * Creates the marker object references, to be used by the edges.
+    */
+  this.createMarkers = function () {
+    var markerGroup = d3.select("#" + DEFAULT_IDS.SVG_GROUP.MARKER);
+    
+    markerGroup.append(SVG_MARKER)
+        .attr("id", DEFAULT_IDS.SVG_MARKER.END.NULL)
+        .attr("orient", "auto")
+        .attr("markerWidth", defaultProperties.marker.width)
+        .attr("markerHeight", defaultProperties.marker.height)
+        .attr("refX", defaultProperties.marker.refX.end)
+        .attr("viewBox", "0 -5 10 10")
+        .append("path")
+            .attr("d", "M0,-5 L10,0 L0,5")
+            .attr("fill", defaultProperties.edge.stroke.null);
+    
+    markerGroup.append(SVG_MARKER)
+        .attr("id", DEFAULT_IDS.SVG_MARKER.END.DEFAULT)
+        .attr("orient", "auto")
+        .attr("markerWidth", defaultProperties.marker.width)
+        .attr("markerHeight", defaultProperties.marker.height)
+        .attr("refX", defaultProperties.marker.refX.end)
+        .attr("viewBox", "0 -5 10 10")
+        .append("path")
+            .attr("d", "M0,-5 L10,0 L0,5")
+            .attr("fill", defaultProperties.edge.stroke.default);
+    
+    markerGroup.append(SVG_MARKER)
+        .attr("id", DEFAULT_IDS.SVG_MARKER.START.NULL)
+        .attr("orient", "auto")
+        .attr("markerWidth", defaultProperties.marker.width)
+        .attr("markerHeight", defaultProperties.marker.height)
+        .attr("refX", defaultProperties.marker.refX.start)
+        .attr("viewBox", "-10 -5 10 10")
+        .append("path")
+            .attr("d", "M0,-5 L-10,0 L0,5")
+            .attr("fill", defaultProperties.edge.stroke.null);
+    
+    markerGroup.append(SVG_MARKER)
+        .attr("id", DEFAULT_IDS.SVG_MARKER.START.DEFAULT)
+        .attr("orient", "auto")
+        .attr("markerWidth", defaultProperties.marker.width)
+        .attr("markerHeight", defaultProperties.marker.height)
+        .attr("refX", defaultProperties.marker.refX.start)
+        .attr("viewBox", "-10 -5 10 10")
+        .append("path")
+            .attr("d", "M0,-5 L-10,0 L0,5")
+            .attr("fill", defaultProperties.edge.stroke.default);
+  }
   
   this.createGroups();
   this.createMarkers();

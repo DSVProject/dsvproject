@@ -98,7 +98,6 @@ var StackArray = function(){
     
     coreObj.clearLog();
     
-    /*
     if (coreObj.isLearningMode()){
       coreObj.clearPseudocode();
       
@@ -129,8 +128,9 @@ var StackArray = function(){
       coreObj.saveState("Update the top pointer.", 1);
       
       coreObj.play(coreObj.getAnimationDuration());
-    }*/
+    }
     
+    /*
     if (coreObj.isLearningMode()){
       coreObj.clearPseudocode();
       
@@ -163,6 +163,7 @@ var StackArray = function(){
       
       coreObj.begin();
     }
+    */
     
     return true;
   }

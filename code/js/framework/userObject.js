@@ -322,7 +322,7 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
     * @param {!Number=} duration : the duration in miliseconds of this animation.
     */
   this.draw = function (duration) {    
-    if(duration == null || isNaN(duration) || dur < 0) duration = DEFAULT_ANIMATION_DURATION;
+    if(duration == null || isNaN(duration) || duration < 0) duration = DEFAULT_ANIMATION_DURATION;
     
     var json = [];
     json.push(self.propObj);
