@@ -42,6 +42,16 @@ code {
   margin-bottom: 5px;
 }
 
+.panel-first {
+  border-color: #1abc9c;
+}
+
+.panel-first > .panel-heading {
+color: #fff;
+background-color: #1abc9c;
+border-color: #1abc9c;
+}
+
 #pseudocode-panel .panel-body {
   height: 175px;
   overflow: auto;
@@ -69,11 +79,11 @@ code {
 }
 
 .slider-selection {
-	background: #d6e9c6;
+	background: #1abc9c;
 }
 
 .slider-handle {
-  background: #505050;
+  background: #3b3b3b;
   opacity: 0.9;
 }
 
@@ -82,6 +92,29 @@ code {
   z-index: 1;
 }
 
+.btn-first{
+  color: #fff;
+  background-color: #16a085;
+  border-color: #16a085;
+}
+
+.btn-first:hover{
+  color: #fff;
+  background-color: #198069;
+  border-color: #198069;
+}
+
+.btn-second{
+  color: #fff;
+  background-color: #9b59b6;
+  border-color: #9b59b6;
+}
+
+.btn-second:hover{
+  color: #fff;
+  background-color: #8e44ad;
+  border-color: #8e44ad;
+}
 div .navbar-brand {
   float: left;
   height: 50px;

@@ -5,10 +5,11 @@
 body {
   padding-bottom: 40px;
   color: #5a5a5a;
+  background-color: #ecf0f1;
 }
 
 a {
-  color: #d9534f
+  color: #198069;
 }
 
 /* CUSTOMIZE THE CAROUSEL
@@ -36,7 +37,7 @@ a {
 /* Declare heights because of positioning of img element */
 .carousel .item {
   height: 350px;
-  background-color: #261e00;
+  background-color: #198069;
 }
 .carousel-inner > .item > img {
   position: absolute;
@@ -66,13 +67,38 @@ a {
   width: 100px;
 }
 
+.btn-first{
+  color: #fff;
+  background-color: #16a085;
+  border-color: #16a085;
+}
+
+.btn-first:hover{
+  color: #fff;
+  background-color: #198069;
+  border-color: #198069;
+}
+
+.btn-second{
+  color: #fff;
+  background-color: #9b59b6;
+  border-color: #9b59b6;
+}
+
+.btn-second:hover{
+  color: #fff;
+  background-color: #8e44ad;
+  border-color: #8e44ad;
+}
+
 
 /* DIVIDER
 ------------------------- */
 
 .divider {
   margin: 80px 0; /* Space out the Bootstrap <hr> more */
-}
+  border-top-color: #dae4e6;
+} 
 
 
 /* RESPONSIVE CSS
