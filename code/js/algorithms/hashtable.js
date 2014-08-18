@@ -63,7 +63,7 @@ var Hashtable = function () {
   
   coreObj.saveState();
   
-  coreObj.play();
+  coreObj.begin(0);
   
   this.getCore = function () {
     return coreObj;
