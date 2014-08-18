@@ -82,13 +82,13 @@ var QueueLinkedList = function () {
   
   this.size = function () { return N; }
           
-  this.enqueue = function(item) {
+  this.enqueue = function(item, duration) {
     if (item.trim() == "") {
       coreObj.displayAlert("The input should not be empty.");
       return false;
     }
-
-    this.generatePseudocode(ENQUEUE);
+    
+    var oldlast = last;
 
     if (coreObj.isLearningMode()) {
       coreObj.clearPseudocode();
@@ -106,11 +106,16 @@ var QueueLinkedList = function () {
         iterator = iterator.next;
       }
       
-      coreObj.saveState("Use the grey circles to create the final state.");
-      coreObj.begin(0);
+      coreObj.learnState("Use the grey circles to create the final state.");
+      
+      DEFERRED.done(function() {
+        coreObj.cancelLearn();
+        coreObj.displayAlert("Correct solution!");
+        self.enqueue(item, 0);
+      });
       
     } else {
-      var oldlast = last;
+      this.generatePseudocode(ENQUEUE);
     
       if (oldlast != null) oldlast.drawing.setLabel("oldLast");
 
@@ -148,7 +153,8 @@ var QueueLinkedList = function () {
       }
 
       N++;
-      coreObj.begin();
+      
+      coreObj.begin(duration);
     }
   }
   

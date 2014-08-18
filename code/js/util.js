@@ -95,6 +95,8 @@ $('#chk-learn').on('click', function () {
   $('#restart-btn').toggleDisabled();
   $('#cancel-btn').toggleDisabled();
   $('#div-media-buttons :input').toggleDisabled();
+  
+  DEFERRED = $.Deferred();
 });
 
 $('.dropdown-menu').find('form').click(function (e) {

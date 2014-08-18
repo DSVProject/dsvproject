@@ -417,7 +417,7 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
         .attr("fill-opacity", function (d) {return d.shape.fillOpacity;})
         .attr("stroke", function (d) {return d.shape.stroke;})
         .attr("stroke-width", function (d) {return d.shape.strokeWidth;});
-      
+    
     var text = d3.select("#" + DEFAULT_IDS.SVG_GROUP.TEXT).selectAll(SVG_TEXT)
         .data(json, function (d) {return d.id;});
         
@@ -432,7 +432,7 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
         .attr("font-family", function (d) {return d.text.fontFamily;})
         .attr("font-weigh", function (d) {return d.text.fontWeight;})
         .attr("font-size", function (d) {return d.text.fontSize;})
-        .attr("text-anchor", function (d) {return d.text.textAnchor;})   
+        .attr("text-anchor", function (d) {return d.text.textAnchor;})
         .text(function (d) {return d.text.text;});
     
     var label = d3.select("#" + DEFAULT_IDS.SVG_GROUP.LABEL).selectAll(SVG_TEXT)
@@ -446,7 +446,7 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
         .attr("x", function (d) {return d.label.x;})
         .attr("y", function (d) {return d.label.y;})
         .text(function (d) { return d.label.text; });
-    
+
     for(var key in this.edgeList){
       this.edgeList[key].draw(duration);
     }
@@ -474,7 +474,7 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
         .data(json, function (d) {return d.id;});
         
     label.transition()
-        .duration(duration)
+        .duration(duration)    
         .remove();
     
     var text = d3.select("#" + DEFAULT_IDS.SVG_GROUP.TEXT).selectAll(SVG_TEXT)

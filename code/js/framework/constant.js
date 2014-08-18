@@ -18,6 +18,8 @@ const SVG_MARKER = "marker";
 //Values in miliseconds
 const DEFAULT_ANIMATION_DURATION = 500;
 
+var DEFERRED;
+
 /**
   * Values used by CoreAnimObject, to control the playing status of the animation.
   *

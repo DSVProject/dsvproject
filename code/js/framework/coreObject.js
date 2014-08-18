@@ -138,14 +138,16 @@ var CoreObject = function () {
     var state = {
       data : null,
       log : null,
+      variables : null,
       pseudocodeLine : null
     };
     
+    // Create a "snapshot" of the current state of objectList[]
     var newList = []; // The copy of the current objectList
-    var clone;  // The instance for the cloned Object
+    var copy;  // The instance for the cloned Object
     for (var key in this.objectList){
-      clone = this.objectList[key].cloneObject();
-      newList[key] = clone; 
+      copy = this.objectList[key].cloneObject();
+      newList[key] = copy;
     }
     
     state.data = newList;
@@ -156,7 +158,42 @@ var CoreObject = function () {
     
     this.stateList["learn"] = state;
     
-    this.draw(state, 0);
+    this.draw(this.stateList["learn"], 0);
+  }
+  
+  this.checkAnswer = function () {
+    DEFERRED.resolve();
+  }
+  
+  this.restartLearn = function () {
+    this.draw(this.stateList["learn"], 0);
+  }
+  
+  this.cancelLearn = function () {
+    for (var key in this.objectList) {
+      if (this.objectList[key] instanceof UserObject) { 
+        this.objectList[key].setToRemove(true);
+      } else {
+        this.objectList[key].setIsValidTarget(false);
+        
+        for (var edgeKey in this.objectList[key].edgeList) {
+          this.objectList[key].edgeList[edgeKey].setIsValidTarget(false);
+        }
+      }
+    }
+    
+    this.toggelLearningMode();
+    this.learnState();
+  }
+  
+  this.toggelLearningMode = function () {
+    $('#chk-learn').toggleClass('btn-default btn-success');
+    $('#chk-learn').toggleClass('active');
+  
+    $('#chk-answer-btn').toggleDisabled();
+    $('#restart-btn').toggleDisabled();
+    $('#cancel-btn').toggleDisabled();
+    $('#div-media-buttons :input').toggleDisabled();
   }
   
   // ANIMATION METHODS
@@ -201,18 +238,18 @@ var CoreObject = function () {
     var currentObjectList = currentState.data;
     var allObjectsJson = [];
     
-    if(duration == null || isNaN(duration) || duration < 0) duration = DEFAULT_ANIMATION_DURATION;
+    if (duration == null || isNaN(duration) || duration < 0) duration = DEFAULT_ANIMATION_DURATION;
     
     // Update the panels
-    if (typeof currentState.log != 'undefined') {
+    if (currentState.log != null) {
       self.printLog(currentState.log);
     }
     
-    if (Object.keys(currentState.variables).length > 0) {
+    if (currentState.variables != null) {
       self.printVariableWatch(currentState.variables)
     }
     
-    if (typeof currentState.pseudocodeLine != 'undefined') {
+    if (currentState.pseudocodeLine != null) {
       self.highlightPseudocode(currentState.pseudocodeLine);
     }
     

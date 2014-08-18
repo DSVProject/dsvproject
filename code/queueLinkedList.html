@@ -35,7 +35,7 @@
             <span class="icon-bar"></span>
           </button>
           <!-- Template: Visualisation Title -->
-          <a class="navbar-brand" href="#">Queue Linked List</a>
+          <div class="navbar-brand">Queue Linked List</div>
         </div>
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
@@ -69,20 +69,23 @@
           <ul class="nav navbar-nav navbar-right">
             <!-- Template: Learning Mode Buttons (If not available comment this div tag) -->
             <div id="div-learning-buttons" class="btn-group popover-dismiss" data-popover="popover" data-html="true" data-placement="bottom" title="Learning Mode" data-content="Use this switch to toggle between the <b>Exploration</b> and the <b>Learning</b> modes.<br/><br/>In Exploration mode animations will happen automatically.<br/>In Learning mode you will have to create the final state of each method.">
-              <button id="chk-answer-btn" type="button" disabled class="btn btn-default navbar-btn" data-toggle="tooltip" data-placement="bottom" title="Check Answer" onclick="">
+              <button id="chk-answer-btn" type="button" disabled class="btn btn-default navbar-btn" data-toggle="tooltip" data-placement="bottom" title="Check Answer" onclick="checkAnswer()">
                     <span class="glyphicon glyphicon-check"></span>
               </button>
-              <button id="restart-btn" type="button" disabled class="btn btn-default navbar-btn" data-toggle="tooltip" data-placement="bottom" title="Restart" onclick="">
+              <button id="restart-btn" type="button" disabled class="btn btn-default navbar-btn" data-toggle="tooltip" data-placement="bottom" title="Restart" onclick="restartLearn()">
                     <span class="glyphicon glyphicon-repeat"></span>
               </button>
-              <button id="cancel-btn" type="button" disabled class="btn btn-default navbar-btn" data-toggle="tooltip" data-placement="bottom" title="Cancel" onclick="">
+              <button id="cancel-btn" type="button" disabled class="btn btn-default navbar-btn" data-toggle="tooltip" data-placement="bottom" title="Cancel" onclick="cancelLearn()">
                     <span class="glyphicon glyphicon-remove"></span>
               </button>
               <button type="button" id="chk-learn" class="btn btn-default navbar-btn" data-toggle="tooltip" data-placement="bottom" title="Toggle Mode">Learning Mode</button>
             </div>
             <div class="btn-group">
-              <button id="help-btn" type="button" class="btn btn-default navbar-btn navbar-right" data-toggle="tooltip" data-placement="bottom" title="Help">
+              <button id="help-btn" type="button" class="btn btn-default navbar-btn navbar-left" data-toggle="tooltip" data-placement="bottom" title="Help">
                     <span class="glyphicon glyphicon-question-sign"></span>
+              </button>
+              <button class="btn btn-default navbar-btn navbar-right" type="button" data-toggle="tooltip" data-placement="bottom" title="Home" onclick="location.href='index.html'">
+                <span class="glyphicon glyphicon-home"></span>
               </button>
             </div>
           </ul>
@@ -92,7 +95,6 @@
 
     <!-- Begin page content -->
     <div class="container">
-      <div id = "alert_placeholder"></div>
       <div class="row">
         <div class="col-md-9">
           <div id="viz"></div>
@@ -138,6 +140,7 @@
           </div>
         </div>
       </div>
+      <div id = "alert_placeholder"></div>
     </div>
 
     <!-- Fixed bottom navbar -->
@@ -258,6 +261,18 @@
       
       function redo(){
         
+      }
+      
+      function checkAnswer () {
+        core.checkAnswer();
+      }
+      
+      function restartLearn () {
+        core.restartLearn();
+      }
+      
+      function cancelLearn () {
+        core.cancelLearn();
       }
     </script>
   </body>
