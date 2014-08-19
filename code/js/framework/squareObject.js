@@ -555,7 +555,7 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
     *
     * @param {!Bool=} allowSwap: if true this object's text will be swapped with the active UserObject's text (only for VALUE type UserObject).
     */
-  this.createPlaceHolder = function (allowSwap, updatePointer) {
+  this.createPlaceHolder = function (allowSwap, updateShapeValue, updateTextSource) {
     d3.select("#" + DEFAULT_IDS.SVG_GROUP.SHAPE)
         .append(SVG_CIRCLE)
         .attr("class", DEFAULT_CLASSES.LEARNING_MODE.PLACE_HOLDER)
@@ -580,9 +580,14 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
             edge.setIdObjectB(self.propObj.id);
             edge.draw();
             
-            // REMOVE THIS
-            self.coreObj.objectList[edge.getIdObjectA()].setText(self.propObj.label.text);
-            self.coreObj.objectList[edge.getIdObjectA()].draw();
+            if (updateShapeValue == true) {
+              if (updateTextSource == USER_TEXT_SOURCE.TEXT) {
+                self.coreObj.objectList[edge.getIdObjectA()].setText(self.propObj.text.text);
+              } else if (updateTextSource == USER_TEXT_SOURCE.LABEL) {
+                self.coreObj.objectList[edge.getIdObjectA()].setText(self.propObj.label.text); 
+              }
+              self.coreObj.objectList[edge.getIdObjectA()].draw();
+            }
             
             activeObject.moveShape(edge.getCoordinateX2(), edge.getCoordinateY2());
             activeObject.redraw();

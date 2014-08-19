@@ -96,6 +96,16 @@ const USER_TYPE_OBJ_CREATED = {
 };
 
 /**
+  * Values used when creating an instance of UserObject, for the learning mode to determine which text will be placed at a shape when updating an edge.
+  *
+  * @const 
+  */
+const USER_TEXT_SOURCE = {
+  LABEL: 0,
+  TEXT: 1
+};
+
+/**
   * Default class names used across the framework, defined here to improve code abstraction.
   *
   * @const 

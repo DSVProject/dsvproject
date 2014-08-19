@@ -41,8 +41,10 @@
   * @param {!Const} type : the type of this userObject (defined at 'animation/constant.js' : USER_OBJ_TYPE).
   * @param {!Bool=} allowSwap: if this instance is a VALUE type object, this parameter should be passed. If true, this object's text will be swapped during the interactions.
   * @param {!(String|Number)=} bindedObjID : if this instance is a MOVEMENT type object, it should be binded to another object.
+  * @param {!Bool=} updateShapeValue: if this instance is a MOVEMENT type object, this parameter should be passed. If true, the text of the shape which is at the origin of the edge will be changed (used for array implementation).
+  * @param {!Bool=} updateTextSource: if this instance is a MOVEMENT type object, this parameter should be passed. If updateShapeValue is true, this value (defined at 'animation/constant.js' : USER_TEXT_SOURCE) will indicate which text source will be used to update.
   */
-var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textClass, type, allowSwap, bindedObjID) {
+var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textClass, type, allowSwap, bindedObjID, updateShapeValue, updateTextSource) {
   var self = this;
 
   if (coreObj == null) {
@@ -95,7 +97,11 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
     
     "allowSwap": allowSwap != null ? allowSwap : false,
     
-    "bindedObjID": bindedObjID
+    "bindedObjID": bindedObjID,
+    
+    "updateShapeValue": updateShapeValue != null ? updateShapeValue : false,
+    
+    "updateTextSource": updateTextSource != null ? updateTextSource : USER_TEXT_SOURCE.TEXT
   }
   
   /**
@@ -354,7 +360,7 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
             if (activeObject == null) {
               self.coreObj.setActiveUserObject(self.propObj.id);
 
-              self.coreObj.createPlaceHolders(self.propObj.allowSwap);
+              self.coreObj.createPlaceHolders(self.propObj.allowSwap, self.propObj.updateShapeValue, self.propObj.updateTextSource);
             } else {
               self.coreObj.setActiveUserObject();
 

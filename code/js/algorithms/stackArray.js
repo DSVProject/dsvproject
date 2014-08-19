@@ -118,7 +118,7 @@ var StackArray = function(){
       coreObj.clearPseudocode();
       
       learnObj["newValue"] = coreObj.newUserObject("newValue", 500, 75, 25, item, "learning", null, USER_OBJ_TYPE.VALUE, true, null);
-      learnObj["newTopPointer"] = coreObj.newUserObject("newTopPointer", top.edge.getCoordinateX2(), top.edge.getCoordinateY2(), 10, null, "learning", null, USER_OBJ_TYPE.MOVEMENT, null, top.edge.getID());
+      learnObj["newTopPointer"] = coreObj.newUserObject("newTopPointer", top.edge.getCoordinateX2(), top.edge.getCoordinateY2(), 10, null, "learning", null, USER_OBJ_TYPE.MOVEMENT, null, top.edge.getID(), true, USER_TEXT_SOURCE.LABEL);
       
       for (var key in mArray) {
         mArray[key].setIsValidTarget(true);
@@ -142,9 +142,6 @@ var StackArray = function(){
       top.drawing.setText(top.value);
       top.drawing.setFill(defaultProperties["shape"]["fill"]["default"]);
       coreObj.saveState("Update the top pointer.", 1);
-      
-      coreObj.saveVariableToWatch("top", top.value);
-      coreObj.saveVariableToWatch("isEmpty", this.isEmpty());
       
       coreObj.play(coreObj.getAnimationDuration());
     }
