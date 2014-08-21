@@ -27,9 +27,6 @@ a{
 .intro{
   text-align:center;
 }
-.title{
-  text-shadow: 0px -4px 2px #484848;
-}
 .intro p{
   width: 50%;
   margin: 0 auto;
@@ -42,6 +39,12 @@ a{
 }
 .text{
   margin: 80px;
+}
+.fp-controlArrow.fp-prev {
+  border-color: rgba(0,0,0,0) rgba(0,0,0,0.5) rgba(0,0,0,0) rgba(0,0,0,0);
+}
+.fp-controlArrow.fp-next {
+  border-color: rgba(0,0,0,0) rgba(0,0,0,0) rgba(0,0,0,0) rgba(0,0,0,0.5);
 }
 #menu li {
   display:inline-block;
