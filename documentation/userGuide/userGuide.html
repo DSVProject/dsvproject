@@ -58,7 +58,7 @@
             <div class="page-header">
               <h1>1. The Framework</h1>
             </div>
-            <p>This framework serves as a base to implement <strong>Data Structure Visualisations</strong>, providing tools to create graphic items, animate and manage them. It was built in a way that anyone with some knowledge of <strong>Object Oriented Programming</strong> and <strong>JavaScript</strong> can use it, without having knowledge about <strong>SVG</strong> or <strong>D3</strong>.</p>
+            <p>This framework serves as a base to implement <strong>Data Structure Visualisations</strong>, providing tools to create graphic items, animate and manage them. It was built in a way that anyone with some knowledge of <strong>Object Oriented Programming</strong> and <strong>JavaScript</strong> can use it, without having knowledge about <strong><a href="http://www.w3.org/Graphics/SVG/">SVG</a></strong> or <strong><a href="http://d3js.org/">D3.js</a></strong>.</p>
             <p>In this user guide we'll begin by studying each class and then we will proceed to learn how to use them to create a visualisation.</p>
             <p>The classes provided were designed to control the graphic part of the visualisation, and should be integrated with the algorithms of each data structure.</p>
             
@@ -151,7 +151,7 @@ var newObj = new SquareObject(coreObj, id, x, y, text, label, shapeClass, textCl
             <p>As you will be able to notice in the javadoc, some of this parameters are not obligatory (like text, label, classes), making it easy to customise a shape. Regarding the classes, it is always recommended to send "null" as parameter since all instances will inherit a default class, unless you would like it to have a different look.</p>
             <p>Now let's take a look of a few examples:</p>
             <img src="img/squareExample.png" alt="">
-            <p>Square 01 is an instance of a SquareObject without a label, while Square 02 have one. All the other Squares have an EdgeObject associated with them, where each instance was created with a different "outgoingPoint" parameter, which means that when the pointer is null (in here indicated by the color red) it will point into a different direction. When leaving from the bottom, if the SquareObject has a label, the Edge will take this into consideration (as seen in Square 08).</p>
+            <p>Square 01 is an instance of a SquareObject without a label, while Square 02 has one. All the other Squares have an EdgeObject associated with them, where each instance was created with a different "outgoingPoint" parameter, which means that when the pointer is null (in here indicated by the color red) it will point into a different direction. When leaving from the bottom, if the SquareObject has a label, the Edge will take this into consideration (as seen in Square 08).</p>
             
             <h3>2.1.2. Fields</h3>
             <p>These fields will store all the important data regarding this instance.</p>
