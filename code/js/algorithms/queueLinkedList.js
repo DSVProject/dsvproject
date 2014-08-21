@@ -109,14 +109,16 @@ var QueueLinkedList = function () {
     if (coreObj.isLearningMode()) {
       coreObj.clearPseudocode();
       
-      learnObj["newValue"] = coreObj.newUserObject("newValue", 500, 75, 25, item, "learning", null, USER_OBJ_TYPE.VALUE, true, null);
+      learnObj["newValue"] = coreObj.newUserObject("newValue", 500, 75, 25, item, "learning", null, USER_OBJ_TYPE.VALUE, true, null, null, null);
       
       var iterator = first;
       while(iterator != null) {
         iterator.drawing.setIsValidTarget(true);
         
         if (iterator.edge.getIdObjectB() == null) {
-          iterator.edge.setIsValidTarget(true);
+          //iterator.edge.setIsValidTarget(true);
+          
+          learnObj[iterator.edge.getID()] = coreObj.newUserObject("c" + iterator.edge.getID(), iterator.edge.getCoordinateX2(), iterator.edge.getCoordinateY2(), 10, null, "learning creator", null, USER_OBJ_TYPE.CREATOR, null, null, null, null);
         }
 
         iterator = iterator.next;

@@ -25,6 +25,23 @@
 const MAIN_SVG_WIDTH = 1200;
 const MAIN_SVG_HEIGHT = 500;
 
+const SHAPE_POSITION = {
+  DELTA: 50,
+  DISTANCE: 50,
+  INITIAL_1: {
+    X: 600,
+    Y: 50
+  },
+  INITIAL_2: {
+    X: 100,
+    Y: 300
+  },
+  INITIAL_3: {
+    X: 250,
+    Y: 100
+  }
+}
+
 const SVG_CIRCLE = "circle";
 const SVG_RECT = "rect";
 const SVG_TEXT = "text";
@@ -78,7 +95,8 @@ const EDGE_POSITION = {
   */
 const USER_OBJ_TYPE = {
   VALUE: 0,
-  MOVEMENT: 1
+  MOVEMENT: 1,
+  CREATOR: 2
 };
 
 /**

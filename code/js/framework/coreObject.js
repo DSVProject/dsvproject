@@ -203,7 +203,7 @@ var CoreObject = function () {
   }
   
   this.toggelLearningMode = function () {
-    $('#chk-learn').toggleClass('btn-default btn-success');
+    $('#chk-learn').toggleClass('btn-default btn-first');
     $('#chk-learn').toggleClass('active');
   
     $('#chk-answer-btn').toggleDisabled();
@@ -531,6 +531,11 @@ var CoreObject = function () {
     * @return {SquareObject} : the new object.
     */
   this.newSquareObject = function (id, x, y, text, label, shapeClass, textClass, labelClass) {
+    if (this.objectList[id] != null) {
+      throw new Error("This id is already in use by another object.");
+      return;
+    }
+    
     this.objectList[id] = new SquareObject(this, id, x, y, text, label, shapeClass, textClass, labelClass);
     
     return this.objectList[id];
@@ -552,6 +557,11 @@ var CoreObject = function () {
     * @return {CircleObject} : the new object.
     */
   this.newCircleObject = function (id, cx, cy, radius, text, label, shapeClass, textClass, labelClass) {
+    if (this.objectList[id] != null) {
+      throw new Error("This id is already in use by another object.");
+      return;
+    }
+    
     this.objectList[id] = new CircleObject(this, id, cx, cy, radius, text, label, shapeClass, textClass, labelClass);
     
     return this.objectList[id];
@@ -576,6 +586,11 @@ var CoreObject = function () {
     * @return {userObject} : the new object.
     */
   this.newUserObject = function (id, cx, cy, radius, text, shapeClass, textClass, type, allowSwap, bindedObjID, updateShapeValue, updateTextSource) {
+    if (this.objectList[id] != null) {
+      throw new Error("This id is already in use by another object.");
+      return;
+    }
+    
     this.objectList[id] = new UserObject(this, id, cx, cy, radius, text, shapeClass, textClass, type, allowSwap, bindedObjID, updateShapeValue, updateTextSource);
     
     return this.objectList[id];

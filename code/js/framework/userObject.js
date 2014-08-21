@@ -424,6 +424,7 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
         .attr("fill-opacity", this.propObj.shape.fillOpacity)
         .attr("stroke", this.propObj.shape.stroke)
         .attr("stroke-width", this.propObj.shape.strokeWidth);
+    
     var text = d3.select("#" + DEFAULT_IDS.SVG_ELEMENT.USER_TEXT + this.propObj.id);
         
     text.transition()
