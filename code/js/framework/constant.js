@@ -1,6 +1,22 @@
 /**
-  * Copyright 2014 Filipe Belatti and Laércio Guimarães, Trinity College Dublin. All rights reserved.
+  * Copyright 2014 Filipe Belatti and Laércio Guimarães.
   *
+  * This file is part of DSVProject.
+  *
+  * DSVProject is free software: you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License as published by
+  * the Free Software Foundation, either version 3 of the License, or
+  * (at your option) any later version.
+  *
+  * DSVProject is distributed in the hope that it will be useful,
+  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+  *
+  * Redistribution and use in source and binary forms, with or without modification, are
+  * permitted provided that the above copyright notice, license and this disclaimer are retained.
+  *
+  * This project was started as summer internship project in Trinity College Dublin.
   * The views and conclusions contained in the software and documentation are those of the
   * authors and should not be interpreted as representing official policies, either expressed
   * or implied, of Trinity College Dublin.
@@ -8,6 +24,23 @@
 
 const MAIN_SVG_WIDTH = 1200;
 const MAIN_SVG_HEIGHT = 500;
+
+const SHAPE_POSITION = {
+  DELTA: 50,
+  DISTANCE: 50,
+  INITIAL_1: {
+    X: 600,
+    Y: 50
+  },
+  INITIAL_2: {
+    X: 100,
+    Y: 300
+  },
+  INITIAL_3: {
+    X: 250,
+    Y: 100
+  }
+}
 
 const SVG_CIRCLE = "circle";
 const SVG_RECT = "rect";
@@ -62,7 +95,8 @@ const EDGE_POSITION = {
   */
 const USER_OBJ_TYPE = {
   VALUE: 0,
-  MOVEMENT: 1
+  MOVEMENT: 1,
+  CREATOR: 2
 };
 
 /**
@@ -77,6 +111,16 @@ const USER_TYPE_OBJ_CREATED = {
   CIRCLE_EDGE_2: 2,
   SQUARE_EDGE_0: 3,
   SQUARE_EDGE_1: 4,
+};
+
+/**
+  * Values used when creating an instance of UserObject, for the learning mode to determine which text will be placed at a shape when updating an edge.
+  *
+  * @const 
+  */
+const USER_TEXT_SOURCE = {
+  LABEL: 0,
+  TEXT: 1
 };
 
 /**

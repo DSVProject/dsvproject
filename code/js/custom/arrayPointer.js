@@ -1,4 +1,28 @@
 /**
+  * Copyright 2014 Filipe Belatti and Laércio Guimarães.
+  *
+  * This file is part of DSVProject.
+  *
+  * DSVProject is free software: you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License as published by
+  * the Free Software Foundation, either version 3 of the License, or
+  * (at your option) any later version.
+  *
+  * DSVProject is distributed in the hope that it will be useful,
+  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+  *
+  * Redistribution and use in source and binary forms, with or without modification, are
+  * permitted provided that the above copyright notice, license and this disclaimer are retained.
+  *
+  * This project was started as summer internship project in Trinity College Dublin.
+  * The views and conclusions contained in the software and documentation are those of the
+  * authors and should not be interpreted as representing official policies, either expressed
+  * or implied, of Trinity College Dublin.
+  */
+
+/**
   * Defines a Pointer object, that contains:
   *   {Number} value
   *   {Object} drawing : an instace of one of the basic shapes (squareObject, nodeObject, etc)

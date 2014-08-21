@@ -1,6 +1,22 @@
 /**
-  * Copyright 2014 Filipe Belatti and Laércio Guimarães, Trinity College Dublin. All rights reserved.
+  * Copyright 2014 Filipe Belatti and Laércio Guimarães.
   *
+  * This file is part of DSVProject.
+  *
+  * DSVProject is free software: you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License as published by
+  * the Free Software Foundation, either version 3 of the License, or
+  * (at your option) any later version.
+  *
+  * DSVProject is distributed in the hope that it will be useful,
+  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+  *
+  * Redistribution and use in source and binary forms, with or without modification, are
+  * permitted provided that the above copyright notice, license and this disclaimer are retained.
+  *
+  * This project was started as summer internship project in Trinity College Dublin.
   * The views and conclusions contained in the software and documentation are those of the
   * authors and should not be interpreted as representing official policies, either expressed
   * or implied, of Trinity College Dublin.
@@ -102,7 +118,7 @@ var StackArray = function(){
       coreObj.clearPseudocode();
       
       learnObj["newValue"] = coreObj.newUserObject("newValue", 500, 75, 25, item, "learning", null, USER_OBJ_TYPE.VALUE, true, null);
-      learnObj["newTopPointer"] = coreObj.newUserObject("newTopPointer", top.edge.getCoordinateX2(), top.edge.getCoordinateY2(), 10, null, "learning", null, USER_OBJ_TYPE.MOVEMENT, null, top.edge.getID());
+      learnObj["newTopPointer"] = coreObj.newUserObject("newTopPointer", top.edge.getCoordinateX2(), top.edge.getCoordinateY2(), 10, null, "learning", null, USER_OBJ_TYPE.MOVEMENT, null, top.edge.getID(), true, USER_TEXT_SOURCE.LABEL);
       
       for (var key in mArray) {
         mArray[key].setIsValidTarget(true);
@@ -119,12 +135,12 @@ var StackArray = function(){
       coreObj.saveState("Inserting the new value", 0);
   
       top.value++;
-      top.drawing.setFill(defaultProperties["shape"]["update"]["fill"]);
+      top.drawing.setFill(defaultProperties["shape"]["fill"]["update"]);
       coreObj.saveState();
       
       top.edge.setIdObjectB(mArray[top.value].getID());
       top.drawing.setText(top.value);
-      top.drawing.setFill(defaultProperties["shape"]["default"]["fill"]);
+      top.drawing.setFill(defaultProperties["shape"]["fill"]["default"]);
       coreObj.saveState("Update the top pointer.", 1);
       
       coreObj.play(coreObj.getAnimationDuration());

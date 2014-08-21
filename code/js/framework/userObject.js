@@ -1,6 +1,22 @@
 /**
-  * Copyright 2014 Filipe Belatti and Laércio Guimarães, Trinity College Dublin. All rights reserved.
+  * Copyright 2014 Filipe Belatti and Laércio Guimarães.
   *
+  * This file is part of DSVProject.
+  *
+  * DSVProject is free software: you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License as published by
+  * the Free Software Foundation, either version 3 of the License, or
+  * (at your option) any later version.
+  *
+  * DSVProject is distributed in the hope that it will be useful,
+  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+  *
+  * Redistribution and use in source and binary forms, with or without modification, are
+  * permitted provided that the above copyright notice, license and this disclaimer are retained.
+  *
+  * This project was started as summer internship project in Trinity College Dublin.
   * The views and conclusions contained in the software and documentation are those of the
   * authors and should not be interpreted as representing official policies, either expressed
   * or implied, of Trinity College Dublin.
@@ -25,8 +41,10 @@
   * @param {!Const} type : the type of this userObject (defined at 'animation/constant.js' : USER_OBJ_TYPE).
   * @param {!Bool=} allowSwap: if this instance is a VALUE type object, this parameter should be passed. If true, this object's text will be swapped during the interactions.
   * @param {!(String|Number)=} bindedObjID : if this instance is a MOVEMENT type object, it should be binded to another object.
+  * @param {!Bool=} updateShapeValue: if this instance is a MOVEMENT type object, this parameter should be passed. If true, the text of the shape which is at the origin of the edge will be changed (used for array implementation).
+  * @param {!Bool=} updateTextSource: if this instance is a MOVEMENT type object, this parameter should be passed. If updateShapeValue is true, this value (defined at 'animation/constant.js' : USER_TEXT_SOURCE) will indicate which text source will be used to update.
   */
-var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textClass, type, allowSwap, bindedObjID) {
+var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textClass, type, allowSwap, bindedObjID, updateShapeValue, updateTextSource) {
   var self = this;
 
   if (coreObj == null) {
@@ -79,7 +97,11 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
     
     "allowSwap": allowSwap != null ? allowSwap : false,
     
-    "bindedObjID": bindedObjID
+    "bindedObjID": bindedObjID,
+    
+    "updateShapeValue": updateShapeValue != null ? updateShapeValue : false,
+    
+    "updateTextSource": updateTextSource != null ? updateTextSource : USER_TEXT_SOURCE.TEXT
   }
   
   /**
@@ -338,7 +360,7 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
             if (activeObject == null) {
               self.coreObj.setActiveUserObject(self.propObj.id);
 
-              self.coreObj.createPlaceHolders(self.propObj.allowSwap);
+              self.coreObj.createPlaceHolders(self.propObj.allowSwap, self.propObj.updateShapeValue, self.propObj.updateTextSource);
             } else {
               self.coreObj.setActiveUserObject();
 
@@ -402,6 +424,7 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
         .attr("fill-opacity", this.propObj.shape.fillOpacity)
         .attr("stroke", this.propObj.shape.stroke)
         .attr("stroke-width", this.propObj.shape.strokeWidth);
+    
     var text = d3.select("#" + DEFAULT_IDS.SVG_ELEMENT.USER_TEXT + this.propObj.id);
         
     text.transition()

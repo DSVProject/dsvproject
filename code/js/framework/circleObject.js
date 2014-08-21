@@ -1,6 +1,22 @@
 /**
-  * Copyright 2014 Filipe Belatti and Laércio Guimarães, Trinity College Dublin. All rights reserved.
+  * Copyright 2014 Filipe Belatti and Laércio Guimarães.
   *
+  * This file is part of DSVProject.
+  *
+  * DSVProject is free software: you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License as published by
+  * the Free Software Foundation, either version 3 of the License, or
+  * (at your option) any later version.
+  *
+  * DSVProject is distributed in the hope that it will be useful,
+  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+  *
+  * Redistribution and use in source and binary forms, with or without modification, are
+  * permitted provided that the above copyright notice, license and this disclaimer are retained.
+  *
+  * This project was started as summer internship project in Trinity College Dublin.
   * The views and conclusions contained in the software and documentation are those of the
   * authors and should not be interpreted as representing official policies, either expressed
   * or implied, of Trinity College Dublin.
@@ -520,7 +536,7 @@ var CircleObject = function (coreObj, id, cx, cy, radius, text, label, shapeClas
     *
     * @param {!Bool=} allowSwap: if true this object's text will be swapped with the active UserObject's text (only for VALUE type UserObject).
     */
-  this.createPlaceHolder = function (allowSwap) {
+  this.createPlaceHolder = function (allowSwap, updateShapeValue, updateTextSource) {
     d3.select("#" + DEFAULT_IDS.SVG_GROUP.SHAPE)
         .append(SVG_CIRCLE)
         .attr("class", DEFAULT_CLASSES.LEARNING_MODE.PLACE_HOLDER)
@@ -541,9 +557,18 @@ var CircleObject = function (coreObj, id, cx, cy, radius, text, label, shapeClas
             self.draw();
           } else if (activeObject.getType() == USER_OBJ_TYPE.MOVEMENT) {
             var edge = self.coreObj.getUserObjectBindedItem(activeObject.getBindedObjID());
-
+            
             edge.setIdObjectB(self.propObj.id);
             edge.draw();
+            
+            if (updateShapeValue == true) {
+              if (updateTextSource == USER_TEXT_SOURCE.TEXT) {
+                self.coreObj.objectList[edge.getIdObjectA()].setText(self.propObj.text.text);
+              } else if (updateTextSource == USER_TEXT_SOURCE.LABEL) {
+                self.coreObj.objectList[edge.getIdObjectA()].setText(self.propObj.label.text); 
+              }
+              self.coreObj.objectList[edge.getIdObjectA()].draw();
+            }
             
             activeObject.moveShape(edge.getCoordinateX2(), edge.getCoordinateY2());
             activeObject.redraw();

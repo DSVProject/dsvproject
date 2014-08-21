@@ -1,6 +1,22 @@
 /**
-  * Copyright 2014 Filipe Belatti and Laércio Guimarães, Trinity College Dublin. All rights reserved.
+  * Copyright 2014 Filipe Belatti and Laércio Guimarães.
   *
+  * This file is part of DSVProject.
+  *
+  * DSVProject is free software: you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License as published by
+  * the Free Software Foundation, either version 3 of the License, or
+  * (at your option) any later version.
+  *
+  * DSVProject is distributed in the hope that it will be useful,
+  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+  *
+  * Redistribution and use in source and binary forms, with or without modification, are
+  * permitted provided that the above copyright notice, license and this disclaimer are retained.
+  *
+  * This project was started as summer internship project in Trinity College Dublin.
   * The views and conclusions contained in the software and documentation are those of the
   * authors and should not be interpreted as representing official policies, either expressed
   * or implied, of Trinity College Dublin.
@@ -93,14 +109,16 @@ var QueueLinkedList = function () {
     if (coreObj.isLearningMode()) {
       coreObj.clearPseudocode();
       
-      learnObj["newValue"] = coreObj.newUserObject("newValue", 500, 75, 25, item, "learning", null, USER_OBJ_TYPE.VALUE, true, null);
+      learnObj["newValue"] = coreObj.newUserObject("newValue", 500, 75, 25, item, "learning", null, USER_OBJ_TYPE.VALUE, true, null, null, null);
       
       var iterator = first;
       while(iterator != null) {
         iterator.drawing.setIsValidTarget(true);
         
         if (iterator.edge.getIdObjectB() == null) {
-          iterator.edge.setIsValidTarget(true);
+          //iterator.edge.setIsValidTarget(true);
+          
+          learnObj[iterator.edge.getID()] = coreObj.newUserObject("c" + iterator.edge.getID(), iterator.edge.getCoordinateX2(), iterator.edge.getCoordinateY2(), 10, null, "learning creator", null, USER_OBJ_TYPE.CREATOR, null, null, null, null);
         }
 
         iterator = iterator.next;
@@ -122,6 +140,7 @@ var QueueLinkedList = function () {
       last = new Node();
       last.item = item;
       last.next = null;
+      
       last.drawing = coreObj.newSquareObject(++counterID, 200, 200, item, null, "node", null, null);
       last.edge = coreObj.newEdgeObject(counterID, last.drawing.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.RIGHT, EDGE_POSITION.LEFT, USER_TYPE_OBJ_CREATED.SQUARE_EDGE_1);
 

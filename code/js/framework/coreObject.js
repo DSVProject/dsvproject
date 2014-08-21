@@ -1,6 +1,22 @@
 /**
-  * Copyright 2014 Filipe Belatti and Laércio Guimarães, Trinity College Dublin. All rights reserved.
+  * Copyright 2014 Filipe Belatti and Laércio Guimarães.
   *
+  * This file is part of DSVProject.
+  *
+  * DSVProject is free software: you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License as published by
+  * the Free Software Foundation, either version 3 of the License, or
+  * (at your option) any later version.
+  *
+  * DSVProject is distributed in the hope that it will be useful,
+  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+  *
+  * Redistribution and use in source and binary forms, with or without modification, are
+  * permitted provided that the above copyright notice, license and this disclaimer are retained.
+  *
+  * This project was started as summer internship project in Trinity College Dublin.
   * The views and conclusions contained in the software and documentation are those of the
   * authors and should not be interpreted as representing official policies, either expressed
   * or implied, of Trinity College Dublin.
@@ -187,7 +203,7 @@ var CoreObject = function () {
   }
   
   this.toggelLearningMode = function () {
-    $('#chk-learn').toggleClass('btn-default btn-success');
+    $('#chk-learn').toggleClass('btn-default btn-first');
     $('#chk-learn').toggleClass('active');
   
     $('#chk-answer-btn').toggleDisabled();
@@ -360,7 +376,7 @@ var CoreObject = function () {
     
     this.saveState();
     
-    this.play(0); 
+    this.begin(0); 
   }
   
   /**
@@ -515,6 +531,11 @@ var CoreObject = function () {
     * @return {SquareObject} : the new object.
     */
   this.newSquareObject = function (id, x, y, text, label, shapeClass, textClass, labelClass) {
+    if (this.objectList[id] != null) {
+      throw new Error("This id is already in use by another object.");
+      return;
+    }
+    
     this.objectList[id] = new SquareObject(this, id, x, y, text, label, shapeClass, textClass, labelClass);
     
     return this.objectList[id];
@@ -536,6 +557,11 @@ var CoreObject = function () {
     * @return {CircleObject} : the new object.
     */
   this.newCircleObject = function (id, cx, cy, radius, text, label, shapeClass, textClass, labelClass) {
+    if (this.objectList[id] != null) {
+      throw new Error("This id is already in use by another object.");
+      return;
+    }
+    
     this.objectList[id] = new CircleObject(this, id, cx, cy, radius, text, label, shapeClass, textClass, labelClass);
     
     return this.objectList[id];
@@ -554,11 +580,18 @@ var CoreObject = function () {
     * @param {!Const} type : the type of this userObject (defined at 'animation/constant.js' : USER_OBJ_TYPE).
     * @param {!Bool=} allowSwap: if this instance is a VALUE type object, this parameter should be passed. If true, this object's text will be swapped during the interactions.
     * @param {!(String|Number)=} bindedObjID : if this instance is a MOVEMENT type object, it should be binded to another object.
+    * @param {!Bool=} updateShapeValue: if this instance is a MOVEMENT type object, this parameter should be passed. If true, the text of the shape which is at the origin of the edge will be changed (used for array implementation).
+    * @param {!Bool=} updateTextSource: if this instance is a MOVEMENT type object, this parameter should be passed. If updateShapeValue is true, this value (defined at 'animation/constant.js' : USER_TEXT_SOURCE) will indicate which text source will be used to update.
     *
     * @return {userObject} : the new object.
     */
-  this.newUserObject = function (id, cx, cy, radius, text, shapeClass, textClass, type, allowSwap, bindedObjID) {
-    this.objectList[id] = new UserObject(this, id, cx, cy, radius, text, shapeClass, textClass, type, allowSwap, bindedObjID);
+  this.newUserObject = function (id, cx, cy, radius, text, shapeClass, textClass, type, allowSwap, bindedObjID, updateShapeValue, updateTextSource) {
+    if (this.objectList[id] != null) {
+      throw new Error("This id is already in use by another object.");
+      return;
+    }
+    
+    this.objectList[id] = new UserObject(this, id, cx, cy, radius, text, shapeClass, textClass, type, allowSwap, bindedObjID, updateShapeValue, updateTextSource);
     
     return this.objectList[id];
   }
@@ -616,13 +649,15 @@ var CoreObject = function () {
     * This function should only be called from inside an UserObject instance.
     *
     * @param {!Bool} allowSwap: if true this object's text will be swapped with the active UserObject's text (only for VALUE UserObject).
+    * @param {!Bool} updateShapeValue: if true the object at the start of the edge will have it's text changed (only for MOVEMENT UserObject).
+    * @param {!Const} updateTextSource: if updateShapeValue is true this value will indicate the source of the text (only for MOVEMENT UserObject).
     */
-  this.createPlaceHolders = function (allowSwap) {
+  this.createPlaceHolders = function (allowSwap, updateShapeValue, updateTextSource) {
     for (var key in this.objectList) {
       if (this.objectList[key] instanceof UserObject) continue; // skips the userObject as they are never valid targets.
       
       if (this.objectList[key].getIsValidTarget() == true) {
-        this.objectList[key].createPlaceHolder(allowSwap);
+        this.objectList[key].createPlaceHolder(allowSwap, updateShapeValue, updateTextSource);
       }
       
       for (var edgeKey in this.objectList[key].edgeList) {

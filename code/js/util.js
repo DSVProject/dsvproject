@@ -88,7 +88,7 @@ $('#pseudocode-btn').on('click', function () {
   * Enable or disable the Learning Mode.
   */
 $('#chk-learn').on('click', function () {
-  $(this).toggleClass('btn-default btn-success');
+  $(this).toggleClass('btn-default btn-first');
   $(this).toggleClass('active');
   
   $('#chk-answer-btn').toggleDisabled();

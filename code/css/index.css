@@ -1,0 +1,239 @@
+@CHARSET "ISO-8859-1";
+body ::selection {
+  background: none;
+}
+
+body{
+  font-family: arial, helvetica;
+  color: #5a5a5a;
+  color: rgba(0,0,0,0.5);
+  background-color: #ecf0f1;
+}
+.wrap{
+  margin-left: auto;
+  margin-right: auto;
+  width: 960px;
+  position: relative;
+}
+h1{
+  font-size: 6em;	
+}
+h2{
+  font-size: 2em;
+}
+a{
+  color: #198069;
+}
+.intro{
+  text-align:center;
+}
+.title{
+  text-shadow: 0px -4px 2px #484848;
+}
+.intro p{
+  width: 50%;
+  margin: 0 auto;
+  font-size: 1.5em;
+}
+.intro p a{
+  width: 50%;
+  margin: 0 auto;
+  font-size: 1em;
+}
+.text{
+  margin: 80px;
+}
+#menu li {
+  display:inline-block;
+  margin: 10px;
+  color: #000;
+  background:#fff;
+  background: rgba(255,255,255, 0.5);
+  -webkit-border-radius: 10px; 
+          border-radius: 10px; 
+}
+#menu li.active{
+  background:#666;
+  background: rgba(0,0,0, 0.5);
+  color: #fff;
+}
+#menu li a{
+  text-decoration:none;
+  color: #000;
+}
+#menu li.active a:hover{
+  color: #000;
+}
+#menu li:hover{
+  background: rgba(255,255,255, 0.8);
+}
+#menu li a,
+#menu li.active a{
+  padding: 9px 18px;
+  display:block;
+}
+#menu li.active a{
+  color: #fff;
+}
+#menu{
+  position:fixed;
+  top:0;
+  left:0;
+  height: 40px;
+  z-index: 70;
+  width: 100%;
+  padding: 0;
+  margin:0;
+}
+.row {
+  margin-bottom: 35px;
+  margin-top: 35px;
+}
+.col-lg-3 {
+  margin-bottom: 20px;
+  text-align: center;
+}
+.col-lg-3 p {
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+.btn{
+  width: 120px;
+}
+
+.btn-first{
+  color: #fff;
+  background-color: #16a085;
+  border-color: #16a085;
+}
+
+.btn-first:hover{
+  color: #fff;
+  background-color: #198069;
+  border-color: #198069;
+}
+
+.btn-second{
+  color: #fff;
+  background-color: #9b59b6;
+  border-color: #9b59b6;
+}
+
+.btn-second:hover{
+  color: #fff;
+  background-color: #8e44ad;
+  border-color: #8e44ad;
+}
+
+.btn-third{
+  color: #fff;
+  background-color: #e74c3c;
+  border-color: #e74c3c;
+}
+
+.btn-third:hover{
+  color: #fff;
+  background-color: #c0392b;
+  border-color: #c0392b;
+}
+
+.divider {
+  margin: 35px 0; /* Space out the Bootstrap <hr> more */
+  border-top-color: #dae4e6;
+}
+
+.shadow {
+  margin: auto;
+  border-radius: 50% 50% 5% 50%;
+  overflow: hidden;
+  padding: 3%;
+  font-weight: bold;
+  font-size: 75px;
+  height: 150px;
+  width: 150px;
+  text-align: center;
+  vertical-align: middle;
+  color: #ecf0f1;
+  background-color: rgb(22, 160, 133);
+  text-shadow: rgb(17, 120, 100) 1px 1px,
+    rgb(17, 120, 100) 2px 2px,
+    rgb(17, 120, 100) 3px 3px,
+    rgb(17, 120, 100) 4px 4px,
+    rgb(17, 121, 100) 5px 5px,
+    rgb(17, 121, 100) 6px 6px,
+    rgb(17, 121, 101) 7px 7px,
+    rgb(17, 121, 101) 8px 8px,
+    rgb(17, 121, 101) 9px 9px,
+    rgb(17, 122, 101) 10px 10px,
+    rgb(17, 122, 101) 11px 11px,
+    rgb(17, 122, 101) 12px 12px,
+    rgb(17, 122, 102) 13px 13px,
+    rgb(17, 122, 102) 14px 14px,
+    rgb(17, 123, 102) 15px 15px,
+    rgb(17, 123, 102) 16px 16px,
+    rgb(17, 123, 102) 17px 17px,
+    rgb(17, 123, 102) 18px 18px,
+    rgb(17, 123, 103) 19px 19px,
+    rgb(17, 124, 103) 20px 20px,
+    rgb(17, 124, 103) 21px 21px,
+    rgb(17, 124, 103) 22px 22px,
+    rgb(17, 124, 103) 23px 23px,
+    rgb(17, 124, 103) 24px 24px,
+    rgb(17, 125, 104) 25px 25px,
+    rgb(17, 125, 104) 26px 26px,
+    rgb(17, 125, 104) 27px 27px,
+    rgb(17, 125, 104) 28px 28px,
+    rgb(17, 125, 104) 29px 29px,
+    rgb(17, 126, 104) 30px 30px,
+    rgb(17, 126, 105) 31px 31px,
+    rgb(17, 126, 105) 32px 32px,
+    rgb(17, 126, 105) 33px 33px,
+    rgb(17, 126, 105) 34px 34px,
+    rgb(17, 127, 105) 35px 35px,
+    rgb(17, 127, 105) 36px 36px,
+    rgb(17, 127, 106) 37px 37px,
+    rgb(17, 127, 106) 38px 38px,
+    rgb(17, 127, 106) 39px 39px,
+    rgb(18, 128, 106) 40px 40px,
+    rgb(18, 128, 106) 41px 41px,
+    rgb(18, 128, 106) 42px 42px,
+    rgb(18, 128, 107) 43px 43px,
+    rgb(18, 128, 107) 44px 44px,
+    rgb(18, 129, 107) 45px 45px,
+    rgb(18, 129, 107) 46px 46px,
+    rgb(18, 129, 107) 47px 47px,
+    rgb(18, 129, 107) 48px 48px,
+    rgb(18, 129, 108) 49px 49px,
+    rgb(18, 130, 108) 50px 50px,
+    rgb(18, 130, 108) 51px 51px,
+    rgb(18, 130, 108) 52px 52px,
+    rgb(18, 130, 108) 53px 53px,
+    rgb(18, 130, 108) 54px 54px,
+    rgb(18, 131, 109) 55px 55px,
+    rgb(18, 131, 109) 56px 56px,
+    rgb(18, 131, 109) 57px 57px,
+    rgb(18, 131, 109) 58px 58px,
+    rgb(18, 131, 109) 59px 59px,
+    rgb(18, 132, 109) 60px 60px,
+    rgb(18, 132, 110) 61px 61px,
+    rgb(18, 132, 110) 62px 62px,
+    rgb(18, 132, 110) 63px 63px,
+    rgb(18, 132, 110) 64px 64px,
+    rgb(18, 133, 110) 65px 65px,
+    rgb(18, 133, 110) 66px 66px,
+    rgb(18, 133, 111) 67px 67px,
+    rgb(18, 133, 111) 68px 68px,
+    rgb(18, 133, 111) 69px 69px,
+    rgb(18, 134, 111) 70px 70px,
+    rgb(18, 134, 111) 71px 71px,
+    rgb(18, 134, 111) 72px 72px,
+    rgb(18, 134, 112) 73px 73px,
+    rgb(18, 134, 112) 74px 74px,
+    rgb(18, 135, 112) 75px 75px,
+    rgb(18, 135, 112) 76px 76px,
+    rgb(18, 135, 112) 77px 77px,
+    rgb(18, 135, 112) 78px 78px,
+    rgb(18, 135, 113) 79px 79px,
+    rgb(19, 136, 113) 80px 80px
+}

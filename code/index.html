@@ -1,102 +1,185 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" href="../../favicon.ico">
+    <meta name="author" content="Filipe Belatti and Laércio Guimarães" />
+    <meta name="description" content="home page of DSVProject" />
+    <meta name="keywords"  content="data,structure,visualisation,visualization,trinity,college,dublin,filipe,belatti,laercio,guimaraes" />
+    <meta name="Resource-type" content="Document" />
 
     <title>DSVProject</title>
 
-    <!-- Bootstrap core CSS -->
+    <!-- Bootstrap and fullPage CSS -->
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/jquery.fullPage.css" rel="stylesheet">
     
     <!-- Custom styles for this template -->
-    <link href="css/carousel.css" rel="stylesheet">
-  </head>
+    <link href="css/index.css" rel="stylesheet">
+    
+    <!-- jQuery and fullPage JS -->
+    <script type="text/javascript" src="js/third-party/jquery-2.1.1.js"></script>
+    <script type="text/javascript" src="js/third-party/jquery.fullPage.js"></script>
+    <script type="text/javascript" src="js/third-party/jquery.easings.min.js"></script>
+    <script type="text/javascript" src="js/third-party/jquery.slimscroll.min.js"></script>
 
-    <!-- Carousel
-    ================================================== -->
-    <div id="myCarousel" class="carousel slide" data-interval="false" data-ride="carousel">
-      <!-- Indicators -->
-      <ol class="carousel-indicators">
-        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-        <li data-target="#myCarousel" data-slide-to="1"></li>
-      </ol>
-      <div class="carousel-inner">
-        <div class="item active">
-          <div class="container">
-            <div class="carousel-caption">
-              <h1>Data Structure Visualization</h1>
-              <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-              <p></p>
-            </div>
+    <script type="text/javascript">
+      $(document).ready(function() {
+        $('#fullpage').fullpage({
+          touchSensitivity: 15,
+          scrollOverflow: true,
+          scrollingSpeed: 400,
+          sectionsColor : ['#198069'],
+          anchors: ['intro', 'visualisations', 'about'],
+          menu: '#menu'
+        });
+      });
+    </script>
+
+  </head>
+  <body>
+
+    <ul id="menu">
+      <li data-menuanchor="intro"><a href="#intro">The Project</a></li>
+      <li data-menuanchor="visualisations"><a href="#visualisations">Visualisations</a></li>
+      <li data-menuanchor="about"><a href="#about">About</a></li>
+    </ul>
+
+
+    <div id="fullpage">
+      <div class="section active" id="section0">
+        <div class="slide">
+          <div class="intro">
+            <h1>Data Structure Visualization</h1>
+            <p>Is there a better way of understanding how data can be stored and organised than seeing it in action? This tool will show both practical and theoretical aspects of the operation of data structures.</p>
+            </br>
+            <p><a class="btn btn-lg btn-second" href="#visualisations" role="button">Begin</a></p>
           </div>
         </div>
-        <div class="item">
-          <div class="container">
-            <div class="carousel-caption">
-              <h1>About</h1>
-              <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-              <p><a class="btn btn-lg btn-second" href="#" role="button">Learn more</a></p>
-            </div>
+        <div class="slide">
+          <div class="intro">
+            <h1>The Project</h1>
+              <p>This website was developed as a Summer Internship project by two former Computer Science students of Trinity College Dublin. The aim was to design and implement an extensible software framework that could allow continuation of the project by other interested parties, while generating a tool for online visual interaction with Algorithms and Data Structures that students could use to practice and test their knowledge.</p>
+              </br>
+              <p><a class="btn btn-lg btn-second" href="#about" role="button">Learn more</a></p>
           </div>
         </div>
       </div>
-      <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
-      <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
-    </div><!-- /.carousel -->
-  
-    <!-- Marketing messaging
-    ================================================== -->
-    <!-- Wrap the rest of the page in another container to center all the content. -->
-
-    <div class="container marketing">
-
-      <!-- Three columns of text below the carousel -->
-      <div class="row">
-        <div class="col-lg-2"></div>
-        <div class="col-lg-4">
-          <!-- <img class="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Generic placeholder image" style="width: 140px; height: 140px;"> -->
-          <h2>Stack</h2>
-          <p><p>
-            <div class="btn-group">
-              <a class="btn btn-first" href="stackArray.html" role="button">Array</a>
-              <a class="btn btn-second" href="stackLinkedList.html" role="button">Linked List</a>
+      <div class="section" id="section1">
+        <div class="row">
+          <!-- Each row can hold up to 4 visualisations -->
+          <div class="col-lg-3">
+            <div class="shadow" style="width: 120px; height: 120px;">
+              St
             </div>
-          </p>
-        </div><!-- /.col-lg-4 -->
-        <div class="col-lg-4">
-          <!-- <img class="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Generic placeholder image" style="width: 140px; height: 140px;"> -->
-          <h2>Queue</h2>
-          <p><p>
-            <div class="btn-group">
-              <a class="btn btn-first" href="queueArray.html" role="button">Array</a>
-              <a class="btn btn-second" href="queueLinkedList.html" role="button">Linked List</a>
+            <h2>Sorting</h2>
+            <p>
+              <div class="btn-group">
+                <a class="btn btn-third" href="#" role="button">In Progress</a>
+              </div>
+            </p>
+          </div>
+          <div class="col-lg-3">
+            <!--
+            <img class="img-circle" src="img/q.png" alt="" style="width: 140px; height: 140px;">
+            -->
+            <div class="shadow" style="width: 120px; height: 120px;">
+              Q
             </div>
+            <h2>Queue</h2>
+            <p>
+              <div class="btn-group">
+                <a class="btn btn-first" href="queueArray.html" role="button">Array</a>
+                <a class="btn btn-second" href="queueLinkedList.html" role="button">Linked List</a>
+              </div>
+            </p>
+          </div>
+          <div class="col-lg-3">
+            <!--
+            <img class="img-circle" src="img/s.png" alt="" style="width: 140px; height: 140px;">
+            -->
+            <div class="shadow" style="width: 120px; height: 120px;">
+              S
+            </div>
+            <h2>Stack</h2>
+            <p>
+              <div class="btn-group">
+                <a class="btn btn-first" href="stackArray.html" role="button">Array</a>
+                <a class="btn btn-second" href="stackLinkedList.html" role="button">Linked List</a>
+              </div>
+            </p>
+          </div>
+          <div class="col-lg-3">
+            <div class="shadow" style="width: 120px; height: 120px;">
+              LL
+            </div>
+            <h2>Linked List</h2>
+            <p>
+              <div class="btn-group">
+                <a class="btn btn-third" href="#" role="button">In Progress</a>
+              </div>
+            </p>
+          </div>
+        </div><!-- /.row -->
+        <div class="row">
+          <!-- Each row can hold up to 4 visualisations -->
+          <div class="col-lg-3">
+            <div class="shadow" style="width: 120px; height: 120px;">
+              Ht
+            </div>
+            <h2>Hash Table</h2>
+            <p>
+              <div class="btn-group">
+                <a class="btn btn-third" href="#" role="button">In Progress</a>
+              </div>
+            </p>
+          </div>
+          <div class="col-lg-3">
+            <div class="shadow" style="width: 120px; height: 120px;">
+              T
+            </div>
+            <h2>Trees</h2>
+            <p>
+              <div class="btn-group">
+                <a class="btn btn-third" href="#" role="button">In Progress</a>
+              </div>
+            </p>
+          </div>
+          <div class="col-lg-3">
+          </div>
+          <div class="col-lg-3">
+          </div>
+        </div><!-- /.row -->
+      </div>
+      <div class="section" id="section2">
+        <div class="text">
+          <h2>The Team</h2>
+          <p><strong>Programmers:</strong>
+            </br><a href="https://github.com/fibelatti" alt="">Filipe Belatti</a>
+            </br>Laércio Guimarães
           </p>
-        </div><!-- /.col-lg-4 -->
-        <div class="col-lg-2"></div>
-      </div><!-- /.row -->
-      
-      <hr class="divider">
-      
-      
-      <!-- FOOTER -->
-      <footer>
-        <p class="pull-right"><a href="#">Back to top</a></p>
-        <p>&copy; 2014 Company, Inc. &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
-      </footer>
 
-    </div><!-- /.container -->
+          <p><strong>Supervision:</strong>
+            </br><a href="https://www.scss.tcd.ie/Vasileios.Koutavas/" alt="">Vasileios Koutavas</a>
+          </p>
 
+          <hr class="divider">
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="js/jquery-2.1.1.js"></script>
-    <script src="bootstrap/js/bootstrap.min.js"></script>
+          <h2>Using and Contributing to the project</h2>
+          <p>This is an ongoing development that started in 2014 as a summer project. The source code is <a href="https://github.com/DSVProject/dsvproject" alt="github page of the project" >made available</a> under the GNU License to anyone interested in contributing to this project with new visualisations, or to make use of the framework as they please.</p>
+          <p>If you're a lecturer interested in using this tool for your classes, please do so.</p>
+
+          <hr class="divider">
+
+          <h2>Bug report</h2>
+          <p>If you've found any bug in our visualisations or in the behaviour of the framework please let us know! Send an email to belattif at tcd dot ie describing the problem and we'll happily work to fix it.</p>
+
+          <div class="intro">
+            <hr class="divider">
+            <p>&copy; 2014 Filipe Belatti and Laércio Guimarães</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

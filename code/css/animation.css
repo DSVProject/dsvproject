@@ -35,6 +35,14 @@
   cursor: pointer;
 }
 
+.shape .learning.creator{
+  fill:grey;
+  fill-opacity:0.2;
+  stroke:#fcf553;
+  stroke-width:2px;
+  cursor: pointer;
+}
+
 .shape .learning.selected{
   stroke-dasharray: 10 5;
 }
