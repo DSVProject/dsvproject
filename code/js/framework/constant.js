@@ -27,7 +27,7 @@ const MAIN_SVG_HEIGHT = 500;
 
 const SHAPE_POSITION = {
   DELTA: 50,
-  DISTANCE: 50,
+  DISTANCE: 100,
   INITIAL_1: {
     X: 600,
     Y: 50
@@ -87,6 +87,13 @@ const EDGE_POSITION = {
   BOTTOM: 3,
   RIGHT: 4
 };
+
+const ORIENTATION = {
+  TOP: 1,
+  LEFT: 2,
+  BOTTOM: 3,
+  RIGHT: 4
+}
 
 /**
   * Values used when creating an instance of UserObject.

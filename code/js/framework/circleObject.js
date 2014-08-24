@@ -101,7 +101,12 @@ var CircleObject = function (coreObj, id, cx, cy, radius, text, label, shapeClas
   /**
     * This object edge list.
     */
-  this.edgeList = {};
+  this.edgeList = [];
+  
+  /**
+    * Offset values to adjust the position of the shapes on the screen
+    */
+  this.widthAdjust = [];
   
   /**
     * @return {propObj} : the content of this object property map.
@@ -387,6 +392,55 @@ var CircleObject = function (coreObj, id, cx, cy, radius, text, label, shapeClas
     this.edgeList[edgeObj.getID()] = edgeObj;
   }
   
+  this.getEdgeCount = function () {
+    return Object.keys(this.edgeList).length;
+  }
+  
+  this.reposition = function(x, y, side, orientation) {
+    var counter = 0;
+    var midPoint = this.getEdgeCount()/2;
+    
+    if (x == null) x = this.propObj.shape.cx;
+    if (y == null) y = this.propObj.shape.cy;
+    
+    if (orientation == ORIENTATION.TOP || orientation == ORIENTATION.BOTTOM) {
+      if (side == -1) {
+        x = x - this.widthAdjust[Math.ceil(midPoint)];
+      } else if (side == 1) {
+        x = x + this.widthAdjust[Math.floor(midPoint)];
+      }
+    } else if (orientation == ORIENTATION.LEFT) {
+      if (side == -1) {
+        y = y - this.widthAdjust[Math.ceil(midPoint)];
+      } else if (side == 1) {
+        y = y + this.widthAdjust[Math.floor(midPoint)];
+      }
+    } else if (orientation == ORIENTATION.RIGHT) {
+      if (side == -1) {
+        y = y + this.widthAdjust[Math.ceil(midPoint)];
+      } else if (side == 1) {
+        y = y - this.widthAdjust[Math.floor(midPoint)];
+      }
+    }
+    
+    this.moveShape(x, y);
+
+    for (var key in this.edgeList) {
+      if (this.getEdgeCount() == 1) {
+        this.edgeList[key].reposition(x, y, 0, this.widthAdjust[Math.ceil(midPoint)], orientation);
+        
+        continue;
+      }
+      
+      if (counter < midPoint) {
+        this.edgeList[key].reposition(x, y, -1, this.widthAdjust[Math.ceil(midPoint)], orientation);
+      } else {
+        this.edgeList[key].reposition(x, y, 1, this.widthAdjust[Math.floor(midPoint)], orientation);
+      }
+      counter++;
+    }
+  }
+  
   /**
     * Draw this object attributes on the screen.
     * If the object is new, it will be generated; if any property has changed, it will be updated.
@@ -455,7 +509,7 @@ var CircleObject = function (coreObj, id, cx, cy, radius, text, label, shapeClas
     * @param {!Number=} dur : the duration in miliseconds of this animation.
     */
   this.remove = function (duration) {
-    if(duration == null || isNaN(duration) || dur < 0) duration = DEFAULT_ANIMATION_DURATION;
+    if(duration == null || isNaN(duration) || duration < 0) duration = DEFAULT_ANIMATION_DURATION;
     
     var json = [];
     json.push(this.propObj);
@@ -467,17 +521,17 @@ var CircleObject = function (coreObj, id, cx, cy, radius, text, label, shapeClas
         .duration(duration)
         .remove();
     
+    var text = d3.select("#" + DEFAULT_IDS.SVG_GROUP.TEXT).selectAll(SVG_TEXT)
+        .data(json, function (d) {return d.id;});
+        
+    text.transition()
+        .duration(duration)
+        .remove();
+    
     var label = d3.select("#" + DEFAULT_IDS.SVG_GROUP.LABEL).selectAll(SVG_TEXT)
         .data(json, function (d) {return d.id;});
         
     label.transition()
-        .duration(duration)
-        .remove();
-    
-    var text = d3.select("#" + DEFAULT_IDS.SVG_GROUP_TEXT).selectAll(SVG_TEXT)
-        .data(json, function (d) {return d.id;});
-        
-    text.transition()
         .duration(duration)
         .remove();
     

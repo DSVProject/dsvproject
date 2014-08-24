@@ -111,6 +111,9 @@ var StackLinkedList = function () {
 
     coreObj.saveState("Update the top pointer.", 1);
 
+    
+    if (oldtop == null) coreObj.reposition(top.drawing, 250, 100);
+    /*
     top.drawing.moveShape(250, 100);
     
     var iterator = oldtop;
@@ -120,11 +123,13 @@ var StackLinkedList = function () {
       
       iterator = iterator.next;
     }
+    */
     
     coreObj.saveState();
 
     if (oldtop != null) {
       top.edge.setIdObjectB(oldtop.drawing.getID());
+      coreObj.reposition(top.drawing, 250, 100);
       
       oldtop.drawing.setLabel();
       

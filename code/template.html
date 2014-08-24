@@ -226,12 +226,12 @@
     <script type="text/javascript">
       // Template: Your js file instance and calls to methods.
       var stack = new StackArray();
-      var anim = stack.getAnim();
+      var core = stack.getCore();
 
       function push(){
         var input = $("#txt-input");
         
-        stack.push(input.val());
+        stack.push(input.val().toUpperCase());
         input.val("");
       }
       
@@ -245,27 +245,19 @@
       
       // DEFAULT METHODS. DO NOT REMOVE.
       function previous(){
-        anim.previous();
+        core.previous();
       }
       
       function play(){
-        anim.play();
+        core.play();
       }
       
       function pause(){
-        anim.pause();
+        core.pause();
       }
       
       function next(){
-        anim.next();
-      }
-      
-      function undo(){
-        anim.undo();
-      }
-      
-      function redo(){
-        
+        core.next();
       }
     </script>
   </body>
