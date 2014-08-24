@@ -122,3 +122,7 @@ $(document).ready(function() {
     }
   });
 });
+
+$('.prevent-submit').submit(function(e){
+    e.preventDefault();
+});
