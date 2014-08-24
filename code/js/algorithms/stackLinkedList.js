@@ -112,7 +112,7 @@ var StackLinkedList = function () {
     coreObj.saveState("Update the top pointer.", 1);
 
     
-    if (oldtop == null) coreObj.reposition(top.drawing, 250, 100);
+    if (oldtop == null) coreObj.reposition(top.drawing, 250, 100, ORIENTATION.BOTTOM);
     /*
     top.drawing.moveShape(250, 100);
     
@@ -129,7 +129,7 @@ var StackLinkedList = function () {
 
     if (oldtop != null) {
       top.edge.setIdObjectB(oldtop.drawing.getID());
-      coreObj.reposition(top.drawing, 250, 100);
+      coreObj.reposition(top.drawing, 250, 100, ORIENTATION.BOTTOM);
       
       oldtop.drawing.setLabel();
       
