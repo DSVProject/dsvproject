@@ -22,39 +22,28 @@
   * or implied, of Trinity College Dublin.
   */
 
-// Defines a Queue object (Linked-List Implementation). Used to keep track of the object internally and to interact with the animations
+// Defines a Binary Search Tree. Used to keep track of the object internally and to interact with the animations
 
 var Node = function () {
-  var item,
-    next,
+  var key,
+    leftChild,
+    rightChild,
+    N,
+    
     drawing,
-    edge;
+    leftEdge,
+    rightEdge;
 }
 
-var QueueLinkedList = function () {
+var BinarySearchTree = function () {
   var self = this;
   var coreObj = new CoreObject();
   
-  // ARRAY TO STORE LEARNING MODE OBJECTS
-  var learnObj = [];
-  
-  const ENQUEUE = 0,
-        DEQUEUE = 1;
+  const INSERT = 0,
+        DELETE = 1;
 
-  var first = null;
-  var last = null;
-  var N = 0;
+  this.root = null;
   var counterID = 0;
-  
-  var firstD = coreObj.newSquareObject("first", 50, 50, "First", null, null, null, "pointer");
-  var lastD = coreObj.newSquareObject("last", 150, 50, "Last", null, null, null, "pointer");
-  var edgeFirstD = coreObj.newEdgeObject("first", firstD.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.BOTTOM, EDGE_POSITION.TOP);
-  var edgeLastD = coreObj.newEdgeObject("last", lastD.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.BOTTOM, EDGE_POSITION.TOP);
-
-  coreObj.newStateList();
-  
-  coreObj.saveState();
-  coreObj.begin(0);
   
   this.getCore = function () {
     return coreObj;
@@ -64,13 +53,13 @@ var QueueLinkedList = function () {
     coreObj.clearPseudocode();
     
     switch (command) {
-        case ENQUEUE:
+        case INSERT:
           coreObj.addPseudocodeLine(0, "Node temp = value;");
           coreObj.addPseudocodeLine(1, "last = temp;");
           coreObj.addPseudocodeLine(2, "if (isEmpty()) first = last;");
           coreObj.addPseudocodeLine(3, "else oldlast.next = last;");
           break;
-        case DEQUEUE:
+        case DELETE:
           coreObj.addPseudocodeLine(0, "first = first.next;");
           coreObj.addPseudocodeLine(1, "if (isEmpty()) last = null;");
           break;
@@ -80,23 +69,80 @@ var QueueLinkedList = function () {
   this.init = function () {
     coreObj.newStateList();
     
-    first = null;
-    last = null;
-    N = 0;
+    root = null;
     counterID = 0;
 
-    edgeFirstD.setIdObjectB(null);
-    edgeLastD.setIdObjectB(null);
-    
     coreObj.removeAll("node");
     
     coreObj.saveState();
     coreObj.begin();
   }
 
-  this.isEmpty = function () { return first == null; }
+  this.isEmpty = function () { return root == null; }
   
-  this.size = function () { return N; }
+  this.insert = function (newKey) {
+    if (newKey.trim() == "") {
+      coreObj.displayAlert("The input should not be empty.");
+      return false;
+    }
+    
+    this.root = this.insertTreeWithRoot(this.root, newKey);
+    coreObj.reposition(this.root.drawing, 300, 100, ORIENTATION.BOTTOM);
+    coreObj.saveState();
+    coreObj.begin();
+  }
+  
+  this.insertTreeWithRoot = function (rootNode, newKey) {
+    if (rootNode == null) { // we need to insert the new key/value in this (empty) subtree and return the new root of the subtree
+      var newNode = new Node();
+      
+      newNode.key = newKey;
+      newNode.leftChild = null;
+      newNode.rightChild = null;
+      newNode.N = 0;
+      
+      newNode.drawing = coreObj.newCircleObject(counterID, null, null, defaultProperties.shape.radius, newKey, null, "node", null, null);
+      newNode.leftEdge = coreObj.newEdgeObject(counterID + "l", counterID, null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.CENTER, EDGE_POSITION.TOP, USER_TYPE_OBJ_CREATED.CIRCLE_EDGE_2);
+      newNode.rightEdge = coreObj.newEdgeObject(counterID + "r", counterID, null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.CENTER, EDGE_POSITION.TOP, USER_TYPE_OBJ_CREATED.CIRCLE_EDGE_2);
+      
+      counterID++;
+      
+      return newNode;
+    } else { 	// rootNode contains data
+      // we need to insert the new key/value in one of the left/right subtrees
+      var cmp = newKey.localeCompare(rootNode.key);
+      
+      if (cmp < 0) { // newKey < rootNode.data -> we need to insert to the left subtree
+        rootNode.left = this.insertTreeWithRoot(rootNode.left, newKey);
+        rootNode.leftEdge.setIdObjectB(rootNode.left.drawing.getID());
+      } else if (cmp > 0) { // newKey > rootNode.data -> we need to insert to the right subtree
+        rootNode.right = this.insertTreeWithRoot(rootNode.right, newKey);
+        rootNode.rightEdge.setIdObjectB(rootNode.right.drawing.getID());
+      } else { 	// cmp == 0
+          // -> newKey == rootNode.key -> newKey is already in the tree // -> update value
+          rootNode.key = newKey;
+      }
+      
+      rootNode.N = 1 + this.getSizeOfTreeWithRoot(rootNode.left) + this.getSizeOfTreeWithRoot(rootNode.right);
+      return rootNode;
+    }
+  }
+  
+  this.getSizeOfTreeWithRoot = function (node) {
+    if (node == null) return 0;
+    return node.N;
+  }
+  
+  this.height = function () {
+    return this.getHeightOfTreeWithRoot(this.root);
+  }
+	
+  this.getHeightOfTreeWithRoot = function (rootNode) {
+    if (rootNode == null) return 0;
+    var leftHeight = this.getHeightOfTreeWithRoot(rootNode.leftChild);
+    var rightHeight = this.getHeightOfTreeWithRoot(rootNode.rightChild);
+    return leftHeight > rightHeight ? leftHeight + 1 : rightHeight + 1;
+  }
           
   this.enqueue = function(item, duration) {
     if (item.trim() == "") {

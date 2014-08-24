@@ -642,6 +642,42 @@ var CoreObject = function () {
     }
   }
   
+  this.reposition = function (obj, x, y, orientation) {
+    var startingPoint = x;
+
+    self.repositionWidths(obj);
+
+    var edgeCount = obj.getEdgeCount();
+
+    if (obj.widthAdjust[Math.floor(edgeCount/2) - 1] > x) {
+      startingPoint = obj.widthAdjust[Math.floor(edgeCount/2) - 1]; 
+    }
+
+    obj.reposition(startingPoint, y, 0, orientation);
+  }
+
+  this.repositionWidths = function (obj) {
+    var sum = 0;
+    var i = 0;
+
+    if (obj == null) return 0;
+    
+    for (var key in obj.edgeList) {
+      var nextObj = null;
+
+      if (obj.edgeList[key].getIdObjectB() != null) {
+        nextObj = this.objectList[obj.edgeList[key].getIdObjectB()];
+      }
+
+      obj.widthAdjust[i] = Math.max(this.repositionWidths(nextObj), SHAPE_POSITION.DELTA / 2);
+
+      sum += obj.widthAdjust[i];
+      i++;
+    }
+
+    return sum;
+  }
+  
   // FUNCTIONS CALLED FROM INSIDE SHAPE INSTANCES
   
   /**

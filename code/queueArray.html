@@ -231,7 +231,7 @@
       function enqueue(){
         var input = $("#txt-input");
         
-        queue.enqueue(input.val());
+        queue.enqueue(input.val().toUpperCase());
         input.val("");
       }
       

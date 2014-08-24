@@ -318,10 +318,10 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
         point = this.getOutboundPoint();
 
         if (point == EDGE_POSITION.CENTER) {
-          this.propObj.edge.x2 = this.propObj.edge.x1;
-          this.propObj.edge.y2 = this.propObj.edge.y1 + 35;
+          if (this.propObj.edge.x2 == null) this.propObj.edge.x2 = this.propObj.edge.x1;
+          this.propObj.edge.y2 = this.propObj.edge.y1 + 45;
         } else if (point == EDGE_POSITION.BOTTOM) {
-          this.propObj.edge.x2 = this.propObj.edge.x1;
+          if (this.propObj.edge.x2 == null) this.propObj.edge.x2 = this.propObj.edge.x1;
           this.propObj.edge.y2 = this.propObj.edge.y1 + 25;
         } else if (point == EDGE_POSITION.RIGHT) {
           this.propObj.edge.x2 = this.propObj.edge.x1 + 25;
@@ -335,6 +335,45 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
         }
       }
     } catch (err) {}
+  }
+  
+  this.reposition = function (x, y, side, adjust, orientation) {
+    if (orientation == ORIENTATION.TOP) {
+      if (side == -1) {
+        x = x - this.widthAdjust[Math.ceil(midPoint)];
+      } else if (side == 1) {
+        x = x + this.widthAdjust[Math.floor(midPoint)];
+      }
+      y = y - SHAPE_POSITION.DISTANCE;
+    } else if (orientation == ORIENTATION.LEFT) {
+      if (side == -1) {
+        y = y - this.widthAdjust[Math.ceil(midPoint)];
+      } else if (side == 1) {
+        y = y + this.widthAdjust[Math.floor(midPoint)];
+      }
+      x = x - SHAPE_POSITION.DISTANCE;
+    } else if (orientation == ORIENTATION.BOTTOM) {
+      if (side == -1) {
+        x = x - adjust;
+      } else if (side == 1) {
+        x = x + adjust;
+      }
+      y = y + SHAPE_POSITION.DISTANCE;
+    } else if (orientation == ORIENTATION.RIGHT) {
+      if (side == -1) {
+        y = y + this.widthAdjust[Math.ceil(midPoint)];
+      } else if (side == 1) {
+        y = y - this.widthAdjust[Math.floor(midPoint)];
+      }
+      x = x + SHAPE_POSITION.DISTANCE;
+    }
+    
+    this.propObj.edge.x2 = x;
+    this.propObj.edge.y2 = y;
+    
+    if (this.propObj.idObjectB != null) {
+      this.coreObj.objectList[this.propObj.idObjectB].reposition(x, y, side, orientation);
+    }
   }
   
   /**
@@ -431,8 +470,8 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
 
 
             } else if (self.propObj.typeObjCreated == USER_TYPE_OBJ_CREATED.SQUARE_EDGE_1) {
-              newObj.drawing = new SquareObject(self.coreObj, DEFAULT_IDS.SVG_ELEMENT.USER_NEW_OBJ, self.getCoordinateX2(), self.getCoordinateY2() - 25, activeObjectText, null, null, null, null);
-              newObj.edge1 = new EdgeObject(self.coreObj, DEFAULT_IDS.SVG_ELEMENT.USER_NEW_OBJ, newObj.drawing.getID(), null, null, self.getType(), self.getOutboundPoint(), self.getInboundPoint(), null);
+              newObj.drawing = self.coreObj.newSquareObject(DEFAULT_IDS.SVG_ELEMENT.USER_NEW_OBJ, null, null, activeObjectText, null, null, null, null);
+              newObj.edge1 = self.coreObj.newEdgeObject(DEFAULT_IDS.SVG_ELEMENT.USER_NEW_OBJ, newObj.drawing.getID(), null, null, self.getType(), self.getOutboundPoint(), self.getInboundPoint(), null);
             } else if (self.propObj.typeObjCreated == USER_TYPE_OBJ_CREATED.CIRCLE_EDGE_0) {
 
             } else if (self.propObj.typeObjCreated == USER_TYPE_OBJ_CREATED.CIRCLE_EDGE_1) {
@@ -441,9 +480,11 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
 
             }
             
+            self.setIdObjectB(newObj.drawing.getID());
+            
+            self.coreObj.reposition(self.coreObj.objectList[self.propObj.idObjectA], null, null, self.getOutboundPoint());
+            
             newObj.drawing.draw();
-            if (newObj.edge1 != null) newObj.edge1.draw();
-            if (newObj.edge2 != null) newObj.edge2.draw();
             
             activeObject.setText();
             activeObject.redraw();

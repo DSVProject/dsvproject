@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Template: Page Title -->
-    <title>Stack - Array Implementation</title>
+    <title>Binary Search Tree</title>
 
     <!-- Bootstrap -->
     <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
@@ -35,25 +35,25 @@
             <span class="icon-bar"></span>
           </button>
           <!-- Template: Visualisation Title -->
-          <div class="navbar-brand">Stack Array</div>
+          <div class="navbar-brand">Binary Search Tree</div>
         </div>
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <!-- Template: Method's buttons -->
             <div id="div-control-buttons" class="btn-group popover-dismiss" data-popover="popover" data-html="true" data-placement="bottom" title="Methods" data-content="Here you will find the controls to run the <b>methods</b> of the current data structure visualisation.">
+              <!-- Template: Text input button (methods that require an input value) -->
               <div class="btn-group">
-                <!-- Template: Text input button (methods that require an input value) -->
                 <button type="button" class="btn btn-default navbar-btn dropdown-toggle" data-toggle="dropdown">
-                  Push <span class="caret"></span>
+                  Insert <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" role="menu">
                   <form class="navbar-form">
                     <div class="input-group">
                       <!-- Template: Textbox id, for future reference -->
-                      <input id="txt-input" type="text" class="form-control" maxlength="4">
+                      <input id="txt-insert" type="text" class="form-control" maxlength="4">
                       <span class="input-group-btn">
                         <!-- Template: onclick function -->
-                        <button class="btn btn-default" type="button" onclick="push()">
+                        <button class="btn btn-default" type="button" onclick="insert()">
                           <span class="glyphicon glyphicon-ok"></span>
                         </button>
                       </span>
@@ -61,22 +61,38 @@
                   </form>
                 </ul>
               </div>
-              <!-- Template: Normal button (methods that don't require an input value) -->
-              <button type="button" class="btn btn-default navbar-btn" onclick="pop()">Pop</button>
-              <button type="button" class="btn btn-default navbar-btn" onclick="empty()">Clear</button>
+              <div class="btn-group">
+                <button type="button" class="btn btn-default navbar-btn dropdown-toggle" data-toggle="dropdown">
+                  Delete <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                  <form class="navbar-form">
+                    <div class="input-group">
+                      <!-- Template: Textbox id, for future reference -->
+                      <input id="txt-delete" type="text" class="form-control" maxlength="4">
+                      <span class="input-group-btn">
+                        <!-- Template: onclick function -->
+                        <button class="btn btn-default" type="button" onclick="">
+                          <span class="glyphicon glyphicon-ok"></span>
+                        </button>
+                      </span>
+                    </div>
+                  </form>
+                </ul>
+              </div>
             </div>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <!-- Template: Learning Mode Buttons (If not available comment this div tag) -->
             <!--
             <div id="div-learning-buttons" class="btn-group popover-dismiss" data-popover="popover" data-html="true" data-placement="bottom" title="Learning Mode" data-content="Use this switch to toggle between the <b>Exploration</b> and the <b>Learning</b> modes.<br/><br/>In Exploration mode animations will happen automatically.<br/>In Learning mode you will have to create the final state of each method.">
-              <button id="chk-answer-btn" type="button" disabled class="btn btn-default navbar-btn" data-toggle="tooltip" data-placement="bottom" title="Check Answer">
+              <button id="chk-answer-btn" type="button" disabled class="btn btn-default navbar-btn" data-toggle="tooltip" data-placement="bottom" title="Check Answer" onclick="">
                     <span class="glyphicon glyphicon-check"></span>
               </button>
-              <button id="restart-btn" type="button" disabled class="btn btn-default navbar-btn" data-toggle="tooltip" data-placement="bottom" title="Restart">
+              <button id="restart-btn" type="button" disabled class="btn btn-default navbar-btn" data-toggle="tooltip" data-placement="bottom" title="Restart" onclick="">
                     <span class="glyphicon glyphicon-repeat"></span>
               </button>
-              <button id="cancel-btn" type="button" disabled class="btn btn-default navbar-btn" data-toggle="tooltip" data-placement="bottom" title="Cancel">
+              <button id="cancel-btn" type="button" disabled class="btn btn-default navbar-btn" data-toggle="tooltip" data-placement="bottom" title="Cancel" onclick="">
                     <span class="glyphicon glyphicon-remove"></span>
               </button>
               <button type="button" id="chk-learn" class="btn btn-default navbar-btn" data-toggle="tooltip" data-placement="bottom" title="Toggle Mode">Learning Mode</button>
@@ -222,51 +238,43 @@
     <script type="text/javascript" src="js/framework/edgeObject.js"></script>
     
     <!-- Template: Your Visualisation Scripts -->
-    <script src="js/algorithms/stackArray.js"></script>
+    <script src="js/algorithms/binarySearchTree.js"></script>
     
     <script type="text/javascript">
-      var stack = new StackArray();
-      var core = stack.getCore();
+      // Template: Your js file instance and calls to methods.
+      var bst = new BinarySearchTree();
+      var core = bst.getCore();
 
-      function push () {
-        var input = $("#txt-input");
+      function insert(){
+        var input = $("#txt-insert");
         
-        stack.push(input.val().toUpperCase());
+        bst.insert(input.val().toUpperCase());
         input.val("");
       }
       
-      function pop () {
+      function pop(){
         stack.pop();
       }
       
-      function empty () {
+      function empty(){
         stack.init();
       }
       
       // DEFAULT METHODS. DO NOT REMOVE.
-      
-      function previous () {
+      function previous(){
         core.previous();
       }
       
-      function play () {
+      function play(){
         core.play();
       }
       
-      function pause () {
+      function pause(){
         core.pause();
       }
       
-      function next () {
+      function next(){
         core.next();
-      }
-      
-      function undo () {
-        core.undo();
-      }
-      
-      function redo () {
-        core.redo();
       }
     </script>
   </body>
