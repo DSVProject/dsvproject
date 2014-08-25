@@ -124,7 +124,8 @@ var QueueLinkedList = function () {
         iterator = iterator.next;
       }
       
-      coreObj.learnState("Use the grey circles to create the final state.");
+      coreObj.saveLearnState("Click on the grey circles to create the final state.");
+      coreObj.beginLearn();
       
       DEFERRED.done(function() {
         coreObj.cancelLearn();

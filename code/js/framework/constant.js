@@ -22,21 +22,30 @@
   * or implied, of Trinity College Dublin.
   */
 
-const MAIN_SVG_WIDTH = 1200;
+const MAIN_SVG_WIDTH = 1024;
 const MAIN_SVG_HEIGHT = 500;
 
+/**
+  * Values used to reposition automatically objects on the scren.
+  * There are pre-defined sets used for the existing visualisations.
+  *
+  * @const 
+  */
 const SHAPE_POSITION = {
   DELTA: 50,
   DISTANCE: 100,
   INITIAL_1: {
+    // for Trees
     X: 600,
     Y: 50
   },
   INITIAL_2: {
+    // for Queues
     X: 100,
     Y: 300
   },
   INITIAL_3: {
+    // for Stacks
     X: 250,
     Y: 100
   }
@@ -88,6 +97,11 @@ const EDGE_POSITION = {
   RIGHT: 4
 };
 
+/**
+  * Values used when repositioning objects on the screen.
+  *
+  * @const 
+  */
 const ORIENTATION = {
   TOP: 1,
   LEFT: 2,

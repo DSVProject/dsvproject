@@ -338,38 +338,49 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
   }
   
   this.reposition = function (x, y, side, adjust, orientation) {
+    var edgeX;
+    var edgeY;
+    
     if (orientation == ORIENTATION.TOP) {
       if (side == -1) {
-        x = x - this.widthAdjust[Math.ceil(midPoint)];
+        edgeX = x - adjust;
+        x = x - adjust;
       } else if (side == 1) {
-        x = x + this.widthAdjust[Math.floor(midPoint)];
+        edgeX = x + adjust;
+        x = x + adjust;
       }
       y = y - SHAPE_POSITION.DISTANCE;
     } else if (orientation == ORIENTATION.LEFT) {
       if (side == -1) {
-        y = y - this.widthAdjust[Math.ceil(midPoint)];
+        edgeY = y - adjust;
+        y = y - adjust;
       } else if (side == 1) {
-        y = y + this.widthAdjust[Math.floor(midPoint)];
+        edgeY = y + adjust;
+        y = y + adjust;
       }
       x = x - SHAPE_POSITION.DISTANCE;
     } else if (orientation == ORIENTATION.BOTTOM) {
       if (side == -1) {
+        edgeX = x - adjust;
         x = x - adjust;
       } else if (side == 1) {
+        edgeX = x + adjust;
         x = x + adjust;
       }
       y = y + SHAPE_POSITION.DISTANCE;
     } else if (orientation == ORIENTATION.RIGHT) {
       if (side == -1) {
-        y = y + this.widthAdjust[Math.ceil(midPoint)];
+        edgeY = y + adjust;
+        y = y + adjust;
       } else if (side == 1) {
-        y = y - this.widthAdjust[Math.floor(midPoint)];
+        edgeY = y - adjust;
+        y = y - adjust;
       }
       x = x + SHAPE_POSITION.DISTANCE;
     }
-    
-    this.propObj.edge.x2 = x;
-    this.propObj.edge.y2 = y;
+
+    this.propObj.edge.x2 = edgeX;
+    this.propObj.edge.y2 = edgeY;
     
     if (this.propObj.idObjectB != null) {
       this.coreObj.objectList[this.propObj.idObjectB].reposition(x, y, side, orientation);
@@ -467,22 +478,26 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
           
           if (activeObject.getType() == USER_OBJ_TYPE.VALUE) {
             if (self.propObj.typeObjCreated == USER_TYPE_OBJ_CREATED.SQUARE_EDGE_0) {
-
-
+              newObj.drawing = self.coreObj.newSquareObject(DEFAULT_IDS.SVG_ELEMENT.USER_NEW_OBJ, null, null, activeObjectText, null, null, null, null);
             } else if (self.propObj.typeObjCreated == USER_TYPE_OBJ_CREATED.SQUARE_EDGE_1) {
               newObj.drawing = self.coreObj.newSquareObject(DEFAULT_IDS.SVG_ELEMENT.USER_NEW_OBJ, null, null, activeObjectText, null, null, null, null);
-              newObj.edge1 = self.coreObj.newEdgeObject(DEFAULT_IDS.SVG_ELEMENT.USER_NEW_OBJ, newObj.drawing.getID(), null, null, self.getType(), self.getOutboundPoint(), self.getInboundPoint(), null);
+              newObj.edge1 = self.coreObj.newEdgeObject(DEFAULT_IDS.SVG_ELEMENT.USER_NEW_OBJ + "1", newObj.drawing.getID(), null, null, self.getType(), self.getOutboundPoint(), self.getInboundPoint(), null);
             } else if (self.propObj.typeObjCreated == USER_TYPE_OBJ_CREATED.CIRCLE_EDGE_0) {
-
+              newObj.drawing = self.coreObj.newCircleObject(DEFAULT_IDS.SVG_ELEMENT.USER_NEW_OBJ, null, null, defaultProperties.shape.radius, activeObjectText, null, null, null, null);
             } else if (self.propObj.typeObjCreated == USER_TYPE_OBJ_CREATED.CIRCLE_EDGE_1) {
-
+              newObj.drawing = self.coreObj.newCircleObject(DEFAULT_IDS.SVG_ELEMENT.USER_NEW_OBJ, null, null, defaultProperties.shape.radius, activeObjectText, null, null, null, null);
+              newObj.edge1 = self.coreObj.newEdgeObject(DEFAULT_IDS.SVG_ELEMENT.USER_NEW_OBJ + "1", newObj.drawing.getID(), null, null, self.getType(), self.getOutboundPoint(), self.getInboundPoint(), null);
             } else if (self.propObj.typeObjCreated == USER_TYPE_OBJ_CREATED.CIRCLE_EDGE_2) {
-
+              newObj.drawing = self.coreObj.newCircleObject(DEFAULT_IDS.SVG_ELEMENT.USER_NEW_OBJ, null, null, defaultProperties.shape.radius, activeObjectText, null, null, null, null);
+              newObj.edge1 = self.coreObj.newEdgeObject(DEFAULT_IDS.SVG_ELEMENT.USER_NEW_OBJ + "1", newObj.drawing.getID(), null, null, self.getType(), self.getOutboundPoint(), self.getInboundPoint(), null);
+              newObj.edge2 = self.coreObj.newEdgeObject(DEFAULT_IDS.SVG_ELEMENT.USER_NEW_OBJ + "2", newObj.drawing.getID(), null, null, self.getType(), self.getOutboundPoint(), self.getInboundPoint(), null);
             }
             
             self.setIdObjectB(newObj.drawing.getID());
             
             self.coreObj.reposition(self.coreObj.objectList[self.propObj.idObjectA], null, null, self.getOutboundPoint());
+            if (newObj.edge1 != null) newObj.edge1.calculatePath();
+            if (newObj.edge2 != null) newObj.edge2.calculatePath();
             
             newObj.drawing.draw();
             

@@ -24,12 +24,19 @@
 
 var zoom = d3.behavior.zoom();
 
+var w = window,
+    d = document,
+    e = d.documentElement,
+    g = d.getElementsByTagName('body')[0],
+    x = w.innerWidth || e.clientWidth || g.clientWidth,
+    y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+
 /**
   * Create the svg container.
   */
 var svgContainer = d3.select("#viz").append("svg")
-    .attr("width", MAIN_SVG_WIDTH)
-    .attr("height", MAIN_SVG_HEIGHT)
+    .attr("width", x * 0.75)
+    .attr("height", y * 0.75)
     .attr("pointer-events", "all")
     .call(zoom.on("zoom", rescale))
     .on("dblclick.zoom", null)
