@@ -417,43 +417,53 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
   this.reposition = function(x, y, side, orientation) {
     var counter = 0;
     var midPoint = this.getEdgeCount()/2;
-    
+
     if (x == null) x = this.propObj.shape.x;
     if (y == null) y = this.propObj.shape.y;
-    
-    if (orientation == ORIENTATION.TOP || orientation == ORIENTATION.BOTTOM) {
+
+    if (orientation == ORIENTATION.TOP) {
       if (side == -1) {
         x = x - this.widthAdjust[Math.ceil(midPoint)];
       } else if (side == 1) {
-        x = x + this.widthAdjust[Math.floor(midPoint)];
+        x = x + this.widthAdjust[Math.floor(midPoint) - 1];
       }
+      //y = y - SHAPE_POSITION.DISTANCE;
     } else if (orientation == ORIENTATION.LEFT) {
       if (side == -1) {
         y = y - this.widthAdjust[Math.ceil(midPoint)];
       } else if (side == 1) {
-        y = y + this.widthAdjust[Math.floor(midPoint)];
+        y = y + this.widthAdjust[Math.floor(midPoint) - 1];
       }
+      //x = x - SHAPE_POSITION.DISTANCE;
+    } else if (orientation == ORIENTATION.BOTTOM) {
+      if (side == -1) {
+        x = x - this.widthAdjust[Math.ceil(midPoint)];
+      } else if (side == 1) {
+        x = x + this.widthAdjust[Math.floor(midPoint) - 1];
+      }
+      //y = y + SHAPE_POSITION.DISTANCE;
     } else if (orientation == ORIENTATION.RIGHT) {
       if (side == -1) {
         y = y + this.widthAdjust[Math.ceil(midPoint)];
       } else if (side == 1) {
-        y = y - this.widthAdjust[Math.floor(midPoint)];
+        y = y - this.widthAdjust[Math.floor(midPoint) - 1];
       }
+      //x = x + SHAPE_POSITION.DISTANCE;
     }
-    
+
     this.moveShape(x, y);
 
     for (var key in this.edgeList) {
       if (this.getEdgeCount() == 1) {
         this.edgeList[key].reposition(x, y, 0, this.widthAdjust[Math.ceil(midPoint)], orientation);
-        
+
         continue;
       }
-      
+
       if (counter < midPoint) {
         this.edgeList[key].reposition(x, y, -1, this.widthAdjust[Math.ceil(midPoint)], orientation);
       } else {
-        this.edgeList[key].reposition(x, y, 1, this.widthAdjust[Math.floor(midPoint)], orientation);
+        this.edgeList[key].reposition(x, y, 1, this.widthAdjust[Math.floor(midPoint) - 1], orientation);
       }
       counter++;
     }

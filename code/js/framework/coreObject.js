@@ -149,7 +149,7 @@ var CoreObject = function () {
     * Creates a learn state, that will be used to check the answer at a later stage.
     *
     */
-  this.learnState = function () {
+  this.saveLearnState = function (logMessage) {
     // The current state being created
     var state = {
       data : null,
@@ -168,12 +168,14 @@ var CoreObject = function () {
     
     state.data = newList;
     
-    this.saveLogMessageToList("Use the grey circles to create the final state.")
+    this.saveLogMessageToList(logMessage)
     
     state.log = clone(this.logList);
     
     this.stateList["learn"] = state;
-    
+  }
+  
+  this.beginLearn = function () {
     this.draw(this.stateList["learn"], 0);
   }
   
@@ -182,10 +184,12 @@ var CoreObject = function () {
   }
   
   this.restartLearn = function () {
-    this.draw(this.stateList["learn"], 0);
+    this.undo();
+    this.beginLearn();
   }
   
   this.cancelLearn = function () {
+    /*
     for (var key in this.objectList) {
       if (this.objectList[key] instanceof UserObject) { 
         this.objectList[key].setToRemove(true);
@@ -197,9 +201,12 @@ var CoreObject = function () {
         }
       }
     }
+    */
+    
+    this.undo();
     
     this.toggelLearningMode();
-    this.learnState();
+    //this.learnState();
   }
   
   this.toggelLearningMode = function () {
@@ -365,18 +372,16 @@ var CoreObject = function () {
     if (this.actionCount < 0) this.actionCount = 0;
     
     for (var key in this.objectList) {
-      if (typeof this.actionArray[this.actionCount - 1][key] == 'undefined') {
+      if (this.actionArray[this.actionCount][key] == null) {
         this.objectList[key].remove();
         delete this.objectList[key];
       } else {
-        this.objectList[key].cloneProperties(this.actionArray[this.actionCount - 1][key].getAttributes());
-        this.objectList[key].cloneEdges(this.actionArray[this.actionCount - 1][key].getEdges());
+        this.objectList[key].cloneProperties(this.actionArray[this.actionCount][key].getAttributes());
+        this.objectList[key].cloneEdges(this.actionArray[this.actionCount][key].getEdges());
       }
     }
     
     this.saveState();
-    
-    this.begin(0); 
   }
   
   /**
@@ -649,8 +654,10 @@ var CoreObject = function () {
 
     var edgeCount = obj.getEdgeCount();
 
-    if (obj.widthAdjust[Math.floor(edgeCount/2) - 1] > x) {
+    if (obj.widthAdjust[Math.floor(edgeCount/2) - 1] > startingPoint) {
       startingPoint = obj.widthAdjust[Math.floor(edgeCount/2) - 1]; 
+    } else if (obj.widthAdjust[Math.ceil(edgeCount/2)] > startingPoint) {
+      startingPoint = Math.max(obj.widthAdjust[Math.floor(edgeCount/2) - 1], 2 * startingPoint - obj.widthAdjust[Math.ceil(edgeCount/2)]);
     }
 
     obj.reposition(startingPoint, y, 0, orientation);
@@ -661,13 +668,11 @@ var CoreObject = function () {
     var i = 0;
 
     if (obj == null) return 0;
-    
+
     for (var key in obj.edgeList) {
       var nextObj = null;
 
-      if (obj.edgeList[key].getIdObjectB() != null) {
-        nextObj = this.objectList[obj.edgeList[key].getIdObjectB()];
-      }
+      if (obj.edgeList[key].getIdObjectB() != null) nextObj = this.objectList[obj.edgeList[key].getIdObjectB()];
 
       obj.widthAdjust[i] = Math.max(this.repositionWidths(nextObj), SHAPE_POSITION.DELTA / 2);
 
