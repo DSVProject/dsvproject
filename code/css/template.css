@@ -54,13 +54,13 @@ border-color: #1abc9c;
 }
 
 #pseudocode-panel .panel-body {
-  height: 175px;
+  height: 200px;
   overflow: auto;
   padding: 0px;
 }
 
 #log-panel .panel-body {
-  height: 125px;
+  height: 100px;
   overflow: auto;
   padding: 0px;
 }
