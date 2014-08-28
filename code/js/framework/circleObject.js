@@ -399,45 +399,43 @@ var CircleObject = function (coreObj, id, cx, cy, radius, text, label, shapeClas
   this.reposition = function(x, y, side, orientation) {
     var counter = 0;
     var midPoint = this.getEdgeCount()/2;
+    var leftAdjust = this.widthAdjust[Math.ceil(midPoint)];
+    var rightAdjust = this.widthAdjust[Math.floor(midPoint) - 1];
 
     if (x == null) x = this.propObj.shape.cx;
     if (y == null) y = this.propObj.shape.cy;
 
     if (orientation == ORIENTATION.TOP) {
       if (side == -1) {
-        x = x - this.widthAdjust[Math.ceil(midPoint)];
+        x = x - leftAdjust;
       } else if (side == 1) {
-        x = x + this.widthAdjust[Math.floor(midPoint) - 1];
+        x = x + rightAdjust;
       }
-      //y = y - SHAPE_POSITION.DISTANCE;
     } else if (orientation == ORIENTATION.LEFT) {
       if (side == -1) {
-        y = y - this.widthAdjust[Math.ceil(midPoint)];
+        y = y - leftAdjust;
       } else if (side == 1) {
-        y = y + this.widthAdjust[Math.floor(midPoint) - 1];
+        y = y + rightAdjust;
       }
-      //x = x - SHAPE_POSITION.DISTANCE;
     } else if (orientation == ORIENTATION.BOTTOM) {
       if (side == -1) {
-        x = x - this.widthAdjust[Math.ceil(midPoint)];
+        x = x - leftAdjust;
       } else if (side == 1) {
-        x = x + this.widthAdjust[Math.floor(midPoint) - 1];
+        x = x + rightAdjust;
       }
-      //y = y + SHAPE_POSITION.DISTANCE;
     } else if (orientation == ORIENTATION.RIGHT) {
       if (side == -1) {
-        y = y + this.widthAdjust[Math.ceil(midPoint)];
+        y = y + leftAdjust;
       } else if (side == 1) {
-        y = y - this.widthAdjust[Math.floor(midPoint) - 1];
+        y = y - rightAdjust;
       }
-      //x = x + SHAPE_POSITION.DISTANCE;
     }
 
     this.moveShape(x, y);
 
     for (var key in this.edgeList) {
       if (this.getEdgeCount() == 1) {
-        this.edgeList[key].reposition(x, y, 0, this.widthAdjust[Math.ceil(midPoint)], this.widthAdjust[Math.floor(midPoint) - 1], orientation);
+        this.edgeList[key].reposition(x, y, 0, 0, 0, orientation);
 
         continue;
       }

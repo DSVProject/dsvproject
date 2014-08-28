@@ -304,7 +304,7 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
   /**
     * Update the coordinates of this path, based on the movement of the objects it is binded to.
     */
-  this.calculatePath = function () {
+  this.calculatePath = function (isClone) {
     var point;
     
     try {
@@ -315,31 +315,33 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
         this.propObj.edge.x2 = this.coreObj.objectList[this.propObj.idObjectB].getEdgeCoordinateX(this.getInboundPoint());
         this.propObj.edge.y2 = this.coreObj.objectList[this.propObj.idObjectB].getEdgeCoordinateY(this.getInboundPoint());
       } else {
-        point = this.getOutboundPoint();
+        if (!isClone) {
+          point = this.getOutboundPoint();
 
-        if (point == EDGE_POSITION.CENTER) {
-          if (this.propObj.edge.x2 == null) this.propObj.edge.x2 = this.propObj.edge.x1;
-          this.propObj.edge.y2 = this.propObj.edge.y1 + 45;
-        } else if (point == EDGE_POSITION.BOTTOM) {
-          if (this.propObj.edge.x2 == null) this.propObj.edge.x2 = this.propObj.edge.x1;
-          this.propObj.edge.y2 = this.propObj.edge.y1 + 25;
-        } else if (point == EDGE_POSITION.RIGHT) {
-          this.propObj.edge.x2 = this.propObj.edge.x1 + 25;
-          this.propObj.edge.y2 = this.propObj.edge.y1;
-        } else if (point == EDGE_POSITION.TOP) {
-          this.propObj.edge.x2 = this.propObj.edge.x1;
-          this.propObj.edge.y2 = this.propObj.edge.y1 - 25;
-        } else if (point == EDGE_POSITION.LEFT) {
-          this.propObj.edge.x2 = this.propObj.edge.x1 - 25;
-          this.propObj.edge.y2 = this.propObj.edge.y1;
+          if (point == EDGE_POSITION.CENTER) {
+            this.propObj.edge.x2 = this.propObj.edge.x1;
+            this.propObj.edge.y2 = this.propObj.edge.y1 + 45;
+          } else if (point == EDGE_POSITION.BOTTOM) {
+            this.propObj.edge.x2 = this.propObj.edge.x1;
+            this.propObj.edge.y2 = this.propObj.edge.y1 + 25;
+          } else if (point == EDGE_POSITION.RIGHT) {
+            this.propObj.edge.x2 = this.propObj.edge.x1 + 25;
+            this.propObj.edge.y2 = this.propObj.edge.y1;
+          } else if (point == EDGE_POSITION.TOP) {
+            this.propObj.edge.x2 = this.propObj.edge.x1;
+            this.propObj.edge.y2 = this.propObj.edge.y1 - 25;
+          } else if (point == EDGE_POSITION.LEFT) {
+            this.propObj.edge.x2 = this.propObj.edge.x1 - 25;
+            this.propObj.edge.y2 = this.propObj.edge.y1;
+          }
         }
       }
     } catch (err) {}
   }
   
   this.reposition = function (x, y, side, adjustLeft, adjustRight, orientation) {
-    var edgeX;
-    var edgeY;
+    var edgeX = this.propObj.edge.x2;
+    var edgeY = this.propObj.edge.y2;
     
     if (orientation == ORIENTATION.TOP) {
       if (side == -1) {
@@ -379,11 +381,11 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
       x = x + SHAPE_POSITION.DISTANCE;
     }
 
-    this.propObj.edge.x2 = edgeX;
-    this.propObj.edge.y2 = edgeY;
-    
     if (this.propObj.idObjectB != null) {
       this.coreObj.objectList[this.propObj.idObjectB].reposition(x, y, side, orientation);
+    } else {
+      this.propObj.edge.x2 = edgeX;
+      this.propObj.edge.y2 = edgeY;
     }
   }
   
@@ -451,7 +453,7 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
     */
   this.cloneProperties = function (prop) {
     this.propObj = clone(prop);
-    this.calculatePath();
+    this.calculatePath(true);
   }
   
   /**

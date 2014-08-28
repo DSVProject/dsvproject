@@ -417,45 +417,43 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
   this.reposition = function(x, y, side, orientation) {
     var counter = 0;
     var midPoint = this.getEdgeCount()/2;
+    var leftAdjust = this.widthAdjust[Math.ceil(midPoint)];
+    var rightAdjust = this.widthAdjust[Math.floor(midPoint) - 1];
 
     if (x == null) x = this.propObj.shape.x;
     if (y == null) y = this.propObj.shape.y;
 
     if (orientation == ORIENTATION.TOP) {
       if (side == -1) {
-        x = x - this.widthAdjust[Math.ceil(midPoint)];
+        x = x - leftAdjust;
       } else if (side == 1) {
-        x = x + this.widthAdjust[Math.floor(midPoint) - 1];
+        x = x + rightAdjust;
       }
-      //y = y - SHAPE_POSITION.DISTANCE;
     } else if (orientation == ORIENTATION.LEFT) {
       if (side == -1) {
-        y = y - this.widthAdjust[Math.ceil(midPoint)];
+        y = y - leftAdjust;
       } else if (side == 1) {
-        y = y + this.widthAdjust[Math.floor(midPoint) - 1];
+        y = y + rightAdjust;
       }
-      //x = x - SHAPE_POSITION.DISTANCE;
     } else if (orientation == ORIENTATION.BOTTOM) {
       if (side == -1) {
-        x = x - this.widthAdjust[Math.ceil(midPoint)];
+        x = x - leftAdjust;
       } else if (side == 1) {
-        x = x + this.widthAdjust[Math.floor(midPoint) - 1];
+        x = x + rightAdjust;
       }
-      //y = y + SHAPE_POSITION.DISTANCE;
     } else if (orientation == ORIENTATION.RIGHT) {
       if (side == -1) {
-        y = y + this.widthAdjust[Math.ceil(midPoint)];
+        y = y + leftAdjust;
       } else if (side == 1) {
-        y = y - this.widthAdjust[Math.floor(midPoint) - 1];
+        y = y - rightAdjust;
       }
-      //x = x + SHAPE_POSITION.DISTANCE;
     }
 
     this.moveShape(x, y);
 
     for (var key in this.edgeList) {
       if (this.getEdgeCount() == 1) {
-        this.edgeList[key].reposition(x, y, 0, this.widthAdjust[Math.ceil(midPoint)], this.widthAdjust[Math.floor(midPoint) - 1], orientation);
+        this.edgeList[key].reposition(x, y, 0, 0, 0, orientation);
 
         continue;
       }
@@ -478,15 +476,15 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
   this.draw = function (duration) {
     if(duration == null || isNaN(duration) || duration < 0) duration = DEFAULT_ANIMATION_DURATION;
     
-    var json = [];
-    json.push(this.propObj);
+    this.json = [];
+    this.json.push(this.propObj);
   
-    var shape = d3.select("#" + DEFAULT_IDS.SVG_GROUP.SHAPE).selectAll(SVG_RECT)
-        .data(json, function (d) {return d.id;});
+    this.shape = d3.select("#" + DEFAULT_IDS.SVG_GROUP.SHAPE).selectAll(SVG_RECT)
+        .data(this.json, function (d) {return d.id;});
       
-    shape.enter().append(SVG_RECT)        
+    this.shape.enter().append(SVG_RECT)        
         .attr("id", function (d) {return DEFAULT_IDS.SVG_ELEMENT.SHAPE + d.id;});
-    shape.transition()
+    this.shape.transition()
         .duration(duration)
         .attr("class", function (d) {return d.shape.class})
         .attr("x", function (d) {return d.shape.x;})
@@ -498,12 +496,12 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
         .attr("stroke", function (d) {return d.shape.stroke;})
         .attr("stroke-width", function (d) {return d.shape.strokeWidth;});
     
-    var text = d3.select("#" + DEFAULT_IDS.SVG_GROUP.TEXT).selectAll(SVG_TEXT)
-        .data(json, function (d) {return d.id;});
+    this.text = d3.select("#" + DEFAULT_IDS.SVG_GROUP.TEXT).selectAll(SVG_TEXT)
+        .data(this.json, function (d) {return d.id;});
         
-    text.enter().append(SVG_TEXT)
+    this.text.enter().append(SVG_TEXT)
         .attr("id", function (d) {return DEFAULT_IDS.SVG_ELEMENT.TEXT + d.id; });
-    text.transition()
+    this.text.transition()
         .duration(duration)
         .attr("class", function (d) {return d.text.class})
         .attr("x", function (d) {return d.text.x;})
@@ -515,12 +513,12 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
         .attr("text-anchor", function (d) {return d.text.textAnchor;})
         .text(function (d) {return d.text.text;});
     
-    var label = d3.select("#" + DEFAULT_IDS.SVG_GROUP.LABEL).selectAll(SVG_TEXT)
-        .data(json, function (d) {return d.id;});
+    this.label = d3.select("#" + DEFAULT_IDS.SVG_GROUP.LABEL).selectAll(SVG_TEXT)
+        .data(this.json, function (d) {return d.id;});
         
-    label.enter().append(SVG_TEXT)
+    this.label.enter().append(SVG_TEXT)
         .attr("id", function (d) {return DEFAULT_IDS.SVG_ELEMENT.LABEL + d.id;})
-    label.transition()
+    this.label.transition()
         .duration(duration)
         .attr("class", function (d) {return d.label.class;})
         .attr("x", function (d) {return d.label.x;})
@@ -628,9 +626,13 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
         .attr("r", 10)
         .on("click", function (d) {
           var activeObject = self.coreObj.getActiveUserObject();
-          var activeObjectText = activeObject.getText();
           
           if (activeObject.getType() == USER_OBJ_TYPE.VALUE) {
+            var activeObjectText = activeObject.getText();
+            
+            self.coreObj.saveLearnUserAction(LEARN_ACTION_CODES.UPDATE_TEXT, self.propObj.id, activeObjectText);
+            
+            /*
             if (allowSwap == true) {
               activeObject.setText(self.propObj.text.text);
               activeObject.redraw();
@@ -638,7 +640,11 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
             
             self.propObj.text.text = activeObjectText;
             self.draw();
-          } else if (activeObject.getType() == USER_OBJ_TYPE.MOVEMENT) {
+            */
+          } else if (activeObject.getType() == USER_OBJ_TYPE.EDGE) {
+            self.coreObj.saveLearnUserAction(activeObject.getBindedAction(), activeObject.getBindedObjID(), self.propObj.id);
+            
+            /*
             var edge = self.coreObj.getUserObjectBindedItem(activeObject.getBindedObjID());
             
             edge.setIdObjectB(self.propObj.id);
@@ -655,6 +661,7 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
             
             activeObject.moveShape(edge.getCoordinateX2(), edge.getCoordinateY2());
             activeObject.redraw();
+            */
           }
           
           self.coreObj.setActiveUserObject();

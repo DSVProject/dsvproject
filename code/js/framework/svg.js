@@ -36,7 +36,7 @@ var w = window,
   */
 var svgContainer = d3.select("#viz").append("svg")
     .attr("width", x * 0.9)
-    .attr("height", y * 0.75)
+    .attr("height", y * 0.70)
     .attr("pointer-events", "all")
     .call(zoom.on("zoom", rescale))
     .on("dblclick.zoom", null)

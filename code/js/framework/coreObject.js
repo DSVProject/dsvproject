@@ -57,6 +57,9 @@ var CoreObject = function () {
   this.variableWatchList = [];
   this.logList = [];
   
+  this.learnUserActionList = [];
+  this.learnAnswerKeyList = [];
+  
   /**
     * Verify if the Learning Mode is active.
     *
@@ -88,8 +91,8 @@ var CoreObject = function () {
     *
     * @param {!String} message: the message to be displayed inside the alert.
     */
-  this.displayAlert = function (message) {
-    $('#' + DEFAULT_IDS.PAGE.ALERT_PLACEHOLDER).html('<div class="alert alert-danger alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>' + message + '</div>')
+  this.displayAlert = function (type, message) {
+    $('#' + DEFAULT_IDS.PAGE.ALERT_PLACEHOLDER).html('<div class="alert alert-' + type + ' alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>' + message + '</div>')
   }
   
   /**
@@ -216,6 +219,42 @@ var CoreObject = function () {
     $('#restart-btn').toggleDisabled();
     $('#cancel-btn').toggleDisabled();
     $('#div-media-buttons :input').toggleDisabled();
+  }
+  
+  this.saveLearnUserAction = function (type, affectedObject, newValue) {
+    var action = {
+      type: type,
+      affectedObject: affectedObject,
+      newValue: newValue
+    };
+    this.learnUserActionList.push(action);
+    this.printLearnUserAction(this.learnUserActionList);
+  }
+  
+  /**
+    * Print all saved messages to the log panel.
+    *
+    * @param {Array} logObj : the value of this.logList;
+    */
+  this.printLearnUserAction = function (learnUserActionList) {
+    var varLines = d3.select("#" + DEFAULT_IDS.PAGE.LOG).selectAll("tr")
+        .data(learnUserActionList);
+    
+    varLines.enter()
+        .append("tr")
+        .append("td");
+    
+    varLines.transition()
+        .text(function (d) {return d.type + " " + d.affectedObject;});
+  }
+  
+  this.saveLearnAnswerKey = function (type, callerID, affectedObject) {
+    var key = {
+      type: type,
+      callerID: callerID,
+      affectedObject: affectedObject
+    };
+    this.learnAnswerKeyList.push(key);
   }
   
   // ANIMATION METHODS
@@ -496,9 +535,9 @@ var CoreObject = function () {
   this.addPseudocodeLine = function (id, instruction) {
     d3.select("#" + DEFAULT_IDS.PAGE.PSEUDOCODE)
         .append("tr")
-        .attr("id", DEFAULT_IDS.HTML_ELEMENT.PSEUDOCODE_LINE + id)
+        .attr("id", DEFAULT_IDS.HTML_ELEMENT.PSEUDOCODE_LINE + id)  
         .append("td")
-        .text(instruction);
+        .html(instruction);
   }
   
   /**
@@ -527,19 +566,28 @@ var CoreObject = function () {
   }
   
   this.reposition = function (obj, x, y, orientation) {
-    var startingPoint = x;
+    var startingX = x;
+    var startingY = y;
 
     self.repositionWidths(obj);
 
     var edgeCount = obj.getEdgeCount();
 
-    if (obj.widthAdjust[Math.floor(edgeCount/2) - 1] > startingPoint) {
-      startingPoint = obj.widthAdjust[Math.floor(edgeCount/2) - 1]; 
-    } else if (obj.widthAdjust[Math.ceil(edgeCount/2)] > startingPoint) {
-      startingPoint = Math.max(obj.widthAdjust[Math.floor(edgeCount/2) - 1], 2 * startingPoint - obj.widthAdjust[Math.ceil(edgeCount/2)]);
+    if (orientation == ORIENTATION.BOTTOM || orientation == ORIENTATION.TOP) {
+      if (obj.widthAdjust[Math.floor(edgeCount/2) - 1] > startingX) {
+        startingX = obj.widthAdjust[Math.floor(edgeCount/2) - 1]; 
+      } else if (obj.widthAdjust[Math.ceil(edgeCount/2)] > startingX) {
+        startingX = Math.max(obj.widthAdjust[Math.floor(edgeCount/2) - 1], 2 * startingPoint - obj.widthAdjust[Math.ceil(edgeCount/2)]);
+      }
+    } else if (orientation == ORIENTATION.RIGHT || orientation == ORIENTATION.LEFT){
+      if (obj.widthAdjust[Math.floor(edgeCount/2) - 1] > startingY) {
+        startingY = obj.widthAdjust[Math.floor(edgeCount/2) - 1]; 
+      } else if (obj.widthAdjust[Math.ceil(edgeCount/2)] > startingY) {
+        startingY = Math.max(obj.widthAdjust[Math.floor(edgeCount/2) - 1], 2 * startingPoint - obj.widthAdjust[Math.ceil(edgeCount/2)]);
+      }
     }
-
-    obj.reposition(startingPoint, y, 0, orientation);
+    
+    obj.reposition(startingX, startingY, 0, orientation);
   }
 
   this.repositionWidths = function (obj) {
@@ -633,13 +681,13 @@ var CoreObject = function () {
     *
     * @return {userObject} : the new object.
     */
-  this.newUserObject = function (id, cx, cy, radius, text, shapeClass, textClass, type, allowSwap, bindedObjID, updateShapeValue, updateTextSource) {
+  this.newUserObject = function (id, cx, cy, radius, text, shapeClass, textClass, type, bindedObjID, bindedAction) {
     if (this.objectList[id] != null) {
       throw new Error("This id is already in use by another object.");
       return;
     }
     
-    this.objectList[id] = new UserObject(this, id, cx, cy, radius, text, shapeClass, textClass, type, allowSwap, bindedObjID, updateShapeValue, updateTextSource);
+    this.objectList[id] = new UserObject(this, id, cx, cy, radius, text, shapeClass, textClass, type, bindedObjID, bindedAction);
     
     return this.objectList[id];
   }
