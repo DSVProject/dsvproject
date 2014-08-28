@@ -1,0 +1,29 @@
+.header {
+  position: relative;
+  padding: 40px 0;
+  text-align: center;
+  /*text-shadow: 0 1px 3px rgba(0,0,0,.4), 0 0 30px rgba(0,0,0,.075);*/
+  background-size: 150px 150px;
+  background: #16a085;
+}
+
+.header h1 {
+  font-size:5em;
+  padding: 10px;
+}
+
+.nav-list > .active > a {
+  background-color:#9b59b6;
+}
+.nav-list > .active > a:hover {
+  background-color:#874d9f;
+}
+
+a {
+  color:#9b59b6;
+}
+
+secton > h1,h2,h3,h4 {
+  color:#5a5a5a;
+  color:rgba(0,0,0,0.5);
+}

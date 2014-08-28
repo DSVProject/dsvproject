@@ -38,12 +38,12 @@ var StackLinkedList = function () {
   const PUSH = 0,
         POP = 1;
 
-  var top = null;
+  var head = null;
   var N = 0;
   var counterID = 0;
   
-  var topD = coreObj.newSquareObject("top", 50, 200, "Top", null, null, null, "pointer");
-  var edgeTopD = coreObj.newEdgeObject("top", topD.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.RIGHT, EDGE_POSITION.LEFT);
+  var headD = coreObj.newSquareObject("head", 50, 200, "Head", null, null, null, "pointer");
+  var edgeHeadD = coreObj.newEdgeObject("head", headD.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.RIGHT, EDGE_POSITION.LEFT);
 
   coreObj.newStateList();
   
@@ -60,12 +60,12 @@ var StackLinkedList = function () {
     switch (command) {
         case PUSH:
           coreObj.addPseudocodeLine(0, "Node temp = value;");
-          coreObj.addPseudocodeLine(1, "top = temp;");
-          coreObj.addPseudocodeLine(2, "top.next = oldtop;");
+          coreObj.addPseudocodeLine(1, "head = temp;");
+          coreObj.addPseudocodeLine(2, "head.next = oldhead;");
           break;
         case POP:
-          coreObj.addPseudocodeLine(0, "top = top.next;");
-          coreObj.addPseudocodeLine(1, "if (isEmpty()) top = null;");
+          coreObj.addPseudocodeLine(0, "head = head.next;");
+          coreObj.addPseudocodeLine(1, "if (isEmpty()) head = null;");
           break;
     }
   }
@@ -73,11 +73,11 @@ var StackLinkedList = function () {
   this.init = function () {
     coreObj.newStateList();
     
-    top = null;
+    head = null;
     N = 0;
     counterID = 0;
 
-    edgeTopD.setIdObjectB(null);
+    edgeHeadD.setIdObjectB(null);
     
     coreObj.removeAll("node");
     
@@ -85,7 +85,7 @@ var StackLinkedList = function () {
     coreObj.begin();
   }
 
-  this.isEmpty = function () { return top == null; }
+  this.isEmpty = function () { return head == null; }
   
   this.size = function () { return N; }
           
@@ -97,25 +97,25 @@ var StackLinkedList = function () {
 
     this.generatePseudocode(PUSH);
 
-    var oldtop = top;
+    var oldhead = head;
 
-    top = new Node();
-    top.item = item;
-    top.next = oldtop;
-    top.drawing = coreObj.newSquareObject(++counterID, 150, 200, item, null, "node", null, null);
-	top.edge = coreObj.newEdgeObject(counterID, top.drawing.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.BOTTOM, EDGE_POSITION.TOP);
+    head = new Node();
+    head.item = item;
+    head.next = oldhead;
+    head.drawing = coreObj.newSquareObject(++counterID, 150, 200, item, null, "node", null, null);
+	head.edge = coreObj.newEdgeObject(counterID, head.drawing.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.BOTTOM, EDGE_POSITION.TOP);
 
     coreObj.saveState("Inserting new node.", 0);
 
-    edgeTopD.setIdObjectB(top.drawing.getID());
+    edgeHeadD.setIdObjectB(head.drawing.getID());
 
-    coreObj.saveState("Update the top pointer.", 1);
+    coreObj.saveState("Update the head pointer.", 1);
     
-    if (oldtop == null) coreObj.reposition(top.drawing, 250, 100, ORIENTATION.BOTTOM);
+    if (oldhead == null) coreObj.reposition(head.drawing, 250, 100, ORIENTATION.BOTTOM);
     /*
-    top.drawing.moveShape(250, 100);
+    head.drawing.moveShape(250, 100);
     
-    var iterator = oldtop;
+    var iterator = oldhead;
     
     while(iterator != null) {
       iterator.drawing.moveShape(iterator.drawing.getCoordinateX(), iterator.drawing.getCoordinateY()+100);
@@ -126,11 +126,11 @@ var StackLinkedList = function () {
     
     coreObj.saveState();
 
-    if (oldtop != null) {
-      top.edge.setIdObjectB(oldtop.drawing.getID());
-      coreObj.reposition(top.drawing, 250, 100, ORIENTATION.BOTTOM);
+    if (oldhead != null) {
+      head.edge.setIdObjectB(oldhead.drawing.getID());
+      coreObj.reposition(head.drawing, 250, 100, ORIENTATION.BOTTOM);
       
-      oldtop.drawing.setLabel();
+      oldhead.drawing.setLabel();
       
       coreObj.saveState("Update the pointer of the previous node.", 2);
     }
@@ -147,20 +147,20 @@ var StackLinkedList = function () {
     
     this.generatePseudocode(POP);
     
-    var item = top.item;
+    var item = head.item;
     
-    coreObj.removeShape(top.drawing.getID());
+    coreObj.removeShape(head.drawing.getID());
     coreObj.saveState();
 
-    top = top.next;
+    head = head.next;
     
-    if (top != null){
-      edgeTopD.setIdObjectB(top.drawing.getID());
-      coreObj.reposition(top.drawing, 250, 100, ORIENTATION.BOTTOM);
-      coreObj.saveState("Pop the top position.", 0);
+    if (head != null){
+      edgeHeadD.setIdObjectB(head.drawing.getID());
+      coreObj.reposition(head.drawing, 250, 100, ORIENTATION.BOTTOM);
+      coreObj.saveState("Pop the head position.", 0);
     }
     /*
-    var iterator = top;
+    var iterator = head;
     
     while(iterator != null) {
       iterator.drawing.moveShape(iterator.drawing.getCoordinateX(), iterator.drawing.getCoordinateY()-100);
@@ -171,10 +171,10 @@ var StackLinkedList = function () {
     coreObj.saveState();
     */
     if (this.isEmpty()){
-      top = null;
+      head = null;
       
-      edgeTopD.setIdObjectB(null);
-      coreObj.saveState("Update the top pointer.", 1);
+      edgeHeadD.setIdObjectB(null);
+      coreObj.saveState("Update the head pointer.", 1);
     }
     
     N--;

@@ -89,6 +89,9 @@ var BinarySearchTree = function () {
     this.root = this.insertTreeWithRoot(this.root, newKey);
     coreObj.reposition(this.root.drawing, 300, 100, ORIENTATION.BOTTOM);
     coreObj.saveState();
+    
+    coreObj.clearCustomClasses();
+    coreObj.saveState();
     coreObj.begin();
   }
   
@@ -109,13 +112,20 @@ var BinarySearchTree = function () {
       
       return newNode;
     } else { 	// rootNode contains data
+      rootNode.drawing.setShapeClass("traversed");
+      coreObj.saveState();
+      
       // we need to insert the new key/value in one of the left/right subtrees
       var cmp = newKey.localeCompare(rootNode.key);
       
       if (cmp < 0) { // newKey < rootNode.data -> we need to insert to the left subtree
+        rootNode.leftEdge.setEdgeClass("traversed");
+        
         rootNode.left = this.insertTreeWithRoot(rootNode.left, newKey);
         rootNode.leftEdge.setIdObjectB(rootNode.left.drawing.getID());
       } else if (cmp > 0) { // newKey > rootNode.data -> we need to insert to the right subtree
+        rootNode.rightEdge.setEdgeClass("traversed");
+        
         rootNode.right = this.insertTreeWithRoot(rootNode.right, newKey);
         rootNode.rightEdge.setIdObjectB(rootNode.right.drawing.getID());
       } else { 	// cmp == 0

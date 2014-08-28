@@ -12,6 +12,9 @@
     <link href="css/bootstrap-responsive.css" rel="stylesheet">
     <link href="css/docs.css" rel="stylesheet">
     <link href="css/prettify.css" rel="stylesheet">
+    
+    <!-- Any customisations must be done in this file -->
+    <link href="css/userGuide.css" rel="stylesheet">
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -20,9 +23,9 @@
   </head>
 
   <body data-spy="scroll" data-target=".bs-docs-sidebar">
-    <header class="jumbotron" id="overview">
+    <header class="header" id="overview">
       <div class="container">
-        <h1>Getting started</h1>
+        <h1>Getting started with DSVProject</h1>
         <p class="lead">Overview of the framework, its contents, and how to get started with it.</p>
     </header>
     <div class="container">
@@ -31,23 +34,26 @@
       <div class="row">
         <div class="span3 bs-docs-sidebar">
           <ul class="nav nav-list bs-docs-sidenav">
-            <li><a href="#the-framework"><i class="icon-chevron-right"></i> The Framework</a></li>
+            <li><a href="#the-framework">The Framework</a></li>
             
-            <li><a href="#the-basic-items"><i class="icon-chevron-right"></i> The Basic Items</a></li>
-            <li><a href="#square-object"><i class="icon-chevron-right"></i> &nbsp;&nbsp; Square Object</a></li>
-            <li><a href="#circle-object"><i class="icon-chevron-right"></i> &nbsp;&nbsp; Circle Object</a></li>
-            <li><a href="#edge-object"><i class="icon-chevron-right"></i> &nbsp;&nbsp; Edge Object</a></li>
-            <li><a href="#user-object"><i class="icon-chevron-right"></i> &nbsp;&nbsp; User Object</a></li>
-            <li><a href="#core-object"><i class="icon-chevron-right"></i> &nbsp;&nbsp; Managing All This: Core Object</a></li>
-            <li><a href="#constant-js"><i class="icon-chevron-right"></i> &nbsp;&nbsp; An Important File: Constant.js</a></li>
+            <li><a href="#architecture">Architecture</a></li>
             
-            <li><a href="#new-visualisation"><i class="icon-chevron-right"></i> Creating a New Visualisation</a></li>
-            <li><a href="#two-files"><i class="icon-chevron-right"></i> &nbsp;&nbsp; The Two Files</a></li>
-            <li><a href="#custom-items"><i class="icon-chevron-right"></i> &nbsp;&nbsp; Custom Items</a></li>
+            <li><a href="#basic-items">Basic Items</a></li>
+            <li><a href="#square-object">&nbsp;&nbsp; Square Object</a></li>
+            <li><a href="#circle-object">&nbsp;&nbsp; Circle Object</a></li>
+            <li><a href="#edge-object">&nbsp;&nbsp; Edge Object</a></li>
+            <li><a href="#user-object">&nbsp;&nbsp; User Object</a></li>
+            <li><a href="#core-object">&nbsp;&nbsp; Core Object</a></li>
+            <li><a href="#constant-js">&nbsp;&nbsp; Constant.js</a></li>
             
-            <li><a href="#learning-mode"><i class="icon-chevron-right"></i> Learning Mode</a></li>
-            <li><a href="#valid-target"><i class="icon-chevron-right"></i> &nbsp;&nbsp; User Shape and Valid Targets</a></li>
-            <li><a href="#place-holder"><i class="icon-chevron-right"></i> &nbsp;&nbsp; Place Holders</a></li>
+            <li><a href="#new-visualisation">Creating a New Visualisation</a></li>
+            <li><a href="#brackets">&nbsp;&nbsp; Dev Tool: Brackets</a></li>
+            <li><a href="#two-files">&nbsp;&nbsp; The Two Files</a></li>
+            <li><a href="#custom-items">&nbsp;&nbsp; Custom Items</a></li>
+            
+            <li><a href="#learning-mode">Learning Mode</a></li>
+            <li><a href="#valid-target">&nbsp;&nbsp; User Shape and Valid Targets</a></li>
+            <li><a href="#place-holder">&nbsp;&nbsp; Place Holders</a></li>
           </ul>
         </div>
         <div class="span9">
@@ -62,18 +68,28 @@
             <p>In this user guide we'll begin by studying each class and then we will proceed to learn how to use them to create a visualisation.</p>
             <p>The classes provided were designed to control the graphic part of the visualisation, and should be integrated with the algorithms of each data structure.</p>
             
-            <h2>1.1. File Structure</h2>
+            <h2>1.1. Cloning the repository</h2>
+            <p>In this project we decided to use GitHub for source code control, which means that if you want to contribute you should be familiar with it. If you're not we recommend <strong><a href="http://rogerdudler.github.io/git-guide/" alt="">this tutorial</a></strong>. It goes straight to the point without any complications.</p>
+            <p>If you're already familiar with git, all you have to do is checkout the project repository by running the terminal command:</p>
+<pre>
+git clone https://github.com/DSVProject/dsvproject.git
+</pre>
+            <p>If you're not confortable with terminal, github offers clients for all Operating Systems.</p>
+            <img src="img/git.png" alt="">
+            
+            <h2>1.2. File Structure</h2>
             <p>You've cloned the project to your computer and now what? Let's understand how the framework directories are organised:</p>
-<pre class="prettyprint">
+<pre>
 DSVProject/
 ├── code/
 │   ├── bootstrap/
 │   ├── d3/
 │   ├── js/
 │   │   ├── util.js
+│   │   ├── third-party/
 │   │   ├── algorithms/
 │   │   │   ├── template.js
-│   │   │   ├── visualisation JS files
+│   │   │   └── visualisation JS files
 │   │   ├── framework/
 │   │   │   ├── coreObject.js
 │   │   │   ├── squareObject.js
@@ -81,25 +97,23 @@ DSVProject/
 │   │   │   ├── edgeObject.js
 │   │   │   ├── userObject.js
 │   │   │   ├── svg.js
-│   │   │   ├── constant.js
-│   │   ├── custom/
-│   │   │   ├── Custom shapes and sets of shapes JS files
-│   │   ├── Other JS files
-│   ├── bootstrap/
+│   │   │   └── constant.js
+│   │   └── custom/
+│   │       └── Custom shapes and sets of shapes JS files
 │   ├── css/
 │   │   ├── animation.css
 │   │   ├── template.css
-│   │   ├── Other CSS files
-│   ├── index.html
+│   │   └── Other CSS files
 │   ├── template.html
-│   ├── Visualisatons HTML files
+│   └── Visualisatons HTML files
 ├── documentation/
 │   ├── userGuide/
 │   │   ├── css/
 │   │   ├── js/
 │   │   ├── img/
-│   │   ├── userGuide.html
-│   ├── .doc files
+│   │   └── userGuide.html
+│   └── .doc files
+├── index.html
 └── readme
 </pre>
             <p>Although it might look complex there are only 3 folders that you should worry about:</p>
@@ -111,27 +125,41 @@ DSVProject/
             </ul>
             
             <p>The .css file that controls the styling of the shapes if called <strong>animation.css</strong>.</p>
-            <p>The main website and the visualisation pages were built using <a href="http://getbootstrap.com">Boostrap</a>. The .css file that control the styling of the pages is called <strong>template.css</strong>, and the javascript functions related to the page behaviour are located inside <strong>util.js</strong>.</p>
+            <p>The main website and the visualisation pages were built using <strong><a href="http://getbootstrap.com">Boostrap</a></strong>. The .css file that control the styling of the pages is called <strong>template.css</strong>, and the javascript functions related to the page behaviour are located inside <strong>util.js</strong>.</p>
+            
+          </section>
+          
+          <!-- The Architecture
+          ================================================== -->
+          <section id="architecture">
+            <div class="page-header">
+              <h1>2. Architecture</h1>
+            </div>
+            <p>The files used to develop a visualisation can be divided mainly into 2 layers: <strong>data</strong> and <strong>graphics</strong>. First let's take a look at the big picture:</p>
+            <img src="img/architecture.svg" alt="">
+            
+            <p>Now let's understand what's going on in there. On top of everything we have the .html file which is going to be the page of our data structure visualisation. This file will interact with our <strong>data</strong> layer, that contains the algorithms of this data structure, in a javascript file. With the algorithms ready it's time to make them turn into <strong>graphics</strong>, what brings us to the next layer.</p>
+            <p>In your data structure javascript file you're going to need an instance of CoreObject.js, which is the main class of the graphic layer. It is responsible for the management and control of all graphical classes and animations. When creating a circle, or square, you'll do this through the core, that will store this object for you, but all the details of this are going to be clarified in the next sections of this guide.</p>
             
           </section>
           
           <!-- The Basic Items
           ================================================== -->
-          <section id="the-basic-items">
+          <section id="basic-items">
             <div class="page-header">
-              <h1>2. The Basic Items</h1>
+              <h1>3. Basic Items</h1>
             </div>
             <p>All visualisations will be built using instances of these items. For example, an array will be a combination of Squares positioned side by side, while a node will be a combination of a Square with an Edge. For this reason let's take a look on each of them to understand how they're meant to be used.</p>
           </section>
           
           <!-- SquareObject -->
           <section id="square-object">
-            <h2>2.1. Square Object</h2>
+            <h2>3.1. Square Object</h2>
             <p>The square is one of the basic shapes and here's how it will look on the screen:</p>
             <img src="img/squareObject.png" alt="">
             <p>As you noticed by the annotations on the image this object is composed of 3 elements: a shape, an inner text and a label (the last two being optional) but we'll get into this a little ahead.</p>
             
-            <h3>2.1.1. Constructor and Parameters</h3>
+            <h3>3.1.1. Constructor and Parameters</h3>
             <p>The class is called SquareObject, and to create an instance of a class in javascript all you have to do is the same that you would do in any other OO language:</p>
 <pre class="prettyprint linenums">
 var newObj = new SquareObject(coreObj, id, x, y, text, label, shapeClass, textClass, labelClass);
@@ -139,7 +167,7 @@ var newObj = new SquareObject(coreObj, id, x, y, text, label, shapeClass, textCl
             <p>Now let's understand all those parameters:</p>
             <ul>
               <li><strong>coreObj:</strong> this parameter is the reference to the instance of CoreObject; as you will see later on, CoreObject is responsible to keep track of all existing objects. With this reference, this object will be able to interact with the others if needed (for example in the Learning Mode).</li>
-              <li><strong>id:</strong> an unique identifier for this instance.</li>
+              <li><strong>id:</strong> an unique text, to be used as a "key" for this instance.</li>
               <li><strong>x:</strong> the x coordinate of this object inside the svg container.</li>
               <li><strong>y:</strong> the y coordinate of this object inside the svg container.</li>
               <li><strong>text:</strong> the inner text of this object (b. on the image above).</li>
@@ -153,16 +181,16 @@ var newObj = new SquareObject(coreObj, id, x, y, text, label, shapeClass, textCl
             <img src="img/squareExample.png" alt="">
             <p>Square 01 is an instance of a SquareObject without a label, while Square 02 has one. All the other Squares have an EdgeObject associated with them, where each instance was created with a different "outgoingPoint" parameter, which means that when the pointer is null (in here indicated by the color red) it will point into a different direction. When leaving from the bottom, if the SquareObject has a label, the Edge will take this into consideration (as seen in Square 08).</p>
             
-            <h3>2.1.2. Fields</h3>
+            <h3>3.1.2. Fields</h3>
             <p>These fields will store all the important data regarding this instance.</p>
             
-            <h4>2.1.2.1. Core</h4>
+            <h4>3.1.2.1. Core</h4>
 <pre class="prettyprint linenums">
 this.coreObj = coreObj;
 </pre>
             <p>Store the reference to coreObj parameter.</p>
             
-            <h4>2.1.2.2. Offset Values</h4>
+            <h4>3.1.2.2. Offset Values</h4>
 <pre class="prettyprint linenums">
 this.textAdjustX = defaultProperties.shape.width / 2;
 this.textAdjustY = defaultProperties.shape.height / 1.75;
@@ -170,7 +198,7 @@ this.labelAdjustY = defaultProperties.shape.height + 30;
 </pre>
             <p>When drawing the properties onto the screen, the inner text and the label may need some positioning adjustments, which will be stored in these.</p>
             
-            <h4>2.1.2.3. Property Map</h4>
+            <h4>3.1.2.3. Property Map</h4>
 <pre class="prettyprint linenums">
 this.propObj = {
   "id": id,
@@ -212,15 +240,19 @@ this.propObj = {
 }
 </pre>
             <p>This is the most important field of this object. It is a property map that will store all the data regarding the shape, the text, the label and other variables used for functionality. When drawing this object on the screen these values will be taken into consideration.</p>
-            <p>But as you might have noticed there's two properties in there that doesn't seem quite like "graphical", and you're right. "toRemove" is a Boolean flag that will signalise if this object shall be deleted when the next drawing occur while "isValidTarget" is used for the Learning Mode. You'll see more about this later on.</p>
+            <p>But as you might have noticed there's two properties in there that doesn't seem quite like "graphical", and you're right. Each one is a boolean flag to control an specific behaviour:</p>
+            <ul>
+              <li><strong>toRemove: </strong> if true, this object will be deleted when the next draw function is called.</li>
+              <li><strong>isValidTarget: </strong> if true, the User Objects will be able to interact with this object.</li>
+            </ul>
             
-            <h4>2.1.2.4. Edges</h4>
+            <h4>3.1.2.4. Edges</h4>
 <pre class="prettyprint linenums">
 this.edgeList = [];
 </pre>
             <p>This is an array that will contain all the instances of EdgeObject that are binded to this object.</p>
             
-            <h3>2.1.3. Methods</h3>
+            <h3>3.1.3. Methods</h3>
             <p>Let's first take a look at all the methods from this class:</p>
 <pre class="prettyprint linenums">
 this.getAttributes = function () {...}
@@ -263,17 +295,17 @@ this.createPlaceHolder = function (allowSwap) {...}
 </pre>
             <p>Most of them are just getters and setters for the property map and when creating your own visualisation they are the only ones you should worry. The other methods are used internally by the framework, so heres a brief explanation on them:</p>
             
-            <h4>2.1.3.1. Add Edge</h4>
+            <h4>3.1.3.1. Add Edge</h4>
             <p>This method will add an instance of EdgeObject to this object edgeList[]. Edges are always stored in the origin object, even if the edge is bidirectional.</p>
             
-            <h4>2.1.3.2. Draw and Remove</h4>
+            <h4>3.1.3.2. Draw and Remove</h4>
             <p>The Draw method will get the data from the property map and bind it to HTML elements created with D3, making them appear on the screen or update the looks of an existing object.</p>
             <p>The Remove method will delete the HTML elements, removing the object from the screen.</p>
             
-            <h4>2.1.3.3. GetEdgeCoordinate</h4>
+            <h4>3.1.3.3. GetEdgeCoordinate</h4>
             <p>An EdgeObject is the representation of the Line SVG element, which goes from point (x1,y1) to point (x2,y2). When getting these coordinates this function will be called, returning them while taking into consideration the properties of this object.</p>
             
-            <h4>2.1.3.4. Cloning</h4>
+            <h4>3.1.3.4. Cloning</h4>
             <p>Cloning objects is very important in the way this framework was designed and this will become clearer after we study the CoreObject. There is one main function that calls two subfunctions: </p>
 <pre class="prettyprint linenums">
 this.cloneObject = function () {
@@ -307,18 +339,18 @@ this.cloneEdges = function (edges) {
             <p>These functions create an exact clone of the current instance, without memory references, what will enable the animation to happen step by step.</p>
             <p>When creating a clone, you have to create a new instance of the current object (SquareObject in this case) and the only parameter required is coreObj. The subfunctions will take care of copying the property map and the edge array.</p>
             
-            <h4>2.1.3.5. Place holders (Learning Mode)</h4>
+            <h4>3.1.3.5. Place holders (Learning Mode)</h4>
             <p>This method is only important when creating a visualisation with Learning Mode enabled. If this object is classified as a valid target for the Learning Mode interaction a place holder will be created with behavourial functions to be called responding to user actions, making changes to this and other object properties.</p>    
           </section>
           
           <!-- CircleObject -->
           <section id="circle-object">
-            <h2>2.2. Circle Object</h2>
+            <h2>3.2. Circle Object</h2>
             <p>The circle is one of the basic shapes and here's how it will look on the screen:</p>
             <img src="img/circleObject.png" alt="">
             <p>As you noticed by the annotations on the image this object is composed of 3 elements: a shape, an inner text and a label (the last two being optional) but we'll get into this a little ahead.</p>
             
-            <h3>2.2.1. Constructor and Parameters</h3>
+            <h3>3.2.1. Constructor and Parameters</h3>
             <p>The class is called CircleObject, and to create an instance of a class in javascript all you have to do is the same that you would do in any other OO language:</p>
 <pre class="prettyprint linenums">
 var newObj = new CircleObject(coreObj, id, cx, cy, radius, text, label, shapeClass, textClass, labelClass);
@@ -326,7 +358,7 @@ var newObj = new CircleObject(coreObj, id, cx, cy, radius, text, label, shapeCla
             <p>Now let's understand all those parameters:</p>
             <ul>
               <li><strong>coreObj:</strong> this parameter is the reference to the instance of CoreObject; as you will see later on, CoreObject is responsible to keep track of all existing objects. With this reference, this object will be able to interact with the others if needed (for example in the Learning Mode).</li>
-              <li><strong>id:</strong> an unique identifier for this instance.</li>
+              <li><strong>id:</strong> an unique text, to be used as a "key" for this instance.</li>
               <li><strong>cx:</strong> the cx coordinate of this object inside the svg container.</li>
               <li><strong>cy:</strong> the cy coordinate of this object inside the svg container.</li>
               <li><strong>radius:</strong> the radius of this object.</li>
@@ -341,23 +373,23 @@ var newObj = new CircleObject(coreObj, id, cx, cy, radius, text, label, shapeCla
             <img src="img/circleExample.png" alt="">
             <p>Circle 01 is an instance of a CircleObject without a label, while Circle 02 have one. All the other Circles have an EdgeObject associated with them, where each instance was created with a different "outgoingPoint" parameter, which means that when the pointer is null (in here indicated by the color red) it will point into a different direction. When leaving from the bottom, if the CircleObject has a label, the Edge will take this into consideration (as seen in Circle 08).</p>
             
-            <h3>2.2.2. Fields</h3>
+            <h3>3.2.2. Fields</h3>
             <p>These fields will store all the important data regarding this instance.</p>
             
-            <h4>2.2.2.1. Core</h4>
+            <h4>3.2.2.1. Core</h4>
 <pre class="prettyprint linenums">
 this.coreObj = coreObj;
 </pre>
             <p>Store the reference to coreObj parameter.</p>
             
-            <h4>2.2.2.2. Offset Values</h4>
+            <h4>3.2.2.2. Offset Values</h4>
 <pre class="prettyprint linenums">
 this.textAdjust = defaultProperties.text["font-size"]/3;
 this.labelAdjust = defaultProperties.shape.radius + 30;
 </pre>
             <p>When drawing the properties onto the screen, the inner text and the label may need some positioning adjustments, which will be stored in these.</p>
             
-            <h4>2.2.2.3. Property Map</h4>
+            <h4>3.2.2.3. Property Map</h4>
 <pre class="prettyprint linenums">
 this.propObj = {
   "id": id,
@@ -398,15 +430,19 @@ this.propObj = {
 }
 </pre>
             <p>This is the most important field of this object. It is a property map that will store all the data regarding the shape, the text, the label and other variables used for functionality. When drawing this object on the screen these values will be taken into consideration.</p>
-            <p>But as you might have noticed there's two properties in there that doesn't seem quite like "graphical", and you're right. "toRemove" is a Boolean flag that will signalise if this object shall be deleted when the next drawing occur while "isValidTarget" is used for the Learning Mode. You'll see more about this later on.</p>
+            <p>But as you might have noticed there's two properties in there that doesn't seem quite like "graphical", and you're right. Each one is a boolean flag to control an specific behaviour:</p>
+            <ul>
+              <li><strong>toRemove: </strong> if true, this object will be deleted when the next draw function is called.</li>
+              <li><strong>isValidTarget: </strong> if true, the User Objects will be able to interact with this object.</li>
+            </ul>
             
-            <h4>2.2.2.4. Edges</h4>
+            <h4>3.2.2.4. Edges</h4>
 <pre class="prettyprint linenums">
 this.edgeList = [];
 </pre>
             <p>This is an array that will contain all the instances of EdgeObject that are binded to this object.</p>
             
-            <h3>2.2.3. Methods</h3>
+            <h3>3.2.3. Methods</h3>
             <p>Let's first take a look at all the methods from this class:</p>
 <pre class="prettyprint linenums">
 this.getAttributes = function () {...}
@@ -447,17 +483,17 @@ this.createPlaceHolder = function (allowSwap) {...}
 </pre>
             <p>Most of them are just getters and setters for the property map and when creating your own visualisation they are the only ones you should worry. The other methods are used internally by the framework, so heres a brief explanation on them:</p>
             
-            <h4>2.2.3.1. Add Edge</h4>
+            <h4>3.2.3.1. Add Edge</h4>
             <p>This method will add an instance of EdgeObject to this object edgeList[]. Edges are always stored in the origin object, even if the edge is bidirectional.</p>
             
-            <h4>2.2.3.2. Draw and Remove</h4>
+            <h4>3.2.3.2. Draw and Remove</h4>
             <p>The Draw method will get the data from the property map and bind it to HTML elements created with D3, making them appear on the screen or update the looks of an existing object.</p>
             <p>The Remove method will delete the HTML elements, removing the object from the screen.</p>
             
-            <h4>2.2.3.3. GetEdgeCoordinate</h4>
+            <h4>3.2.3.3. GetEdgeCoordinate</h4>
             <p>An EdgeObject is the representation of the Line SVG element, which goes from point (x1,y1) to point (x2,y2). When getting these coordinates this function will be called, returning them while taking into consideration the properties of this object.</p>
             
-            <h4>2.2.3.4. Cloning</h4>
+            <h4>3.2.3.4. Cloning</h4>
             <p>Cloning objects is very important in the way this framework was designed and this will become clearer after we study the CoreObject. There is one main function that calls two subfunctions: </p>
 <pre class="prettyprint linenums">
 this.cloneObject = function () {
@@ -491,15 +527,15 @@ this.cloneEdges = function (edges) {
             <p>These functions create an exact clone of the current instance, without memory references, what will enable the animation to happen step by step.</p>
             <p>When creating a clone, you have to create a new instance of the current object (SquareObject in this case) and the only parameter required is coreObj. The subfunctions will take care of copying the property map and the edge array.</p>
             
-            <h4>2.2.3.5. Place holders (Learning Mode)</h4>
+            <h4>3.2.3.5. Place holders (Learning Mode)</h4>
             <p>This method is only important when creating a visualisation with Learning Mode enabled. If this object is classified as a valid target for the Learning Mode interaction a place holder will be created with behavourial functions to be called responding to user actions, making changes to this and other object properties.</p>    
           </section>
           
           <!-- EdgeObject -->
           <section id="edge-object">
-            <h2>2.3. Edge Object</h2>
+            <h2>3.3. Edge Object</h2>
             
-            <p>The edge (in SVG knows as line) is one of the basic elements, used to connect two shapes. It might also have a marker element, in case the edge needs to be directed.</p>
+            <p>The edge (in SVG known as line) is one of the basic elements, used to connect two shapes. It might also have a marker element, in case the edge needs to be directed.</p>
             <img src="img/edgeExample.png" alt="">
             <p>There are three types of edges:</p>
             <ul>
@@ -509,7 +545,7 @@ this.cloneEdges = function (edges) {
             </ul>
             <p>Although and EdgeObject is connecting two shapes it only belongs to the <strong>edgeList[]</strong> as we've mentioned earlier. This happens for two reasons: it makes the management of edges easier for the developer and during the drawing operations it will avoid redundancy.</p>
             
-            <h3>2.3.1. Constructor and Parameters</h3>
+            <h3>3.3.1. Constructor and Parameters</h3>
             <p>The class is called EdgeObject, and to create an instance of a class in javascript all you have to do is the same that you would do in any other OO language:</p>
 <pre class="prettyprint linenums">
 var newObj = new EdgeObject(coreObj, id, idObjectA, idObjectB, edgeClass, edgeType, outboundPoint, inboundPoint, typeObjCreated);
@@ -517,7 +553,7 @@ var newObj = new EdgeObject(coreObj, id, idObjectA, idObjectB, edgeClass, edgeTy
             <p>Now let's understand all those parameters:</p>
             <ul>
               <li><strong>coreObj:</strong> this parameter is the reference to the instance of CoreObject; as you will see later on, CoreObject is responsible to keep track of all existing objects. With this reference, this object will be able to interact with the others if needed (for example in the Learning Mode).</li>
-              <li><strong>id:</strong> an unique identifier for this instance.</li>
+              <li><strong>id:</strong> an unique text, to be used as a "key" for this instance.</li>
               <li><strong>idObjectA:</strong> the id of the origin object.</li>
               <li><strong>idObjectB:</strong> the id of the destination object. If null a small edge will be created following the orientation of the origin point (as seen in the square and circle examples).</li>
               <li><strong>edgeClass:</strong> the CSS class of the line svg element.</li>
@@ -528,16 +564,16 @@ var newObj = new EdgeObject(coreObj, id, idObjectA, idObjectB, edgeClass, edgeTy
             </ul>
             <p>As you will be able to notice in the javadoc, some of this parameters are not obligatory (like idObjectB, class), making it easy to customise an edge. Regarding the class, it is always recommended to send "null" as parameter since all instances will inherit a default class, unless you would like it to have a different look.</p>
             
-            <h3>2.3.2. Fields</h3>
+            <h3>3.3.2. Fields</h3>
             <p>These fields will store all the important data regarding this instance.</p>
             
-            <h4>2.3.2.1. Core</h4>
+            <h4>3.3.2.1. Core</h4>
 <pre class="prettyprint linenums">
 this.coreObj = coreObj;
 </pre>
             <p>Store the reference to coreObj parameter.</p>
             
-            <h4>2.3.2.3. Property Map</h4>
+            <h4>3.3.2.2. Property Map</h4>
 <pre class="prettyprint linenums">
 this.propObj = {
   "id": id,
@@ -573,7 +609,7 @@ this.propObj = {
 </pre>
             <p>This is the most important field of this object. It is a property map that will store all the data regarding the edge and other variables used for functionality. When drawing this object on the screen these values will be taken into consideration.</p>
             
-            <h3>2.3.3. Methods</h3>
+            <h3>3.3.3. Methods</h3>
             <p>Let's first take a look at all the methods from this class:</p>
 <pre class="prettyprint linenums">
 this.getAttributes = function () {...}
@@ -607,17 +643,17 @@ this.createPlaceHolder = function () {...}
 </pre>
             <p>Most of them are just getters and setters for the property map and when creating your own visualisation they are the only ones you should worry. The other methods are used internally by the framework, so heres a brief explanation on them:</p>
             
-            <h4>2.3.3.1. setIdObjectA</h4>
+            <h4>3.3.3.1. setIdObjectA</h4>
             <p>As we've mentioned earlier the instance of this object is added to ObjectA's edgeList[], so when changing this object (in a tree rotation for example) a special function will be called, that will take care of removing the edge from the old object edgeList[] and adding it to the new one.</p>
             
-            <h4>2.3.3.2. Draw and Remove</h4>
+            <h4>3.3.3.2. Draw and Remove</h4>
             <p>The Draw method will get the data from the property map and bind it to HTML elements created with D3, making them appear on the screen or update the looks of an existing object.</p>
             <p>The Remove method will delete the HTML elements, removing the object from the screen.</p>
             
-            <h4>2.2.3.3. calculatePath</h4>
+            <h4>3.3.3.3. calculatePath</h4>
             <p>An EdgeObject is the representation of the Line SVG element, which goes from point (x1,y1) to point (x2,y2). This points are determined by the two objects which this edge is connecting. When this class is instantiated, or any of the two objects is changed, this function will be called getting the coordinates needed.</p>
             
-            <h4>2.2.3.4. Cloning</h4>
+            <h4>3.3.3.4. Cloning</h4>
             <p>Cloning objects is very important in the way this framework was designed and this will become clearer after we study the CoreObject. Here is the cloning function for this object: </p>
 <pre class="prettyprint linenums">
 this.cloneProperties = function (prop) {
@@ -627,29 +663,29 @@ this.cloneProperties = function (prop) {
 </pre>
             <p>Shapes that possesses edges will call this function when cloning their edges. This will return a deep copy of this object properties, without the memory references.</p>
             
-            <h4>2.2.3.5. Place holders (Learning Mode)</h4>
+            <h4>3.3.3.5. Place holders (Learning Mode)</h4>
             <p>This method is only important when creating a visualisation with Learning Mode enabled. If this object is classified as a valid target for the Learning Mode interaction a place holder will be created with behavourial functions to be called responding to user actions, making changes to this and other object properties.</p>   
             
           </section>
           
           <!-- UserObject -->
           <section id="user-object">
-            <h2>2.4. User Object</h2>
+            <h2>3.4. User Object</h2>
           </section>
           
           <!-- CoreObject -->
           <section id="core-object">
-            <h2>2.5. Managing all this: Core Object</h2>
+            <h2>3.5. Managing all this: Core Object</h2>
             <p><strong>CoreObject.js</strong> is the most important file of this framework. It works as an interface between all the other classes and your javascript file containing the data structure's algorithm. In this sections we will study all Core methods and understand when their use.</p>
             
-            <h3>2.5.1. Constructor</h3>
+            <h3>3.5.1. Constructor</h3>
             <p>This class shall be instantiated in any algorithm javascipt file without any parameters, like this:</p>
 <pre class="prettyprint linenums">
 var coreObj = new CoreObject();
 </pre>
             <p>With this instance you'll make use of this class to realise all other graphical changes.</p>
             
-            <h3>2.5.2. Fields</h3>
+            <h3>3.5.2. Fields</h3>
             <p>All fields, except for objectList are for private use. Let's understand each of them:</p>
             <ul>
               <li>
@@ -693,14 +729,14 @@ this.logList = [];
               </li>
             </ul>
             
-            <h3>2.5.3. Validation Methods</h3>
+            <h3>3.5.3. Validation Methods</h3>
             <p>Summary:</p>
 <pre class="prettyprint linenums">
 this.isLearningMode = function () {...}
 this.newActionEnabled = function () {...}
 this.displayAlert = function (message) {...}
 </pre>
-            <h4>2.5.3.1. isLearningMode</h4>
+            <h4>3.5.3.1. isLearningMode</h4>
             <p>This function will return wether the Learning Mode is active or not. In a visualisation where the Learning Mode is implemented, this function shall be called in your algorithm javascript file, when calling the methods and then run the correspondent set of code according to what this function returned.</p>
 <pre class="prettyprint linenums">
 if (coreObj.isLearningMode()){
@@ -710,7 +746,7 @@ if (coreObj.isLearningMode()){
 }
 </pre>
     
-            <h4>2.5.3.2. newActionEnabled</h4>
+            <h4>3.5.3.2. newActionEnabled</h4>
             <p>When using the Learning Mode, the user should complete or cancel the current action before making any further changes. This function shall be called when trying to run any method; it return false if any UserObject exists, and the code should be interrupted, preventing more actions from happening.</p>
 <pre class="prettyprint linenums">
 this.push = function (item) {
@@ -724,7 +760,7 @@ this.push = function (item) {
 }
 </pre>
             
-            <h4>2.5.3.3. displayAlert</h4>
+            <h4>3.5.3.3. displayAlert</h4>
             <p>If some condition was not satisfied and you want to alert the user you should call this function, sending the message as parameter.</p>
 <pre class="prettyprint linenums">
 coreObj.displayAlert("Please finish or cancel the current action before making any further changes.");
@@ -732,8 +768,8 @@ coreObj.displayAlert("Please finish or cancel the current action before making a
             <p>Which will result in (displayed at the top of the screen):</p>
             <img src="img/alert.png" alt ="">
             
-            <h3>2.5.4. Animation Methods</h3>
-            <h4>2.5.4.1. State Methods</h4>
+            <h3>3.5.4. Animation Methods</h3>
+            <h4>3.5.4.1. State Methods</h4>
             <p>To have a step-by-step animation of the algorithms we make use of "states". Just like in state machines, we save the current state of each existing object in a given time, creating a series of snapshots so we can iterate through them later.</p>
             <p>When a visualisation page is called the state list should be initialised, like this:</p>
 <pre class="prettyprint linenums">
@@ -793,7 +829,7 @@ this.enqueue = function (item) {
 </pre>
             <p>To save a state only two things are required, both being optional: a <strong>message</strong> that will be printed on the log panel, and which <strong>pseudocode line</strong> that will be highlighted. <strong>Variables</strong> should be saved separately (as seen in lines 20 and 21), this allows the programmer to save as many variables as he want.</p>
             
-            <h4>2.5.4.2. Control Methods</h4>
+            <h4>3.5.4.2. Control Methods</h4>
             <p>After you've saved all desired states is time to play with them. In order to do this there's only one function that you have to call:</p>
 <pre class="prettyprint">
 coreObj.begin();
@@ -803,7 +839,7 @@ coreObj.begin();
             <p>Functions such as <strong>play</strong>, <strong>pause</strong>, <strong>next</strong>, <strong>previous</strong> are called straight from the HTML file, to iterate through the steps of the animation, and they all will call <strong>draw</strong>, sending the a state to be displayed on the screen.</p>
             <p>All this functions take into consideration the user speed preference, which is accessible with the <strong>getAnimationDuration</strong> function.</p>
             
-            <h4>2.5.4.3. Panel Methods</h4>
+            <h4>3.5.4.3. Panel Methods</h4>
             <p>Here's the list of all the core functions that interact with the panels:</p>
 <pre class="prettyprint linenums">
 this.clearLog = function () {...}
@@ -824,8 +860,8 @@ this.highlightPseudocode = function (lineNumber) {...}
             </ul>
             <p>All other methods are called internaly in the core, so you don't have to worry.</p>
             
-            <h3>2.5.5. Object Constructor Methods</h3>
-            <p>All basic items that we've studied before must be created or deleted using the active instance of CoreObject, which will return the just created instance reference to the algorithm javascript file. This will make it possible for the core to manage and organise all existing objects, making the framework more consistent. With the reference that is returned you will be able to interact with each instance, applying any desired graphic changes.</p>
+            <h3>3.5.5. Factories</h3>
+            <p>All basic items that we've studied before must be created or deleted using the active instance of CoreObject, which will return the just created instance reference to the algorithm javascript file. This is necessary so the core can manage and organise all existing objects, making the framework more consistent, otherwise changes made to the object graphics wouldn't appear on the screen. With the reference that is returned you will be able to interact with each instance, applying any desired graphic changes.</p>
             <p>Here's how these functions look like:</p>
 <pre class="prettyprint linenums">
 /**
@@ -959,10 +995,10 @@ this.removeAll = function (selectedClass, duration) {
             <p>The first one is used to delete a single item, while the second will delete all items that match the provided class (for example deleting all nodes when clearing a linked list visualisation).</p>
             
             <!--
-            <h3>2.5.6. Object Interaction Methods</h3>
+            <h3>3.5.6. Object Interaction Methods</h3>
             <p>There are some methods that are called from the basic shapes to interact with other shapes, but mediated by the core. When creating a new visualisation you don't have to use any of these functions but let's take a look to understand what each of them do:</p>
             
-            <h3>2.5.7. Other Methods</h3>
+            <h3>3.5.7. Other Methods</h3>
             <p>Summary:</p>
 <pre class="prettyprint linenums">
 this.createGroups = function () {...}
@@ -974,7 +1010,7 @@ this.createMarkers = function () {...}
           
           <!-- Constant.js -->
           <section id="constant-js">
-            <h2>2.6. An important file: Constant.js</h2>
+            <h2>3.6. An important file: Constant.js</h2>
             
             <p>To improve code abstraction all default values and constants are defined in one single file. This make doing changes to the code a lot easier as changing the values here will affect all the framework. Normally, a parameter responsible for the aspec of an item will receive a value defined in this file.</p>
             <p>Let's check some important items declared in this file:</p>
@@ -1192,13 +1228,24 @@ const defaultProperties = {
           ================================================== -->
           <section id="new-visualisation">
             <div class="page-header">
-              <h1>3. Creating a New Visualisation</h1>
+              <h1>4. Creating a New Visualisation</h1>
             </div>
             <p>Now that you know all the items of the framework it's time to create your own Data Structure Visualisation.</p>
             <img src="img/dataStructureVisualisation.png" alt="">
             
-            <p>In this section you'll see what you have to do to achieve this. But before we begin we would like to recommend a developing tool: <a href="http://brackets.io/?lang=en">Brackets</a>.</p>
-            <p>Brackets as described in its own website is an open source code editor for web designers and front-end developers. We've used it for the entire development of this tool and found it to be very productive. A few points that we would like to mention:</p>
+            <p>At first, you'll learn how to create a visualisation in <strong>Exploration Mode</strong>, which means users can interact with the data structure using its methods and the step-by-step animations are going to happen in a pre-defined order.</p>
+            <p>In a second moment, you'll learn how to develop a <Strong>Learning Mode</Strong> for your visualisations. In this mode, the user will be prompted to make changes to the graphics, and the animations will only happen as the user command them.</p>
+          </section>
+          
+          <!-- Dev Tool: Brackets
+          ================================================== -->
+          <section id="brackets">
+            <div class="page-header">
+              <h1>4.1. Dev Tool: Brackets</h1>
+            </div>
+
+            <p>Before we begin we would like to recommend a developing tool: <strong><a href="http://brackets.io/?lang=en">Brackets</a></strong>.</p>
+            <p>As described in its own website is an open source code editor for web designers and front-end developers. We've used it for the entire development of this tool and found it to be very productive. A few points that we would like to mention:</p>
             <ul>
               <li><strong>Frequent sprints:</strong> every four weeks or so a new version of the software is released, with new functionalities and improvements.</li>
               <li><strong>Code completion:</strong> not only for html tags, but your file tree. When inserting files this really come in handy.</li>
@@ -1234,10 +1281,10 @@ const defaultProperties = {
           <!-- The Two Files
           ================================================== -->
           <section id="two-files">
-            <h2>3.1. The two files</h2>
+            <h2>4.1. The two files</h2>
             <p>In most cases you will only have to create two files: an <strong>HTML</strong> and a <strong>JavaScript</strong>. This will only be different if you decide to create a custom shape or set of shapes, which will take another <strong>JavaScript</strong> file.</p>
             
-            <h3>3.1.1. HTML</h3>
+            <h3>4.1.1. HTML</h3>
             <p>To create the HTML file of your data structure visualisation the first thing you have to do is to copy the <strong>template.html</strong> provided and rename it to fit the data structure. In you'll find the following lines:</p>
 <pre class="prettyprint">
 &lt;!-- Template: Page Title --&gt; (line 7)
@@ -1253,7 +1300,7 @@ const defaultProperties = {
 </pre>
             <p>Below each of them you'll find the code that needs to be adapted for the new page.</p>
             
-            <h4>3.1.1.1. The Buttons</h4>
+            <h4>4.1.1.1. The Buttons</h4>
             <img src="img/buttons.png" alt="">
             <p>For the methods in our visualisations we only use two kinds of buttons: <strong>with (a)</strong> and <strong>without (b)</strong> text input.</p>
             <p>If a method requires an input, a text box (c) will appear, an the method will be executed after pressing the button. If no input is required the method will be executed immediatly.</p>
@@ -1311,7 +1358,7 @@ const defaultProperties = {
 </pre>
             <p>To make it visible just remove the comment tags (&lt;!-- -->).</p>
             
-            <h4>3.1.1.2. The scrips</h4>
+            <h4>4.1.1.2. The scrips</h4>
             <p>The last thing to be changed in the html file is the scripts. You will have to make reference to the new file and create calls to your methods. For this example we're going to use the StackArray.html file.</p>
 
 <pre class="prettyprint linenums">
@@ -1449,7 +1496,7 @@ var Template = function(){
 </pre>
             <p>Now let's understand what's happening in there.</p>
             
-            <h4>3.1.2.1. Organising the data and the graphics</h4>
+            <h4>4.1.2.1. Organising the data and the graphics</h4>
             <p>As we've seen when studying CoreObject each graphic object created is returned to this class for you to manage. This will give you access to each instance, making it easier to do necessary graphic changes.</p>
             <p>Let's pick a few examples to have an idea of how to manage all this:</p>
             <ul>
@@ -1526,7 +1573,7 @@ this.root.leftEdge.setIdObjectB(newNode.drawing.getID());
               </li>
             </ul>
             
-            <h4>3.1.2.2. Default variables</h4>
+            <h4>4.1.2.2. Default variables</h4>
             <p>There are only four default variables that have to be declared:</p>
             <ul>
               <li><strong>this.self:</strong> current value of <strong>this</strong>, useful for scope issues.</li>
@@ -1535,29 +1582,29 @@ this.root.leftEdge.setIdObjectB(newNode.drawing.getID());
               <li><strong>Constants:</strong> values used to create the apropriate pseudocode set.</li>
             </ul>
             
-            <h4>3.1.2.3. Initial Items</h4>
+            <h4>4.1.2.3. Initial Items</h4>
             <p>In certain visualisations some initial graphic elements may be necessary. For example, in an Array implementation you'll have to display the array itself.</p>
             <img src="img/array.png" alt="">
             <p>To achieve this you'll have to create all these items in here as this lines of code will execute as this class is instantiated and the graphics will be displayed as soon as the page load.</p>
             
-            <h4>3.1.2.4. Default Methods</h4>
+            <h4>4.1.2.4. Default Methods</h4>
             <p>The two important default methods are:</p>
             <ul>
               <li><strong>this.getCore:</strong> this method will return the instance of CoreObject.js to the HTML file.</li>
               <li><strong>this.generatePseudocode:</strong> this method will fill the pseudocode panel when executing a method.</li>
             </ul>
             
-            <h4>3.1.2.5. Particular Methods</h4>
+            <h4>4.1.2.5. Particular Methods</h4>
             <p>Any method related to this data structure, that will be called from the HTML file.</p>
             
           </section>
           
           <!-- The Two Files -->
           <section id="custom-items">
-            <h2>3.2. Custom Items</h2>
+            <h2>4.2. Custom Items</h2>
             <p>The basic classes provided in this framework are meant to cover all necessary items to implement a data structure visualisation, but there is still room for customisation.</p>
             
-            <h3>3.2.1. Custom Shapes</h3>
+            <h3>4.2.1. Custom Shapes</h3>
             <p>Let's say that you want to create an object that is made of two squares, how would you do that? Creating two squares during run time can end up as a big headache, so let's look at the example below:</p>
 <pre class="prettyprint linenums">
 var DoubleSquareObject = function (coreObj, id, x, y, text1, text2, label, shapeClass, textClass, labelClass) {
@@ -1638,7 +1685,7 @@ this.newDoubleSquareObject = function (id, x, y, text1, text2, label, shapeClass
 var doubleSquare = coreAnim.newDoubleSquareObject("ds", 200, 200, "1", "2", null, null, null, null);
 </pre>
             
-            <h3>3.2.2. Custom Sets</h3>
+            <h3>4.2.2. Custom Sets</h3>
             <p>Custom sets can be useful when creating initial shapes. If there's a lot of visualisations that will use an array why not create a custom set just for that? Let's see how the code of a custom set would look:</p>
 <pre class="prettyprint linenums">
 /**
@@ -1706,90 +1753,20 @@ var Hashtable = function () {
           ================================================== -->
           <section id="learning-mode">
             <div class="page-header">
-              <h1>4. Learning Mode</h1>
+              <h1>5. Learning Mode</h1>
             </div>
             
           </section>
           
           <!-- User Shape and Valid Targets -->
           <section id="valid-target">
-            <h2>4.1. User Shape and Valid Targets</h2>
+            <h2>5.1. User Shape and Valid Targets</h2>
           </section>
           
           <!-- Place Holders -->
           <section id="place-holder">
-            <h2>4.2. Place Holders</h2>
+            <h2>5.2. Place Holders</h2>
           </section>
-
-          <!-- Examples
-          ================================================== 
-          <section id="examples">
-            <div class="page-header">
-              <h1>5. Examples</h1>
-            </div>
-            <p class="lead">Move beyond the base template with a few example layouts. We encourage folks to iterate on these examples and not simply use them as an end result.</p>
-            <ul class="thumbnails bootstrap-examples">
-              <li class="span3">
-                <a class="thumbnail" href="examples/starter-template.html">
-                  <img src="assets/img/examples/bootstrap-example-starter.png" alt="">
-                </a>
-                <h4>Starter template</h4>
-                <p>A barebones HTML document with all the Bootstrap CSS and JavaScript included.</p>
-              </li>
-              <li class="span3">
-                <a class="thumbnail" href="examples/hero.html">
-                  <img src="assets/img/examples/bootstrap-example-marketing.png" alt="">
-                </a>
-                <h4>Basic marketing site</h4>
-                <p>Featuring a hero unit for a primary message and three supporting elements.</p>
-              </li>
-              <li class="span3">
-                <a class="thumbnail" href="examples/fluid.html">
-                  <img src="assets/img/examples/bootstrap-example-fluid.png" alt="">
-                </a>
-                <h4>Fluid layout</h4>
-                <p>Uses our new responsive, fluid grid system to create a seamless liquid layout.</p>
-              </li>
-
-              <li class="span3">
-                <a class="thumbnail" href="examples/marketing-narrow.html">
-                  <img src="assets/img/examples/bootstrap-example-marketing-narrow.png" alt="">
-                </a>
-                <h4>Narrow marketing</h4>
-                <p>Slim, lightweight marketing template for small projects or teams.</p>
-              </li>
-              <li class="span3">
-                <a class="thumbnail" href="examples/justified-nav.html">
-                  <img src="assets/img/examples/bootstrap-example-justified-nav.png" alt="">
-                </a>
-                <h4>Justified nav</h4>
-                <p>Marketing page with equal-width navigation links in a modified navbar.</p>
-              </li>
-              <li class="span3">
-                <a class="thumbnail" href="examples/signin.html">
-                  <img src="assets/img/examples/bootstrap-example-signin.png" alt="">
-                </a>
-                <h4>Sign in</h4>
-                <p>Barebones sign in form with custom, larger form controls and a flexible layout.</p>
-              </li>
-
-              <li class="span3">
-                <a class="thumbnail" href="examples/sticky-footer.html">
-                  <img src="assets/img/examples/bootstrap-example-sticky-footer.png" alt="">
-                </a>
-                <h4>Sticky footer</h4>
-                <p>Pin a fixed-height footer to the bottom of the user's viewport.</p>
-              </li>
-              <li class="span3">
-                <a class="thumbnail" href="examples/carousel.html">
-                  <img src="assets/img/examples/bootstrap-example-carousel.png" alt="">
-                </a>
-                <h4>Carousel jumbotron</h4>
-                <p>A more interactive riff on the basic marketing site featuring a prominent carousel.</p>
-              </li>
-            </ul>
-          </section>
-          -->
         </div>
       </div>
     </div>
@@ -1802,22 +1779,8 @@ var Hashtable = function () {
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
-    <script src="../../code/js/jquery-2.1.1.js"></script>
-    <script src="js/bootstrap-scrollspy.js"></script>
-    <script src="js/bootstrap-transition.js"></script>
-    <script src="js/bootstrap-alert.js"></script>
-    <script src="js/bootstrap-modal.js"></script>
-    <script src="js/bootstrap-dropdown.js"></script>
-    <script src="js/bootstrap-tab.js"></script>
-    <script src="js/bootstrap-tooltip.js"></script>
-    <script src="js/bootstrap-popover.js"></script>
-    <script src="js/bootstrap-button.js"></script>
-    <script src="js/bootstrap-collapse.js"></script>
-    <script src="js/bootstrap-carousel.js"></script>
-    <script src="js/bootstrap-typeahead.js"></script>
-    <script src="js/bootstrap-affix.js"></script>
-    <script src="js/holder.js"></script>
+    <script src="../../code/js/third-party/jquery-2.1.1.js"></script>
+    <script src="../../code/bootstrap/js/bootstrap.js"></script>  
     <script src="js/prettify.js"></script>
     <script src="js/application.js"></script>
   </body>

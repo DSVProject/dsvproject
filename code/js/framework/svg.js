@@ -35,7 +35,7 @@ var w = window,
   * Create the svg container.
   */
 var svgContainer = d3.select("#viz").append("svg")
-    .attr("width", x * 0.75)
+    .attr("width", x * 0.9)
     .attr("height", y * 0.75)
     .attr("pointer-events", "all")
     .call(zoom.on("zoom", rescale))
