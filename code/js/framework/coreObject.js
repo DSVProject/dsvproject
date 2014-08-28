@@ -204,7 +204,6 @@ var CoreObject = function () {
     */
     
     this.undo();
-    
     this.toggelLearningMode();
     //this.learnState();
   }
@@ -369,7 +368,7 @@ var CoreObject = function () {
   this.undo = function () {
     this.actionCount--;
     
-    if (this.actionCount < 0) this.actionCount = 0;
+    if (this.actionCount < 0 || this.actionCount == 0) return;
     
     for (var key in this.objectList) {
       if (this.actionArray[this.actionCount][key] == null) {
@@ -380,8 +379,6 @@ var CoreObject = function () {
         this.objectList[key].cloneEdges(this.actionArray[this.actionCount][key].getEdges());
       }
     }
-    
-    this.saveState();
   }
   
   /**
@@ -519,6 +516,52 @@ var CoreObject = function () {
         .classed(DEFAULT_CLASSES.PAGE.PSEUDOCODE.HIGHLIGHT, "true");
   }
   
+  this.clearCustomClasses = function () {
+    for (var key in this.objectList) {
+      this.objectList[key].setShapeClass("");
+      
+      for (var edgeKey in this.objectList[key].edgeList) {
+        this.objectList[key].edgeList[edgeKey].setEdgeClass("");
+      }
+    }
+  }
+  
+  this.reposition = function (obj, x, y, orientation) {
+    var startingPoint = x;
+
+    self.repositionWidths(obj);
+
+    var edgeCount = obj.getEdgeCount();
+
+    if (obj.widthAdjust[Math.floor(edgeCount/2) - 1] > startingPoint) {
+      startingPoint = obj.widthAdjust[Math.floor(edgeCount/2) - 1]; 
+    } else if (obj.widthAdjust[Math.ceil(edgeCount/2)] > startingPoint) {
+      startingPoint = Math.max(obj.widthAdjust[Math.floor(edgeCount/2) - 1], 2 * startingPoint - obj.widthAdjust[Math.ceil(edgeCount/2)]);
+    }
+
+    obj.reposition(startingPoint, y, 0, orientation);
+  }
+
+  this.repositionWidths = function (obj) {
+    var sum = 0;
+    var i = 0;
+
+    if (obj == null) return 0;
+
+    for (var key in obj.edgeList) {
+      var nextObj = null;
+
+      if (obj.edgeList[key].getIdObjectB() != null) nextObj = this.objectList[obj.edgeList[key].getIdObjectB()];
+
+      obj.widthAdjust[i] = Math.max(this.repositionWidths(nextObj), SHAPE_POSITION.DELTA / 2);
+
+      sum += obj.widthAdjust[i];
+      i++;
+    }
+
+    return sum;
+  }
+  
   // OBJECT CONSTRUCTORS
   
   /**
@@ -645,42 +688,6 @@ var CoreObject = function () {
         this.objectList[key].setToRemove(true);
       }
     }
-  }
-  
-  this.reposition = function (obj, x, y, orientation) {
-    var startingPoint = x;
-
-    self.repositionWidths(obj);
-
-    var edgeCount = obj.getEdgeCount();
-
-    if (obj.widthAdjust[Math.floor(edgeCount/2) - 1] > startingPoint) {
-      startingPoint = obj.widthAdjust[Math.floor(edgeCount/2) - 1]; 
-    } else if (obj.widthAdjust[Math.ceil(edgeCount/2)] > startingPoint) {
-      startingPoint = Math.max(obj.widthAdjust[Math.floor(edgeCount/2) - 1], 2 * startingPoint - obj.widthAdjust[Math.ceil(edgeCount/2)]);
-    }
-
-    obj.reposition(startingPoint, y, 0, orientation);
-  }
-
-  this.repositionWidths = function (obj) {
-    var sum = 0;
-    var i = 0;
-
-    if (obj == null) return 0;
-
-    for (var key in obj.edgeList) {
-      var nextObj = null;
-
-      if (obj.edgeList[key].getIdObjectB() != null) nextObj = this.objectList[obj.edgeList[key].getIdObjectB()];
-
-      obj.widthAdjust[i] = Math.max(this.repositionWidths(nextObj), SHAPE_POSITION.DELTA / 2);
-
-      sum += obj.widthAdjust[i];
-      i++;
-    }
-
-    return sum;
   }
   
   // FUNCTIONS CALLED FROM INSIDE SHAPE INSTANCES

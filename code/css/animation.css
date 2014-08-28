@@ -7,12 +7,6 @@
   color:grey;
 }
 
-.shape{
-  fill:white;
-  stroke:black;
-  stroke-width:2px;
-}
-
 .labelText{
   font-family:sans-serif;
   font-size:18px;
@@ -27,18 +21,25 @@
   fill:black;
 }
 
+.innerText .traversed{
+  fill:ivory;
+}
+
+.shape{
+  fill:white;
+  stroke:black;
+  stroke-width:2px;
+}
+
+.shape .traversed{
+  stroke:#16a085;
+  stroke-width:4px;
+}
+
 .shape .learning{
   fill:grey;
   fill-opacity:0.2;
   stroke:tomato;
-  stroke-width:2px;
-  cursor: pointer;
-}
-
-.shape .learning.creator{
-  fill:grey;
-  fill-opacity:0.2;
-  stroke:#fcf553;
   stroke-width:2px;
   cursor: pointer;
 }
@@ -54,6 +55,11 @@
   stroke-width:2px;
   stroke-dasharray: 5 5;
   cursor: pointer;
+}
+
+.edge .traversed{
+  stroke:#16a085;
+  stroke-width:4px;
 }
 
 .table > tbody > tr.codeHighlight > td {

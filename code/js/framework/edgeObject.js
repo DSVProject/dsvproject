@@ -337,44 +337,44 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
     } catch (err) {}
   }
   
-  this.reposition = function (x, y, side, adjust, orientation) {
+  this.reposition = function (x, y, side, adjustLeft, adjustRight, orientation) {
     var edgeX;
     var edgeY;
     
     if (orientation == ORIENTATION.TOP) {
       if (side == -1) {
-        edgeX = x - adjust;
-        x = x - adjust;
+        edgeX = x - adjustLeft;
+        x = x - adjustLeft;
       } else if (side == 1) {
-        edgeX = x + adjust;
-        x = x + adjust;
+        edgeX = x + adjustRight;
+        x = x + adjustRight;
       }
       y = y - SHAPE_POSITION.DISTANCE;
     } else if (orientation == ORIENTATION.LEFT) {
       if (side == -1) {
-        edgeY = y - adjust;
-        y = y - adjust;
+        edgeY = y - adjustLeft;
+        y = y - adjustLeft;
       } else if (side == 1) {
-        edgeY = y + adjust;
-        y = y + adjust;
+        edgeY = y + adjustRight;
+        y = y + adjustRight;
       }
       x = x - SHAPE_POSITION.DISTANCE;
     } else if (orientation == ORIENTATION.BOTTOM) {
       if (side == -1) {
-        edgeX = x - adjust;
-        x = x - adjust;
+        edgeX = x - adjustLeft;
+        x = x - adjustLeft;
       } else if (side == 1) {
-        edgeX = x + adjust;
-        x = x + adjust;
+        edgeX = x + adjustRight;
+        x = x + adjustRight;
       }
       y = y + SHAPE_POSITION.DISTANCE;
     } else if (orientation == ORIENTATION.RIGHT) {
       if (side == -1) {
-        edgeY = y + adjust;
-        y = y + adjust;
+        edgeY = y + adjustLeft;
+        y = y + adjustLeft;
       } else if (side == 1) {
-        edgeY = y - adjust;
-        y = y - adjust;
+        edgeY = y - adjustRight;
+        y = y - adjustRight;
       }
       x = x + SHAPE_POSITION.DISTANCE;
     }
@@ -420,8 +420,8 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
           if (d.type === EDGE_TYPE.UNIDIRECTIONAL || d.type === EDGE_TYPE.BIDIRECTIONAL) return d.markerEnd;
           return null;
         })
-        .style("stroke", function (d) {return d.edge.stroke;})
-        .style("stroke-width", function (d) {return d.edge.strokeWidth;});
+        .attr("stroke", function (d) {return d.edge.stroke;})
+        .attr("stroke-width", function (d) {return d.edge.strokeWidth;});
   }
   
   /**

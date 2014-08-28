@@ -455,15 +455,15 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
 
     for (var key in this.edgeList) {
       if (this.getEdgeCount() == 1) {
-        this.edgeList[key].reposition(x, y, 0, this.widthAdjust[Math.ceil(midPoint)], orientation);
+        this.edgeList[key].reposition(x, y, 0, this.widthAdjust[Math.ceil(midPoint)], this.widthAdjust[Math.floor(midPoint) - 1], orientation);
 
         continue;
       }
 
       if (counter < midPoint) {
-        this.edgeList[key].reposition(x, y, -1, this.widthAdjust[Math.ceil(midPoint)], orientation);
+        this.edgeList[key].reposition(x, y, -1, this.widthAdjust[Math.ceil(midPoint)], null, orientation);
       } else {
-        this.edgeList[key].reposition(x, y, 1, this.widthAdjust[Math.floor(midPoint) - 1], orientation);
+        this.edgeList[key].reposition(x, y, 1, null, this.widthAdjust[Math.floor(midPoint) - 1], orientation);
       }
       counter++;
     }

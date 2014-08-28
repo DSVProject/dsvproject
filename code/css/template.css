@@ -24,6 +24,7 @@ body {
 
 body > .container {
   padding: 60px 15px 0;
+  width: 90%;
 }
 .container .text-muted {
   margin: 20px 0;

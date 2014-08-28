@@ -144,6 +144,26 @@ const USER_TEXT_SOURCE = {
   TEXT: 1
 };
 
+const LEARN_ACTION_CODES = {
+  NEW_CIRCLE: 0,
+  NEW_SQUARE: 1,
+  DELETE_ITEM: 2,
+  SWAP_TEXT: 3,
+  UPDATE_TEXT: 4,
+  UPDATE_EDGE_A: 5,
+  UPDATE_EDGE_B: 6
+}
+
+const LEARN_ACTION_STRINGS = {
+  NEW_CIRCLE: "Create new node",
+  NEW_SQUARE: "Create new node",
+  DELETE_ITEM: "Delete node",
+  SWAP_TEXT: "Swap text",
+  UPDATE_TEXT: "Update text",
+  UPDATE_EDGE_A: "Update edge origin",
+  UPDATE_EDGE_B: "Update edge end"
+}
+
 /**
   * Default class names used across the framework, defined here to improve code abstraction.
   *
