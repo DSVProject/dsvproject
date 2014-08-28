@@ -65,14 +65,21 @@ var QueueLinkedList = function () {
     
     switch (command) {
         case ENQUEUE:
-          coreObj.addPseudocodeLine(0, "Node temp = value;");
-          coreObj.addPseudocodeLine(1, "tail = temp;");
-          coreObj.addPseudocodeLine(2, "if (isEmpty()) head = tail;");
-          coreObj.addPseudocodeLine(3, "else oldtail.next = tail;");
+          coreObj.addPseudocodeLine(0, "newNode = new Node();");
+          coreObj.addPseudocodeLine(1, "newNode.value = input;");
+          coreObj.addPseudocodeLine(2, "if (isEmpty()) {");
+          coreObj.addPseudocodeLine(3, "&nbsp;&nbsp;head = tail = newNode;");
+          coreObj.addPseudocodeLine(4, "} else {");
+          coreObj.addPseudocodeLine(5, "&nbsp;&nbsp;tail.next = newNode;");
+          coreObj.addPseudocodeLine(6, "&nbsp;&nbsp;tail = newNode;}");
           break;
         case DEQUEUE:
-          coreObj.addPseudocodeLine(0, "head = head.next;");
-          coreObj.addPseudocodeLine(1, "if (isEmpty()) tail = null;");
+          coreObj.addPseudocodeLine(0, "toReturn = head.item;");
+          coreObj.addPseudocodeLine(1, "if (head == tail) {");
+          coreObj.addPseudocodeLine(2, "head = tail = null;");
+          coreObj.addPseudocodeLine(3, "} else {");
+          coreObj.addPseudocodeLine(4, "head = head.next;");
+          coreObj.addPseudocodeLine(5, "}");
           break;
     }
   }
@@ -100,30 +107,41 @@ var QueueLinkedList = function () {
           
   this.enqueue = function(item, duration) {
     if (item.trim() == "") {
-      coreObj.displayAlert("The input should not be empty.");
+      coreObj.displayAlert(ALERT_TYPES.negative, "The input should not be empty.");
       return false;
     }
-    
-    var oldtail = tail;
 
     if (coreObj.isLearningMode()) {
       coreObj.clearPseudocode();
       
-      learnObj["newValue"] = coreObj.newUserObject("newValue", 500, 75, 25, item, "learning", null, USER_OBJ_TYPE.VALUE, true, null, null, null);
+      // Create the first user object
+      learnObj["newValue"] = coreObj.newUserObject("newValue", 500, 75, 25, item, "learning value", null, USER_OBJ_TYPE.VALUE, null, null);
+      learnObj["newValue"].setIsValidTarget(true);
+      
+      //learnObj[edgeHeadD.getID() + 1] = coreObj.newUserObject("h1" + edgeHeadD.getID(), edgeHeadD.getCoordinateX1(), edgeHeadD.getCoordinateY1(), 10, null, "learning edge", null, USER_OBJ_TYPE.EDGE, edgeHeadD.getID(), LEARN_ACTION_CODES.UPDATE_EDGE_A, false);
+      learnObj[edgeHeadD.getID()] = coreObj.newUserObject("u" + edgeHeadD.getID(), edgeHeadD.getCoordinateX2(), edgeHeadD.getCoordinateY2(), 10, null, "learning edge", null, USER_OBJ_TYPE.EDGE, edgeHeadD.getID(), LEARN_ACTION_CODES.UPDATE_EDGE_B);
+      
+      //learnObj[edgeTailD.getID() + 1] = coreObj.newUserObject("t1" + edgeTailD.getID(), edgeTailD.getCoordinateX1(), edgeTailD.getCoordinateY1(), 10, null, "learning edge", null, USER_OBJ_TYPE.EDGE, edgeTailD.getID(), LEARN_ACTION_CODES.UPDATE_EDGE_A, false);
+      learnObj[edgeTailD.getID()] = coreObj.newUserObject("u" + edgeTailD.getID(), edgeTailD.getCoordinateX2(), edgeTailD.getCoordinateY2(), 10, null, "learning edge", null, USER_OBJ_TYPE.EDGE, edgeTailD.getID(), LEARN_ACTION_CODES.UPDATE_EDGE_B);
       
       var iterator = head;
       while(iterator != null) {
+        // Set object as valid target for UPDATE_TEXT, SWAP_TEXT, UPDATE_EDGE_A, UPDATE_EDGE_B
         iterator.drawing.setIsValidTarget(true);
         
-        if (iterator.edge.getIdObjectB() == null) {
-          iterator.edge.setIsValidTarget(true);
-        }
+        // Create user objects for DELETE_ITEM
+        //learnObj[iterator.drawing.getID()] = coreObj.newUserObject("d" + iterator.drawing.getID(), iterator.drawing.getCoordinateX() + 25, iterator.drawing.getCoordinateY() + iterator.drawing.getHeight(), 10, "X", "learning delete", "learning delete", USER_OBJ_TYPE.DELETING, iterator.drawing.getID(), LEARN_ACTION_CODES.DELETE_ITEM, false);
+        
+        // Create user objects on the edges, used to update the position
+        //learnObj[iterator.edge.getID() + "1"] = coreObj.newUserObject("e1" + iterator.edge.getID(), iterator.edge.getCoordinateX1(), iterator.edge.getCoordinateY1(), 10, null, "learning edge", null, USER_OBJ_TYPE.EDGE, iterator.edge.getID(), LEARN_ACTION_CODES.UPDATE_EDGE_A, false);
+        learnObj[iterator.edge.getID()] = coreObj.newUserObject("u" + iterator.edge.getID(), iterator.edge.getCoordinateX2(), iterator.edge.getCoordinateY2(), 10, null, "learning edge", null, USER_OBJ_TYPE.EDGE, iterator.edge.getID(), LEARN_ACTION_CODES.UPDATE_EDGE_B);
 
         iterator = iterator.next;
       }
       
-      coreObj.saveLearnState("Click on the grey circles to create the final state.");
+      coreObj.saveLearnState();
       coreObj.beginLearn();
+      coreObj.displayAlert(ALERT_TYPES.information, "Click on the grey circles to schedule the changes of this method.</br>The <strong>Green</strong> is used to create a new node or update an existing node value. The <strong>Purple</strong> is used to update where an edge is poiting to.")
       
       DEFERRED.done(function() {
         coreObj.cancelLearn();
@@ -131,51 +149,46 @@ var QueueLinkedList = function () {
         self.enqueue(item, 0);
       });
       
-    } else {
+    } else {      
       this.generatePseudocode(ENQUEUE);
-    
-      if (oldtail != null) oldtail.drawing.setLabel("oldtail");
 
-      tail = new Node();
-      tail.item = item;
-      tail.next = null;
-      
-      tail.drawing = coreObj.newSquareObject(++counterID, 200, 200, item, null, "node", null, null);
-      tail.edge = coreObj.newEdgeObject(counterID, tail.drawing.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.RIGHT, EDGE_POSITION.LEFT, USER_TYPE_OBJ_CREATED.SQUARE_EDGE_1);
+      var newNode = new Node();
+      newNode.item = item;
+      newNode.next = null;
+
+      newNode.drawing = coreObj.newSquareObject(++counterID, 200, 200, null, null, "node", null, null);
+      newNode.edge = coreObj.newEdgeObject(counterID, newNode.drawing.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.RIGHT, EDGE_POSITION.LEFT, USER_TYPE_OBJ_CREATED.SQUARE_EDGE_1);
 
       coreObj.saveState("Inserting new node.", 0);
-
-      edgeTailD.setIdObjectB(tail.drawing.getID());
-
-      coreObj.saveState("Update the tail pointer.", 1);
-
-      tail.drawing.moveShape((N+1)*100, 300);
-      coreObj.saveState();
       
+      newNode.drawing.setText(item);
+      coreObj.saveState("New node value is: " + item, 1);
+
       if (this.isEmpty()) {
-        head = tail;
+        head = tail = newNode;
+        edgeHeadD.setIdObjectB(newNode.drawing.getID());
+        edgeTailD.setIdObjectB(newNode.drawing.getID());
 
-        edgeHeadD.setIdObjectB(tail.drawing.getID());
-
-        coreObj.saveState("If the list was empty, update the head pointer too.", 2);
+        coreObj.saveState("The list was empty, so update head and tail pointers.", 3);
       } else {
-        oldtail.next = tail;
+        tail.next = newNode;
+        tail.edge.setIdObjectB(newNode.drawing.getID());
+        coreObj.saveState("Update the pointer of the previous node.", 5)
+
+        tail = newNode;
+        edgeTailD.setIdObjectB(newNode.drawing.getID());
+        coreObj.saveState("Update tail pointer.", 6);
       }
 
-      if (oldtail != null) {
-        alert(oldtail.drawing.getID());
-        oldtail.edge.setIdObjectB(tail.drawing.getID());
-
-        oldtail.drawing.setLabel();
-
-        coreObj.saveState("Update the pointer of the previous node.", 3)
-      }
-
-      //coreObj.reposition(head.drawing, 100, 300, ORIENTATION.RIGHT);
-      //coreObj.saveState();
+      coreObj.reposition(head.drawing, 100, 300, ORIENTATION.RIGHT);
+      
+      //tail.drawing.moveShape((N+1)*100, 300);
+      coreObj.saveVariableToWatch("head", head.item);
+      coreObj.saveVariableToWatch("tail", tail.item);
+      coreObj.saveState();
 
       N++;
-      
+
       coreObj.begin(duration);
     }
   }
@@ -185,42 +198,33 @@ var QueueLinkedList = function () {
       return false;
       coreObj.displayAlert("The queue is already empty.");
     }
-    
+
     this.generatePseudocode(DEQUEUE);
-    
+
     var item = head.item;
     
     coreObj.removeShape(head.drawing.getID());
-    coreObj.saveState();
+    coreObj.saveState("Dequeue the first position, returning: " + item, 0);
 
-    head = head.next;
-    
-    if (head != null){
-      edgeHeadD.setIdObjectB(head.drawing.getID());
-      coreObj.saveState("Dequeue the head position.");
-    }
-    
-    var iterator = head;
-    
-    while(iterator != null) {
-      iterator.drawing.moveShape(iterator.drawing.getCoordinateX()-100, iterator.drawing.getCoordinateY());
-      
-      iterator = iterator.next;
-    }
-    
-    if (this.isEmpty()){
-      tail = null;
-      
+    if (head == tail) {
+      head = tail = null;
       edgeHeadD.setIdObjectB(null);
-      coreObj.saveState("Update the head pointer.", 0);
       edgeTailD.setIdObjectB(null);
-      coreObj.saveState("Update the tail pointer.", 1);
+      
+      coreObj.saveState("The queue had 1 item, so update head and tail pointes.", 2);
     } else {
-      coreObj.saveState("Update the head pointer.", 0);
+      head = head.next;
+      edgeHeadD.setIdObjectB(head.drawing.getID());
+      coreObj.saveState("Update head pointer.", 4);
+
+      coreObj.reposition(head.drawing, 100, 300, ORIENTATION.RIGHT);
+      coreObj.saveVariableToWatch("head", head.item);
+      coreObj.saveVariableToWatch("tail", tail.item);
+      coreObj.saveState();
     }
-    
+
     N--;
-    
+
     coreObj.begin();
     return item;
   }
