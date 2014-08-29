@@ -38,7 +38,7 @@
           <div class="navbar-brand">Your Visualisation</div>
         </div>
         <div class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
+          <ul class="nav navbar-nav navbar-left">
             <!-- Template: Method's buttons -->
             <div id="div-control-buttons" class="btn-group popover-dismiss" data-popover="popover" data-html="true" data-placement="bottom" title="Methods" data-content="Here you will find the controls to run the <b>methods</b> of the current data structure visualisation.">
               <!-- Template: Text input button (methods that require an input value) -->
@@ -95,48 +95,42 @@
     </div>
 
     <!-- Begin page content -->
-    <div class="container">
+    <div class="container-fluid">
       <div class="row">
         <div class="col-md-9">
           <div id="viz"></div>
         </div>
         <div id="div-panels" class="col-md-3 popover-dismiss" data-popover="popover" data-html="true" data-placement="left" title="Panels" data-content="In these panels you will find a <b>Log</b> of what happened during the animation, the <b>Pseudocode</b> and a <b>Variable Watch</b>.">
-          <div class="row">
-            <div id="log-panel" class="panel panel-first">
-              <div class="panel-heading">
-                <h3 class="panel-title">Log</h3>
-              </div>
-              <div class="panel-body">
-                <table class="table">
-                  <tbody id="log"></tbody>
-                </table>
-              </div>
+          <div id="pseudocode-panel" class="panel panel-first">
+            <div class="panel-heading">
+              <h3 class="panel-title">Pseudocode</h3>
+            </div>
+            <div class="panel-body">
+              <table class="table">
+                <tbody id="pseudocode"></tbody>
+              </table>
             </div>
           </div>
-          
-          <div class="row">
-            <div id="variables-panel" class="panel panel-first">
-              <div class="panel-heading">
-                <h3 class="panel-title">Variable Watch</h3>
-              </div>
-              <div class="panel-body">
-                <table class="table">
-                  <tbody id="variables"></tbody>
-                </table>
-              </div>
+
+          <div id="variables-panel" class="panel panel-first">
+            <div class="panel-heading">
+              <h3 class="panel-title">Variable Watch</h3>
+            </div>
+            <div class="panel-body">
+              <table class="table">
+                <tbody id="variables"></tbody>
+              </table>
             </div>
           </div>
-          
-          <div class="row">
-            <div id="pseudocode-panel" class="panel panel-first">
-              <div class="panel-heading">
-                <h3 class="panel-title">Pseudocode</h3>
-              </div>
-              <div class="panel-body">
-                <table class="table">
-                  <tbody id="pseudocode"></tbody>
-                </table>
-              </div>
+
+          <div id="log-panel" class="panel panel-first">
+            <div class="panel-heading">
+              <h3 class="panel-title">Log</h3>
+            </div>
+            <div class="panel-body">
+              <table class="table">
+                <tbody id="log"></tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -156,7 +150,7 @@
           </button>
         </div>
         <div class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
+          <ul class="nav navbar-nav navbar-left">
             <div id="div-media-buttons" class="popover-dismiss" data-popover="popover" data-html="true" data-placement="top" title="Media Controls" data-content="Use these to <b>iterate</b> through the animation steps, <b>undo</b> or <b>redo</b> your actions and change the <b>animation speed</b>.">
               <div class="btn-group">
                 <button type="button" class="btn btn-default navbar-btn" data-toggle="tooltip" data-placement="top" title="Previous Step" onclick="previous()">

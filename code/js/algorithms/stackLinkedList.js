@@ -22,7 +22,7 @@
   * or implied, of Trinity College Dublin.
   */
 
-// Defines a Queue object (Linked-List Implementation). Used to keep track of the object internally and to interact with the animations
+// Defines a Stack object (Linked-List Implementation). Used to keep track of the object internally and to interact with the animations
 
 var Node = function () {
   var item,
@@ -42,7 +42,7 @@ var StackLinkedList = function () {
   var N = 0;
   var counterID = 0;
   
-  var headD = coreObj.newSquareObject("head", 50, 200, "Head", null, null, null, "pointer");
+  var headD = coreObj.newSquareObject("head", 50, 200, "head", null, null, null, "pointer");
   var edgeHeadD = coreObj.newEdgeObject("head", headD.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.RIGHT, EDGE_POSITION.LEFT);
 
   coreObj.newStateList();
@@ -59,13 +59,14 @@ var StackLinkedList = function () {
     
     switch (command) {
         case PUSH:
-          coreObj.addPseudocodeLine(0, "Node temp = value;");
-          coreObj.addPseudocodeLine(1, "head = temp;");
-          coreObj.addPseudocodeLine(2, "head.next = oldhead;");
+          coreObj.addPseudocodeLine(0, "newNode = new Node();");
+          coreObj.addPseudocodeLine(1, "newNode.item = input;");
+          coreObj.addPseudocodeLine(2, "newNode.next = head;");
+          coreObj.addPseudocodeLine(2, "head = newNode;");
           break;
         case POP:
-          coreObj.addPseudocodeLine(0, "head = head.next;");
-          coreObj.addPseudocodeLine(1, "if (isEmpty()) head = null;");
+          coreObj.addPseudocodeLine(0, "toReturn = head.item;");
+          coreObj.addPseudocodeLine(1, "head = head.next;");
           break;
     }
   }
@@ -96,45 +97,29 @@ var StackLinkedList = function () {
     }
 
     this.generatePseudocode(PUSH);
-
-    var oldhead = head;
-
-    head = new Node();
-    head.item = item;
-    head.next = oldhead;
-    head.drawing = coreObj.newSquareObject(++counterID, 150, 200, item, null, "node", null, null);
-	head.edge = coreObj.newEdgeObject(counterID, head.drawing.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.BOTTOM, EDGE_POSITION.TOP);
-
+    
+    
+    newNode = new Node();
+    newNode.item = item;
+    newNode.drawing = coreObj.newSquareObject(++counterID, 150, 200, null, null, "node", null, null);
+	newNode.edge = coreObj.newEdgeObject(counterID, newNode.drawing.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.BOTTOM, EDGE_POSITION.TOP);
+    
     coreObj.saveState("Inserting new node.", 0);
-
+    
+    newNode.drawing.setText(item);
+    coreObj.saveState("New node value is: " + item, 1);
+    
+    newNode.next = head;
+    newNode.edge.setIdObjectB(head == null ? null : head.drawing.getID());
+    coreObj.saveState("New node points to the old head.", 2);
+    
+    head = newNode;
     edgeHeadD.setIdObjectB(head.drawing.getID());
-
-    coreObj.saveState("Update the head pointer.", 1);
+    coreObj.saveState("Update the head pointer.", 3);
     
-    if (oldhead == null) coreObj.reposition(head.drawing, 250, 100, ORIENTATION.BOTTOM);
-    /*
-    head.drawing.moveShape(250, 100);
-    
-    var iterator = oldhead;
-    
-    while(iterator != null) {
-      iterator.drawing.moveShape(iterator.drawing.getCoordinateX(), iterator.drawing.getCoordinateY()+100);
-      
-      iterator = iterator.next;
-    }
-    */
-    
+    coreObj.repositionDAG(head.drawing, 250, 100, ORIENTATION.BOTTOM);
     coreObj.saveState();
-
-    if (oldhead != null) {
-      head.edge.setIdObjectB(oldhead.drawing.getID());
-      coreObj.reposition(head.drawing, 250, 100, ORIENTATION.BOTTOM);
-      
-      oldhead.drawing.setLabel();
-      
-      coreObj.saveState("Update the pointer of the previous node.", 2);
-    }
-
+    
     N++;
     coreObj.begin();
   }
@@ -150,29 +135,16 @@ var StackLinkedList = function () {
     var item = head.item;
     
     coreObj.removeShape(head.drawing.getID());
-    coreObj.saveState();
+    coreObj.saveState("Pop the head position, returning: " + item, 0);
 
     head = head.next;
     
     if (head != null){
       edgeHeadD.setIdObjectB(head.drawing.getID());
-      coreObj.reposition(head.drawing, 250, 100, ORIENTATION.BOTTOM);
-      coreObj.saveState("Pop the head position.", 0);
-    }
-    /*
-    var iterator = head;
-    
-    while(iterator != null) {
-      iterator.drawing.moveShape(iterator.drawing.getCoordinateX(), iterator.drawing.getCoordinateY()-100);
-      
-      iterator = iterator.next;
-    }
-    
-    coreObj.saveState();
-    */
-    if (this.isEmpty()){
-      head = null;
-      
+      coreObj.saveState("Update the head pointer.", 1);
+      coreObj.repositionDAG(head.drawing, 250, 100, ORIENTATION.BOTTOM);
+      coreObj.saveState();
+    } else {
       edgeHeadD.setIdObjectB(null);
       coreObj.saveState("Update the head pointer.", 1);
     }

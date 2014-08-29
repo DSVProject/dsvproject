@@ -116,8 +116,9 @@ const ORIENTATION = {
   */
 const USER_OBJ_TYPE = {
   VALUE: 0,
-  MOVEMENT: 1,
-  CREATOR: 2
+  EDGE: 1,
+  DELETING: 2,
+  CREATED: 3
 };
 
 /**
@@ -162,6 +163,17 @@ const LEARN_ACTION_STRINGS = {
   UPDATE_TEXT: "Update text",
   UPDATE_EDGE_A: "Update edge origin",
   UPDATE_EDGE_B: "Update edge end"
+}
+
+/**
+  * Types of alerts that can be displayed. Positive is green, Negative is red, information is blue.
+  *
+  * @const 
+  */
+const ALERT_TYPES = {
+  positive: "success",
+  negative: "danger",
+  information: "info"
 }
 
 /**

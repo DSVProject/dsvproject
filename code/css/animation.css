@@ -25,6 +25,12 @@
   fill:ivory;
 }
 
+.innerText .learning.delete{
+  fill:ivory;
+  font-size: 10px;
+  font-weight: bold;
+}
+
 .shape{
   fill:white;
   stroke:black;
@@ -36,9 +42,25 @@
   stroke-width:4px;
 }
 
-.shape .learning{
+.shape .learning.value{
   fill:grey;
   fill-opacity:0.2;
+  stroke:#16a085;
+  stroke-width:2px;
+  cursor: pointer;
+}
+
+.shape .learning.edge{
+  fill:grey;
+  fill-opacity:0.2;
+  stroke:#9b59b6;
+  stroke-width:2px;
+  cursor: pointer;
+}
+
+.shape .learning.delete{
+  fill:tomato;
+  fill-opacity:1;
   stroke:tomato;
   stroke-width:2px;
   cursor: pointer;

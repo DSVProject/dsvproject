@@ -44,7 +44,7 @@
   * @param {!Bool=} updateShapeValue: if this instance is a MOVEMENT type object, this parameter should be passed. If true, the text of the shape which is at the origin of the edge will be changed (used for array implementation).
   * @param {!Bool=} updateTextSource: if this instance is a MOVEMENT type object, this parameter should be passed. If updateShapeValue is true, this value (defined at 'animation/constant.js' : USER_TEXT_SOURCE) will indicate which text source will be used to update.
   */
-var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textClass, type, allowSwap, bindedObjID, updateShapeValue, updateTextSource) {
+var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textClass, type, bindedObjID, bindedAction) {
   var self = this;
 
   if (coreObj == null) {
@@ -91,23 +91,16 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
     
     "toRemove": false,
     
+    "isValidTarget": false,
+    
     "isActive": false,
     
     "type": type,
     
-    "allowSwap": allowSwap != null ? allowSwap : false,
-    
     "bindedObjID": bindedObjID,
     
-    "updateShapeValue": updateShapeValue != null ? updateShapeValue : false,
-    
-    "updateTextSource": updateTextSource != null ? updateTextSource : USER_TEXT_SOURCE.TEXT
+    "bindedAction": bindedAction
   }
-  
-  /**
-    * This object edge list.
-    */
-  this.edgeList = {};
   
   /**
     * @return {propObj} : the content of this object property map.
@@ -297,6 +290,23 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
   }
   
   /**
+    * Set this object as a valid target for the learning mode interactions.
+    *
+    * @param {!Boolean} bool : if true, the object will be a valid target.
+    */
+  this.setIsValidTarget = function (bool) {
+    if (bool == null) return;
+    this.propObj.isValidTarget = bool;
+  }
+  
+  /**
+    * @return {Boolean} : the isValidTarget property.
+    */ 
+  this.getIsValidTarget = function () {
+    return this.propObj.isValidTarget;
+  }
+  
+  /**
     * Set this object as the one active for the learning mode interaction. Only one object shall be active at a time..
     *
     * @param {!Boolean} bool : if true, the object is active.
@@ -329,12 +339,10 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
   }
   
   /**
-    * Add an EdgeObject to this object edgeList[].
-    *
-    * @param {!EdgeObject} edgeObj : the instance of the EdgeObject.
-    */
-  this.addEdge = function (edgeObj) {
-    this.edgeList[edgeObj.getID()] = edgeObj;
+    * @return {Const} : the bindedAction property.
+    */ 
+  this.getBindedAction = function () {
+    return this.propObj.bindedAction;
   }
 
   /**
@@ -355,18 +363,26 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
     shape.enter().append(SVG_CIRCLE)        
         .attr("id", function (d) {return DEFAULT_IDS.SVG_ELEMENT.USER_SHAPE + d.id;})
         .on("click", function (d) {
-            var activeObject = self.coreObj.getActiveUserObject();
-
-            if (activeObject == null) {
-              self.coreObj.setActiveUserObject(self.propObj.id);
-
-              self.coreObj.createPlaceHolders(self.propObj.allowSwap, self.propObj.updateShapeValue, self.propObj.updateTextSource);
+          if (self.getType() != USER_OBJ_TYPE.CREATED) {
+            if (self.getType() == USER_OBJ_TYPE.DELETING) {
+              self.coreObj.saveLearnUserAction(LEARN_ACTION_CODES.DELETE_ITEM, self.getBindedObjID(), null);
             } else {
-              self.coreObj.setActiveUserObject();
+              var activeObject = self.coreObj.getActiveUserObject();
 
-              self.coreObj.removePlaceHolders();
+              if (activeObject == null) {
+                self.coreObj.setActiveUserObject(self.propObj.id);
+
+                self.coreObj.createPlaceHolders(self.propObj.allowSwap, self.propObj.updateShapeValue, self.propObj.updateTextSource);
+
+                if (self.getType() == USER_OBJ_TYPE.VALUE) self.showObjCreators();
+              } else {
+                self.coreObj.setActiveUserObject();
+
+                self.coreObj.removePlaceHolders();
+              }
             }
-          });
+          }
+        });
     
     shape.transition()
         .duration(duration)
@@ -514,5 +530,95 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
     }
     
     this.edgeList = newList;
+  }
+  
+  this.showObjCreators = function () {
+    this.showSquareCreator();
+    this.showCircleCreator();
+  }
+  
+  /**
+    * When in the Learning Mode, objects on the screen classified as valid targets will have place holders. This function creates them.
+    * When clicked, the place holder will apply the changes according to the UserObject who created them:
+    *     -If it was a VALUE UserObject, this object will have its inner text changed to the same inner text as the UserObject.
+    *     -If it was a MOVEMENT UserObject (user for edges), the binded edge tip will be moved to this object. 
+    *
+    * @param {!Bool=} allowSwap: if true this object's text will be swapped with the active UserObject's text (only for VALUE type UserObject).
+    */
+  this.showSquareCreator = function () {
+    var x = this.propObj.shape.cx + this.propObj.shape.r * Math.cos(0.85 * Math.PI);
+    var y = this.propObj.shape.cy + this.propObj.shape.r * Math.sin(0.85 * Math.PI);
+    
+    d3.select("#" + DEFAULT_IDS.SVG_GROUP.SHAPE)
+        .append(SVG_RECT)
+        .attr("class", DEFAULT_CLASSES.LEARNING_MODE.PLACE_HOLDER)
+        .attr("x", x)
+        .attr("y", y)
+        .attr("height", 17)
+        .attr("width", 17)
+        .on("click", function (d) {
+          var proto;
+          
+          proto = self.coreObj.newSquareObject(DEFAULT_IDS.SVG_ELEMENT.USER_NEW_OBJ, self.propObj.shape.cx - 100, 50, self.propObj.text.text, null, null, null, null);
+          
+          proto.setIsValidTarget(true);
+          proto.draw();
+          
+          self.coreObj.setActiveUserObject();
+          self.coreObj.removePlaceHolders();
+        });
+  }
+  
+  /**
+    * When in the Learning Mode, objects on the screen classified as valid targets will have place holders. This function creates them.
+    * When clicked, the place holder will apply the changes according to the UserObject who created them:
+    *     -If it was a VALUE UserObject, this object will have its inner text changed to the same inner text as the UserObject.
+    *     -If it was a MOVEMENT UserObject (user for edges), the binded edge tip will be moved to this object. 
+    *
+    * @param {!Bool=} allowSwap: if true this object's text will be swapped with the active UserObject's text (only for VALUE type UserObject).
+    */
+  this.showCircleCreator = function () {
+    var x = this.propObj.shape.cx + this.propObj.shape.r * Math.cos(315);
+    var y = this.propObj.shape.cy + this.propObj.shape.r * Math.sin(315);
+    
+    d3.select("#" + DEFAULT_IDS.SVG_GROUP.SHAPE)
+        .append(SVG_CIRCLE)
+        .attr("class", DEFAULT_CLASSES.LEARNING_MODE.PLACE_HOLDER)
+        .attr("cx", x)
+        .attr("cy", y)
+        .attr("r", 10)
+        .on("click", function (d) {
+          var proto = self.coreObj.newProtoSquare(self.propObj.shape.cx - 100, self.propObj.shape.cy, self.propObj.text.text);
+          
+          self.coreObj.setActiveUserObject();
+          self.coreObj.removePlaceHolders();
+        });
+  }
+  
+  /**
+    * When in the Learning Mode, objects on the screen classified as valid targets will have place holders. This function creates them.
+    * When clicked, the place holder will apply the changes according to the UserObject who created them:
+    *     -If it was a VALUE UserObject, this object will have its inner text changed to the same inner text as the UserObject.
+    *     -If it was a MOVEMENT UserObject (user for edges), the binded edge tip will be moved to this object. 
+    *
+    * @param {!Bool=} allowSwap: if true this object's text will be swapped with the active UserObject's text (only for VALUE type UserObject).
+    */
+  this.createPlaceHolder = function (allowSwap, updateShapeValue, updateTextSource) {
+    d3.select("#" + DEFAULT_IDS.SVG_GROUP.SHAPE)
+        .append(SVG_CIRCLE)
+        .attr("class", DEFAULT_CLASSES.LEARNING_MODE.PLACE_HOLDER)
+        .attr("cx", this.propObj.shape.x + this.textAdjustX)
+        .attr("cy", this.propObj.shape.y + this.textAdjustY)
+        .attr("r", 10)
+        .on("click", function (d) {
+          var activeObject = self.coreObj.getActiveUserObject();
+          
+          if (activeObject.getType() == USER_OBJ_TYPE.EDGE) {
+            self.coreObj.saveLearnUserAction(activeObject.getBindedAction, activeObject.getBindedObjID(), self.propObj.id);
+          }
+          
+          self.coreObj.setActiveUserObject();
+          self.coreObj.removePlaceHolders();
+        });
   }
 }

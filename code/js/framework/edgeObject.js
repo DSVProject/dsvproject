@@ -48,6 +48,9 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
     return;
   }
 
+  /**
+    * Local reference of CoreObject from the algorithm javascript file, used for interactions with other existing shapes
+    */
   this.coreObj = coreObj;
   
   /**
@@ -303,8 +306,10 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
   
   /**
     * Update the coordinates of this path, based on the movement of the objects it is binded to.
+    *
+    * @param {Boolean=} isClone : if true, it won't remove the adjustments made by repositionDAG. Should only be true when calling cloning this object.
     */
-  this.calculatePath = function () {
+  this.calculatePath = function (isClone) {
     var point;
     
     try {
@@ -315,31 +320,43 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
         this.propObj.edge.x2 = this.coreObj.objectList[this.propObj.idObjectB].getEdgeCoordinateX(this.getInboundPoint());
         this.propObj.edge.y2 = this.coreObj.objectList[this.propObj.idObjectB].getEdgeCoordinateY(this.getInboundPoint());
       } else {
-        point = this.getOutboundPoint();
+        if (!isClone) {
+          point = this.getOutboundPoint();
 
-        if (point == EDGE_POSITION.CENTER) {
-          if (this.propObj.edge.x2 == null) this.propObj.edge.x2 = this.propObj.edge.x1;
-          this.propObj.edge.y2 = this.propObj.edge.y1 + 45;
-        } else if (point == EDGE_POSITION.BOTTOM) {
-          if (this.propObj.edge.x2 == null) this.propObj.edge.x2 = this.propObj.edge.x1;
-          this.propObj.edge.y2 = this.propObj.edge.y1 + 25;
-        } else if (point == EDGE_POSITION.RIGHT) {
-          this.propObj.edge.x2 = this.propObj.edge.x1 + 25;
-          this.propObj.edge.y2 = this.propObj.edge.y1;
-        } else if (point == EDGE_POSITION.TOP) {
-          this.propObj.edge.x2 = this.propObj.edge.x1;
-          this.propObj.edge.y2 = this.propObj.edge.y1 - 25;
-        } else if (point == EDGE_POSITION.LEFT) {
-          this.propObj.edge.x2 = this.propObj.edge.x1 - 25;
-          this.propObj.edge.y2 = this.propObj.edge.y1;
+          if (point == EDGE_POSITION.CENTER) {
+            this.propObj.edge.x2 = this.propObj.edge.x1;
+            this.propObj.edge.y2 = this.propObj.edge.y1 + 45;
+          } else if (point == EDGE_POSITION.BOTTOM) {
+            this.propObj.edge.x2 = this.propObj.edge.x1;
+            this.propObj.edge.y2 = this.propObj.edge.y1 + 25;
+          } else if (point == EDGE_POSITION.RIGHT) {
+            this.propObj.edge.x2 = this.propObj.edge.x1 + 25;
+            this.propObj.edge.y2 = this.propObj.edge.y1;
+          } else if (point == EDGE_POSITION.TOP) {
+            this.propObj.edge.x2 = this.propObj.edge.x1;
+            this.propObj.edge.y2 = this.propObj.edge.y1 - 25;
+          } else if (point == EDGE_POSITION.LEFT) {
+            this.propObj.edge.x2 = this.propObj.edge.x1 - 25;
+            this.propObj.edge.y2 = this.propObj.edge.y1;
+          }
         }
       }
     } catch (err) {}
   }
   
-  this.reposition = function (x, y, side, adjustLeft, adjustRight, orientation) {
-    var edgeX;
-    var edgeY;
+  /**
+    * Add offsets to the position of the shape this edge is pointing to. This function only works for Directed acyclic graph.
+    *
+    * @param {!Number} x : the x coordinate of who called this.
+    * @param {!Number} y : the y coordinate of who called this.
+    * @param {!Number} side : left offset (-1), right offset (1) or middle (0), with parent as reference.
+    * @param {?Number} adjustLeft : offset to left side.
+    * @param {?Number} adjustRight : offset to right side.
+    * @param {!Const=} orientation : to where the graph is heading (const defined at 'animation/constant.js' : EDGE_POSITION).
+    */
+  this.repositionDAG = function (x, y, side, adjustLeft, adjustRight, orientation) {
+    var edgeX = this.propObj.edge.x2;
+    var edgeY = this.propObj.edge.y2;
     
     if (orientation == ORIENTATION.TOP) {
       if (side == -1) {
@@ -379,11 +396,11 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
       x = x + SHAPE_POSITION.DISTANCE;
     }
 
-    this.propObj.edge.x2 = edgeX;
-    this.propObj.edge.y2 = edgeY;
-    
     if (this.propObj.idObjectB != null) {
-      this.coreObj.objectList[this.propObj.idObjectB].reposition(x, y, side, orientation);
+      this.coreObj.objectList[this.propObj.idObjectB].repositionDAG(x, y, side, orientation);
+    } else {
+      this.propObj.edge.x2 = edgeX;
+      this.propObj.edge.y2 = edgeY;
     }
   }
   
@@ -451,7 +468,7 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
     */
   this.cloneProperties = function (prop) {
     this.propObj = clone(prop);
-    this.calculatePath();
+    this.calculatePath(true);
   }
   
   /**

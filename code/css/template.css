@@ -22,17 +22,17 @@ body {
 -------------------------------------------------- */
 /* Not required for template or sticky footer method. */
 
-body > .container {
-  padding: 60px 15px 0;
-  width: 90%;
-}
-.container .text-muted {
-  margin: 20px 0;
+body > .container-fluid {
+  padding-top: 60px
 }
 
 .footer > .container {
   padding-right: 15px;
   padding-left: 15px;
+}
+
+.navbar-nav.navbar-right:last-child {
+  margin: auto;
 }
 
 code {
@@ -54,13 +54,13 @@ border-color: #1abc9c;
 }
 
 #pseudocode-panel .panel-body {
-  height: 175px;
+  height: 200px;
   overflow: auto;
   padding: 0px;
 }
 
 #log-panel .panel-body {
-  height: 125px;
+  height: 100px;
   overflow: auto;
   padding: 0px;
 }
@@ -115,11 +115,4 @@ border-color: #1abc9c;
   color: #fff;
   background-color: #8e44ad;
   border-color: #8e44ad;
-}
-div .navbar-brand {
-  float: left;
-  height: 50px;
-  padding: 15px 15px;
-  font-size: 18px;
-  line-height: 20px;
 }
