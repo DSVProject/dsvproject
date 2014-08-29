@@ -588,9 +588,7 @@ var UserObject = function (coreObj, id, cx, cy, radius, text, shapeClass, textCl
         .attr("cy", y)
         .attr("r", 10)
         .on("click", function (d) {
-          var proto = self.coreObj.newUserObject("proto", self.propObj.shape.cx - 100, self.propObj.shape.cy, defaultProperties.shape.radius, self.propObj.text.text, null, null, null, null);
-          
-          proto.setIsValidTarget(true);
+          var proto = self.coreObj.newProtoSquare(self.propObj.shape.cx - 100, self.propObj.shape.cy, self.propObj.text.text);
           
           self.coreObj.setActiveUserObject();
           self.coreObj.removePlaceHolders();

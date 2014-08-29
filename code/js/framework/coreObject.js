@@ -57,6 +57,7 @@ var CoreObject = function () {
   this.variableWatchList = [];
   this.logList = [];
   
+  // Arrays to store user actions and the right answer for learning mode interactions
   this.learnUserActionList = [];
   this.learnAnswerKeyList = [];
   
@@ -89,6 +90,7 @@ var CoreObject = function () {
   /**
     * Display an error alert.
     *
+    * @param {!Const} type: the type of the alert box (defined at 'animation/constant.js' : ALERT_TYPES).
     * @param {!String} message: the message to be displayed inside the alert.
     */
   this.displayAlert = function (type, message) {
@@ -565,7 +567,7 @@ var CoreObject = function () {
     }
   }
   
-  this.reposition = function (obj, x, y, orientation) {
+  this.repositionDAG = function (obj, x, y, orientation) {
     var startingX = x;
     var startingY = y;
 
@@ -587,7 +589,7 @@ var CoreObject = function () {
       }
     }
     
-    obj.reposition(startingX, startingY, 0, orientation);
+    obj.repositionDAG(startingX, startingY, 0, orientation);
   }
 
   this.repositionWidths = function (obj) {
@@ -712,6 +714,14 @@ var CoreObject = function () {
     this.objectList[idObjectA].addEdge(newEdge);
     
     return newEdge;
+  }
+  
+  this.newProtoSquare = function (x, y, text) {
+    this.objectList["proto"] = new SquareObject(this, "proto", x, y, defaultProperties.shape.radius, text, null, null, null, null);
+    //this.objectList["proto"].setIsValidTarget(true);
+    //this.objectList["proto"].draw();
+    
+    return this.objectList[id];
   }
   
   /**

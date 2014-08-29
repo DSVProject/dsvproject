@@ -165,6 +165,11 @@ const LEARN_ACTION_STRINGS = {
   UPDATE_EDGE_B: "Update edge end"
 }
 
+/**
+  * Types of alerts that can be displayed. Positive is green, Negative is red, information is blue.
+  *
+  * @const 
+  */
 const ALERT_TYPES = {
   positive: "success",
   negative: "danger",

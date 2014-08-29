@@ -71,14 +71,15 @@ var QueueLinkedList = function () {
           coreObj.addPseudocodeLine(3, "&nbsp;&nbsp;head = tail = newNode;");
           coreObj.addPseudocodeLine(4, "} else {");
           coreObj.addPseudocodeLine(5, "&nbsp;&nbsp;tail.next = newNode;");
-          coreObj.addPseudocodeLine(6, "&nbsp;&nbsp;tail = newNode;}");
+          coreObj.addPseudocodeLine(6, "&nbsp;&nbsp;tail = newNode;");
+          coreObj.addPseudocodeLine(7, "}");
           break;
         case DEQUEUE:
           coreObj.addPseudocodeLine(0, "toReturn = head.item;");
           coreObj.addPseudocodeLine(1, "if (head == tail) {");
-          coreObj.addPseudocodeLine(2, "head = tail = null;");
+          coreObj.addPseudocodeLine(2, "&nbsp;&nbsp;head = tail = null;");
           coreObj.addPseudocodeLine(3, "} else {");
-          coreObj.addPseudocodeLine(4, "head = head.next;");
+          coreObj.addPseudocodeLine(4, "&nbsp;&nbsp;head = head.next;");
           coreObj.addPseudocodeLine(5, "}");
           break;
     }
@@ -177,10 +178,10 @@ var QueueLinkedList = function () {
 
         tail = newNode;
         edgeTailD.setIdObjectB(newNode.drawing.getID());
-        coreObj.saveState("Update tail pointer.", 6);
+        coreObj.saveState("Update the tail pointer.", 6);
       }
 
-      coreObj.reposition(head.drawing, 100, 300, ORIENTATION.RIGHT);
+      coreObj.repositionDAG(head.drawing, 100, 300, ORIENTATION.RIGHT);
       
       //tail.drawing.moveShape((N+1)*100, 300);
       coreObj.saveVariableToWatch("head", head.item);
@@ -215,9 +216,9 @@ var QueueLinkedList = function () {
     } else {
       head = head.next;
       edgeHeadD.setIdObjectB(head.drawing.getID());
-      coreObj.saveState("Update head pointer.", 4);
+      coreObj.saveState("Update the head pointer.", 4);
 
-      coreObj.reposition(head.drawing, 100, 300, ORIENTATION.RIGHT);
+      coreObj.repositionDAG(head.drawing, 100, 300, ORIENTATION.RIGHT);
       coreObj.saveVariableToWatch("head", head.item);
       coreObj.saveVariableToWatch("tail", tail.item);
       coreObj.saveState();

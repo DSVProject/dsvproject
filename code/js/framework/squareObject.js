@@ -48,6 +48,9 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
     return;
   }
   
+  /**
+    * Local reference of CoreObject from the algorithm javascript file, used for interactions with other existing shapes
+    */
   this.coreObj = coreObj;
   
   /**
@@ -410,11 +413,22 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
     this.edgeList[edgeObj.getID()] = edgeObj;
   }
   
+  /**
+    * @return {Integer} : How many edges this object has.
+    */
   this.getEdgeCount = function () {
     return Object.keys(this.edgeList).length;
   }
   
-  this.reposition = function(x, y, side, orientation) {
+  /**
+    * Calculate the position of this shape based on its parent and children. This function only works for Directed acyclic graph.
+    *
+    * @param {!Number} x : the x coordinate of who called this.
+    * @param {!Number} y : the y coordinate of who called this.
+    * @param {!Number} side : left offset (-1), right offset (1) or middle (0), with parent as reference.
+    * @param {!Const} orientation : to where the graph is heading (const defined at 'animation/constant.js' : ORIENTATION).
+    */
+  this.repositionDAG = function(x, y, side, orientation) {
     var counter = 0;
     var midPoint = this.getEdgeCount()/2;
     var leftAdjust = this.widthAdjust[Math.ceil(midPoint)];
@@ -453,15 +467,15 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
 
     for (var key in this.edgeList) {
       if (this.getEdgeCount() == 1) {
-        this.edgeList[key].reposition(x, y, 0, 0, 0, orientation);
+        this.edgeList[key].repositionDAG(x, y, 0, 0, 0, orientation);
 
         continue;
       }
 
       if (counter < midPoint) {
-        this.edgeList[key].reposition(x, y, -1, this.widthAdjust[Math.ceil(midPoint)], null, orientation);
+        this.edgeList[key].repositionDAG(x, y, -1, this.widthAdjust[Math.ceil(midPoint)], null, orientation);
       } else {
-        this.edgeList[key].reposition(x, y, 1, null, this.widthAdjust[Math.floor(midPoint) - 1], orientation);
+        this.edgeList[key].repositionDAG(x, y, 1, null, this.widthAdjust[Math.floor(midPoint) - 1], orientation);
       }
       counter++;
     }
@@ -476,15 +490,15 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
   this.draw = function (duration) {
     if(duration == null || isNaN(duration) || duration < 0) duration = DEFAULT_ANIMATION_DURATION;
     
-    this.json = [];
-    this.json.push(this.propObj);
+    var json = [];
+    json.push(this.propObj);
   
-    this.shape = d3.select("#" + DEFAULT_IDS.SVG_GROUP.SHAPE).selectAll(SVG_RECT)
-        .data(this.json, function (d) {return d.id;});
+    var shape = d3.select("#" + DEFAULT_IDS.SVG_GROUP.SHAPE).selectAll(SVG_RECT)
+        .data(json, function (d) {return d.id;});
       
-    this.shape.enter().append(SVG_RECT)        
+    shape.enter().append(SVG_RECT)        
         .attr("id", function (d) {return DEFAULT_IDS.SVG_ELEMENT.SHAPE + d.id;});
-    this.shape.transition()
+    shape.transition()
         .duration(duration)
         .attr("class", function (d) {return d.shape.class})
         .attr("x", function (d) {return d.shape.x;})
@@ -496,12 +510,12 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
         .attr("stroke", function (d) {return d.shape.stroke;})
         .attr("stroke-width", function (d) {return d.shape.strokeWidth;});
     
-    this.text = d3.select("#" + DEFAULT_IDS.SVG_GROUP.TEXT).selectAll(SVG_TEXT)
-        .data(this.json, function (d) {return d.id;});
+    var text = d3.select("#" + DEFAULT_IDS.SVG_GROUP.TEXT).selectAll(SVG_TEXT)
+        .data(json, function (d) {return d.id;});
         
-    this.text.enter().append(SVG_TEXT)
+    text.enter().append(SVG_TEXT)
         .attr("id", function (d) {return DEFAULT_IDS.SVG_ELEMENT.TEXT + d.id; });
-    this.text.transition()
+    text.transition()
         .duration(duration)
         .attr("class", function (d) {return d.text.class})
         .attr("x", function (d) {return d.text.x;})
@@ -513,12 +527,12 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
         .attr("text-anchor", function (d) {return d.text.textAnchor;})
         .text(function (d) {return d.text.text;});
     
-    this.label = d3.select("#" + DEFAULT_IDS.SVG_GROUP.LABEL).selectAll(SVG_TEXT)
-        .data(this.json, function (d) {return d.id;});
+    var label = d3.select("#" + DEFAULT_IDS.SVG_GROUP.LABEL).selectAll(SVG_TEXT)
+        .data(json, function (d) {return d.id;});
         
-    this.label.enter().append(SVG_TEXT)
+    label.enter().append(SVG_TEXT)
         .attr("id", function (d) {return DEFAULT_IDS.SVG_ELEMENT.LABEL + d.id;})
-    this.label.transition()
+    label.transition()
         .duration(duration)
         .attr("class", function (d) {return d.label.class;})
         .attr("x", function (d) {return d.label.x;})

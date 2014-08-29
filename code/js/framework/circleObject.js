@@ -49,6 +49,9 @@ var CircleObject = function (coreObj, id, cx, cy, radius, text, label, shapeClas
     return;
   }
 
+  /**
+    * Local reference of CoreObject from the algorithm javascript file, used for interactions with other existing shapes
+    */
   this.coreObj = coreObj;
   
   /**
@@ -392,11 +395,22 @@ var CircleObject = function (coreObj, id, cx, cy, radius, text, label, shapeClas
     this.edgeList[edgeObj.getID()] = edgeObj;
   }
   
+  /**
+    * @return {Integer} : How many edges this object has.
+    */
   this.getEdgeCount = function () {
     return Object.keys(this.edgeList).length;
   }
   
-  this.reposition = function(x, y, side, orientation) {
+  /**
+    * Calculate the position of this shape based on its parent and children. This function only works for Directed acyclic graph.
+    *
+    * @param {!Number} x : the x coordinate of who called this.
+    * @param {!Number} y : the y coordinate of who called this.
+    * @param {!Number} side : left offset (-1), right offset (1) or middle (0), with parent as reference.
+    * @param {!Const} orientation : to where the graph is heading (const defined at 'animation/constant.js' : ORIENTATION).
+    */
+  this.repositionDAG = function(x, y, side, orientation) {
     var counter = 0;
     var midPoint = this.getEdgeCount()/2;
     var leftAdjust = this.widthAdjust[Math.ceil(midPoint)];
@@ -435,15 +449,15 @@ var CircleObject = function (coreObj, id, cx, cy, radius, text, label, shapeClas
 
     for (var key in this.edgeList) {
       if (this.getEdgeCount() == 1) {
-        this.edgeList[key].reposition(x, y, 0, 0, 0, orientation);
+        this.edgeList[key].repositionDAG(x, y, 0, 0, 0, orientation);
 
         continue;
       }
 
       if (counter < midPoint) {
-        this.edgeList[key].reposition(x, y, -1, this.widthAdjust[Math.ceil(midPoint)], null, orientation);
+        this.edgeList[key].repositionDAG(x, y, -1, this.widthAdjust[Math.ceil(midPoint)], null, orientation);
       } else {
-        this.edgeList[key].reposition(x, y, 1, null, this.widthAdjust[Math.floor(midPoint) - 1], orientation);
+        this.edgeList[key].repositionDAG(x, y, 1, null, this.widthAdjust[Math.floor(midPoint) - 1], orientation);
       }
       counter++;
     }
