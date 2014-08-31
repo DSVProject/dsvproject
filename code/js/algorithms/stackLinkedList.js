@@ -54,19 +54,19 @@ var StackLinkedList = function () {
     return coreObj;
   }
   
-  this.generatePseudocode = function (command) {
-    coreObj.clearPseudocode();
+  this.generateAlgorithm = function (command) {
+    coreObj.clearAlgorithm();
     
     switch (command) {
         case PUSH:
-          coreObj.addPseudocodeLine(0, "newNode = new Node();");
-          coreObj.addPseudocodeLine(1, "newNode.item = input;");
-          coreObj.addPseudocodeLine(2, "newNode.next = head;");
-          coreObj.addPseudocodeLine(2, "head = newNode;");
+          coreObj.addAlgorithmLine(0, "newNode = new Node();");
+          coreObj.addAlgorithmLine(1, "newNode.item = input;");
+          coreObj.addAlgorithmLine(2, "newNode.next = head;");
+          coreObj.addAlgorithmLine(2, "head = newNode;");
           break;
         case POP:
-          coreObj.addPseudocodeLine(0, "toReturn = head.item;");
-          coreObj.addPseudocodeLine(1, "head = head.next;");
+          coreObj.addAlgorithmLine(0, "toReturn = head.item;");
+          coreObj.addAlgorithmLine(1, "head = head.next;");
           break;
     }
   }
@@ -92,12 +92,12 @@ var StackLinkedList = function () {
           
   this.push = function(item) {
     if (item.trim() == "") {
-      coreObj.displayAlert("The input should not be empty.");
+      coreObj.displayAlert(ALERT_TYPES.NEGATIVE, "The input should not be empty.");
       return false;
     }
 
-    this.generatePseudocode(PUSH);
-    
+    this.generateAlgorithm(PUSH);
+    coreObj.newStateList();
     
     newNode = new Node();
     newNode.item = item;
@@ -118,6 +118,7 @@ var StackLinkedList = function () {
     coreObj.saveState("Update the head pointer.", 3);
     
     coreObj.repositionDAG(head.drawing, 250, 100, ORIENTATION.BOTTOM);
+    coreObj.saveVariableToWatch("head", head.item);
     coreObj.saveState();
     
     N++;
@@ -127,12 +128,13 @@ var StackLinkedList = function () {
   this.pop = function() {
     if (this.isEmpty()) {
       return false;
-      coreObj.displayAlert("The stack is already empty.");
+      coreObj.displayAlert(ALERT_TYPES.NEGATIVE, "The stack is already empty.");
     }
     
-    this.generatePseudocode(POP);
+    this.generateAlgorithm(POP);
+    coreObj.newStateList();
     
-    var item = head.item;
+    var item = head != null ? head.item : null;
     
     coreObj.removeShape(head.drawing.getID());
     coreObj.saveState("Pop the head position, returning: " + item, 0);
@@ -143,9 +145,11 @@ var StackLinkedList = function () {
       edgeHeadD.setIdObjectB(head.drawing.getID());
       coreObj.saveState("Update the head pointer.", 1);
       coreObj.repositionDAG(head.drawing, 250, 100, ORIENTATION.BOTTOM);
+      coreObj.saveVariableToWatch("head", head.item);
       coreObj.saveState();
     } else {
       edgeHeadD.setIdObjectB(null);
+      coreObj.saveVariableToWatch("head", head != null ? head.item : null);
       coreObj.saveState("Update the head pointer.", 1);
     }
     

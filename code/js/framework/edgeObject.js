@@ -38,9 +38,8 @@
   * @param {!Const} edgeType : a constant value (defined at 'animation/constant.js' : EDGE_TYPE) indicating wether the vertex is unidirectional (from A -> B), bidirectional or has no direction.
   * @param {?Const=} outboundPoint : a constant value (defined at 'animation/constant.js' : EDGE_POSITION) indicating from which point of the shape the edge will originate. If null the CENTER position will be used.
   * @param {?Const=} inboundPoint : a constant value (defined at 'animation/constant.js' : EDGE_POSITION) indicating at which point of the shape the edge will arrive. If null the CENTER position will be used.
-  * @param {?Const=} typeObjCreated : a constant value (defined at 'animation/constant.js' : USER_TYPE_OBJ_CREATED) indicating which object should be created to insert a new value in the learning mode.
   */
-var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeType, outboundPoint, inboundPoint, typeObjCreated) {
+var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeType, outboundPoint, inboundPoint) {
   var self = this;
 
   if (coreObj == null) {
@@ -82,11 +81,7 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
       "y2": null,
       "stroke": idObjectB != null ? defaultProperties.edge.stroke.default : defaultProperties.edge.stroke.null,
       "strokeWidth": idObjectB != null ? defaultProperties.edge["stroke-width"].default : defaultProperties.edge["stroke-width"].null
-    },
-    
-    "isValidTarget": false,
-    
-    "typeObjCreated": typeObjCreated
+    }
   }
 
   /**
@@ -288,23 +283,6 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
   }
   
   /**
-    * Set this object as a valid target for the learning mode interactions.
-    *
-    * @param {!Boolean} bool : if true, the object will be a valid target.
-    */
-  this.setIsValidTarget = function (bool) {
-    if (bool == null) return;
-    this.propObj.isValidTarget = bool;
-  }
-  
-  /**
-    * @return {Boolean} : the isValidTarget property.
-    */ 
-  this.getIsValidTarget = function () {
-    return this.propObj.isValidTarget;
-  }
-  
-  /**
     * Update the coordinates of this path, based on the movement of the objects it is binded to.
     *
     * @param {Boolean=} isClone : if true, it won't remove the adjustments made by repositionDAG. Should only be true when calling cloning this object.
@@ -469,65 +447,6 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
   this.cloneProperties = function (prop) {
     this.propObj = clone(prop);
     this.calculatePath(true);
-  }
-  
-  /**
-    * When in the Learning Mode, objects on the screen classified as valid targets will have place holders. This function creates them.
-    * When clicked, the place holder will apply the changes according to the UserObject who created them:
-    *     -If it was a VALUE UserObject, a new object will be created at the end of this edge.
-    *     -If it was a MOVEMENT UserObject nothing will happen. 
-    */
-  this.createPlaceHolder = function () {
-    d3.select("#" + DEFAULT_IDS.SVG_GROUP.SHAPE)
-        .append(SVG_CIRCLE)
-        .attr("class", DEFAULT_CLASSES.LEARNING_MODE.PLACE_HOLDER)
-        .attr("cx", self.getCoordinateX2())
-        .attr("cy", self.getCoordinateY2())
-        .attr("r", 10)
-        .on("click", function (d) {
-          var activeObject = self.coreObj.getActiveUserObject();
-          var activeObjectText = activeObject.getText();
-          var newObj = {
-            drawing: null,
-            edge1: null,
-            edge2: null
-          };
-          
-          if (activeObject.getType() == USER_OBJ_TYPE.VALUE) {
-            if (self.propObj.typeObjCreated == USER_TYPE_OBJ_CREATED.SQUARE_EDGE_0) {
-              newObj.drawing = self.coreObj.newSquareObject(DEFAULT_IDS.SVG_ELEMENT.USER_NEW_OBJ, null, null, activeObjectText, null, null, null, null);
-            } else if (self.propObj.typeObjCreated == USER_TYPE_OBJ_CREATED.SQUARE_EDGE_1) {
-              newObj.drawing = self.coreObj.newSquareObject(DEFAULT_IDS.SVG_ELEMENT.USER_NEW_OBJ, null, null, activeObjectText, null, null, null, null);
-              newObj.edge1 = self.coreObj.newEdgeObject(DEFAULT_IDS.SVG_ELEMENT.USER_NEW_OBJ + "1", newObj.drawing.getID(), null, null, self.getType(), self.getOutboundPoint(), self.getInboundPoint(), null);
-            } else if (self.propObj.typeObjCreated == USER_TYPE_OBJ_CREATED.CIRCLE_EDGE_0) {
-              newObj.drawing = self.coreObj.newCircleObject(DEFAULT_IDS.SVG_ELEMENT.USER_NEW_OBJ, null, null, defaultProperties.shape.radius, activeObjectText, null, null, null, null);
-            } else if (self.propObj.typeObjCreated == USER_TYPE_OBJ_CREATED.CIRCLE_EDGE_1) {
-              newObj.drawing = self.coreObj.newCircleObject(DEFAULT_IDS.SVG_ELEMENT.USER_NEW_OBJ, null, null, defaultProperties.shape.radius, activeObjectText, null, null, null, null);
-              newObj.edge1 = self.coreObj.newEdgeObject(DEFAULT_IDS.SVG_ELEMENT.USER_NEW_OBJ + "1", newObj.drawing.getID(), null, null, self.getType(), self.getOutboundPoint(), self.getInboundPoint(), null);
-            } else if (self.propObj.typeObjCreated == USER_TYPE_OBJ_CREATED.CIRCLE_EDGE_2) {
-              newObj.drawing = self.coreObj.newCircleObject(DEFAULT_IDS.SVG_ELEMENT.USER_NEW_OBJ, null, null, defaultProperties.shape.radius, activeObjectText, null, null, null, null);
-              newObj.edge1 = self.coreObj.newEdgeObject(DEFAULT_IDS.SVG_ELEMENT.USER_NEW_OBJ + "1", newObj.drawing.getID(), null, null, self.getType(), self.getOutboundPoint(), self.getInboundPoint(), null);
-              newObj.edge2 = self.coreObj.newEdgeObject(DEFAULT_IDS.SVG_ELEMENT.USER_NEW_OBJ + "2", newObj.drawing.getID(), null, null, self.getType(), self.getOutboundPoint(), self.getInboundPoint(), null);
-            }
-            
-            self.setIdObjectB(newObj.drawing.getID());
-            
-            self.coreObj.reposition(self.coreObj.objectList[self.propObj.idObjectA], null, null, self.getOutboundPoint());
-            if (newObj.edge1 != null) newObj.edge1.calculatePath();
-            if (newObj.edge2 != null) newObj.edge2.calculatePath();
-            
-            newObj.drawing.draw();
-            
-            activeObject.setText();
-            activeObject.redraw();
-            
-            self.setIdObjectB(newObj.drawing.getID());
-            self.draw();
-          }
-          
-          self.coreObj.setActiveUserObject();
-          self.coreObj.removePlaceHolders();
-        });
   }
 
   // CODE TO BE EXECUTED BY CONSTRUCTOR

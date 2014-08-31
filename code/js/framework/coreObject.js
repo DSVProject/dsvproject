@@ -78,7 +78,7 @@ var CoreObject = function () {
   this.newActionEnabled = function () {
     for (var key in this.objectList) {
       if (this.objectList[key] instanceof UserObject) {
-        this.displayAlert("Please finish or cancel the current action before making any further changes.");
+        this.displayAlert(ALERT_TYPES.NEGATIVE, "Please finish or cancel the current action before making any further changes.");
         
         return false;
       }
@@ -88,7 +88,7 @@ var CoreObject = function () {
   }
   
   /**
-    * Display an error alert.
+    * Display a screen alert.
     *
     * @param {!Const} type: the type of the alert box (defined at 'animation/constant.js' : ALERT_TYPES).
     * @param {!String} message: the message to be displayed inside the alert.
@@ -106,21 +106,23 @@ var CoreObject = function () {
     this.stateAnimation = 0; 
     this.actionArray = [];
     this.actionCount = 0;
+    
+    this.saveState();
   }
   
   /**
     * Creates a snapshot of the current state of all the objects on the screen.
     *
     * @param {?String=} logMessage : an optional message about the changes, that will appear on the log panel.
-    * @param {?Number=} pseudocodeLine : the pseudocode line to be highlighted during the exuction of this iteration.
+    * @param {?Number=} algorithmLine : the algorithm line to be highlighted during the exuction of this iteration.
     */
-  this.saveState = function (logMessage, pseudocodeLine) {
+  this.saveState = function (logMessage, algorithmLine) {
     // The current state being created
     var state = {
       data : null,
       log : null,
       variables : null,
-      pseudocodeLine : null
+      algorithmLine : null
     };
     
     // Create a "snapshot" of the current state of objectList[]
@@ -137,7 +139,7 @@ var CoreObject = function () {
     state.data = newList;
     state.log = clone(self.logList);
     state.variables = clone(self.variableWatchList);
-    state.pseudocodeLine = pseudocodeLine;
+    state.algorithmLine = algorithmLine;
     
     // Save the generated state to the list.
     // Important: When assigning a state for a position in this array you should use parseInt, otherwise when using other
@@ -160,7 +162,7 @@ var CoreObject = function () {
       data : null,
       log : null,
       variables : null,
-      pseudocodeLine : null
+      algorithmLine : null
     };
     
     // Create a "snapshot" of the current state of objectList[]
@@ -312,8 +314,8 @@ var CoreObject = function () {
       self.printVariableWatch(currentState.variables)
     }
     
-    if (currentState.pseudocodeLine != null) {
-      self.highlightPseudocode(currentState.pseudocodeLine);
+    if (currentState.algorithmLine != null) {
+      self.highlightAlgorithm(currentState.algorithmLine);
     }
     
     // Draw the objects
@@ -521,42 +523,45 @@ var CoreObject = function () {
   }
   
   /**
-    * Clear the pseudocode panel.
+    * Clear the algorithm panel.
     */
-  this.clearPseudocode = function () {
-    d3.select("#" + DEFAULT_IDS.PAGE.PSEUDOCODE).selectAll("tr")
+  this.clearAlgorithm = function () {
+    d3.select("#" + DEFAULT_IDS.PAGE.ALGORITHM).selectAll("tr")
         .remove();
   }
   
   /**
-    * Add an instruction on the pseudocode panel.
+    * Add an instruction on the algorithm panel.
     *
     * @param {!Integer} id : the id o the html element that will hold the line.
     * @param {!String} instruction : the instruction to be added.
     */
-  this.addPseudocodeLine = function (id, instruction) {
-    d3.select("#" + DEFAULT_IDS.PAGE.PSEUDOCODE)
+  this.addAlgorithmLine = function (id, instruction) {
+    d3.select("#" + DEFAULT_IDS.PAGE.ALGORITHM)
         .append("tr")
-        .attr("id", DEFAULT_IDS.HTML_ELEMENT.PSEUDOCODE_LINE + id)  
+        .attr("id", DEFAULT_IDS.HTML_ELEMENT.ALGORITHM_LINE + id)  
         .append("td")
         .html(instruction);
   }
   
   /**
-    * Highlight one line of the pseudoCode panel.
+    * Highlight one line of the algorithm panel.
     *
     * @param {!Integer} lineNumber : the line number to be highlighted (same used as id when the line was created).
     */
-  this.highlightPseudocode = function (lineNumber) {
+  this.highlightAlgorithm = function (lineNumber) {
     if(lineNumber == null || isNaN(lineNumber)) return;
     
-    d3.select("#" + DEFAULT_IDS.PAGE.PSEUDOCODE).selectAll("tr")
+    d3.select("#" + DEFAULT_IDS.PAGE.ALGORITHM).selectAll("tr")
         .attr("class", "");
     
-    d3.select("#" + DEFAULT_IDS.HTML_ELEMENT.PSEUDOCODE_LINE + lineNumber)
-        .classed(DEFAULT_CLASSES.PAGE.PSEUDOCODE.HIGHLIGHT, "true");
+    d3.select("#" + DEFAULT_IDS.HTML_ELEMENT.ALGORITHM_LINE + lineNumber)
+        .classed(DEFAULT_CLASSES.PAGE.ALGORITHM.HIGHLIGHT, "true");
   }
   
+  /**
+    * Remove any custom classes that may be added to shapes in the animation steps.
+    */
   this.clearCustomClasses = function () {
     for (var key in this.objectList) {
       this.objectList[key].setShapeClass("");
@@ -567,6 +572,14 @@ var CoreObject = function () {
     }
   }
   
+  /**
+    * Calculate the position of all shapes based on their parents and children. This function only works for Directed acyclic graph.
+    *
+    * @param {!Object} obj : the first object to be repositioned. Usually the root or first node of a data structure.
+    * @param {!Number} x : the initial x coordinate.
+    * @param {!Number} y : the initial y coordinate.
+    * @param {!Const} orientation : to where the graph is heading (const defined at 'animation/constant.js' : ORIENTATION).
+    */
   this.repositionDAG = function (obj, x, y, orientation) {
     var startingX = x;
     var startingY = y;
@@ -592,6 +605,11 @@ var CoreObject = function () {
     obj.repositionDAG(startingX, startingY, 0, orientation);
   }
 
+  /**
+    * Recursive function to calculate the offset between shapes, based on the number of the edges.
+    *
+    * @param {!Object} obj : the first object to be repositioned. Usually the root or first node of a data structure.
+    */
   this.repositionWidths = function (obj) {
     var sum = 0;
     var i = 0;
@@ -612,14 +630,14 @@ var CoreObject = function () {
     return sum;
   }
   
-  // OBJECT CONSTRUCTORS
+  // FACTORIES
   
   /**
     * Create a square graphic element.
     *
     * @param {!(String|Number)} id : the id of this object.
-    * @param {!Number} x : the x coordinate of this object inside the svg element.
-    * @param {!Number} y : the y coordinate of this object inside the svg element.
+    * @param {?Number} x : the x coordinate of this object inside the svg element.
+    * @param {?Number} y : the y coordinate of this object inside the svg element.
     * @param {?String=} text : the inner text of this object, that will be displayed on the screen.
     * @param {?String=} label : the text underneath this object, that will be displayed on the screen.
     * @param {?String=} shapeClass : the CSS class of the shape svg element.
@@ -669,8 +687,8 @@ var CoreObject = function () {
     * Create a user graphic element (used for the learning mode).
     *
     * @param {!(String|Number)} id : the id of this object.
-    * @param {!Number} cx : the cx coordinate of this object inside the svg element.
-    * @param {!Number} cy : the cy coordinate of this object inside the svg element.
+    * @param {?Number} cx : the cx coordinate of this object inside the svg element.
+    * @param {?Number} cy : the cy coordinate of this object inside the svg element.
     * @param {!Number} radius : the radius of this object.
     * @param {?String=} text : the inner text of this object, that will be displayed on the screen.
     * @param {?String=} shapeClass : the CSS class of the rect svg element.
@@ -704,24 +722,15 @@ var CoreObject = function () {
     * @param {!Const} edgeType : a constant value (defined at 'animation/constant.js' : EDGE_TYPE) indicating wether the vertex is unidirectional (from A -> B), bidirectional or has no direction.
     * @param {?Const=} outboundPoint : a constant value (defined at 'animation/constant.js' : EDGE_POSITION) indicating from which point of the shape the edge will originate. If null the CENTER position will be used.
     * @param {?Const=} inboundPoint : a constant value (defined at 'animation/constant.js' : EDGE_POSITION) indicating at which point of the shape the edge will arrive. If null the CENTER position will be used.
-    * @param {?Const=} typeObjCreated : a constant value (defined at 'animation/constant.js' : USER_TYPE_OBJ_CREATED) indicating which object should be created to insert a new value in the learning mode.
     *
     * @return {EdgeObject} : the new object.
     */
-  this.newEdgeObject = function (id, idObjectA, idObjectB, edgeClass, edgeType, outboundPoint, inboundPoint, typeObjCreated) {
-    var newEdge = new EdgeObject(this, id, idObjectA, idObjectB, edgeClass, edgeType, outboundPoint, inboundPoint, typeObjCreated);
+  this.newEdgeObject = function (id, idObjectA, idObjectB, edgeClass, edgeType, outboundPoint, inboundPoint) {
+    var newEdge = new EdgeObject(this, id, idObjectA, idObjectB, edgeClass, edgeType, outboundPoint, inboundPoint);
     
     this.objectList[idObjectA].addEdge(newEdge);
     
     return newEdge;
-  }
-  
-  this.newProtoSquare = function (x, y, text) {
-    this.objectList["proto"] = new SquareObject(this, "proto", x, y, defaultProperties.shape.radius, text, null, null, null, null);
-    //this.objectList["proto"].setIsValidTarget(true);
-    //this.objectList["proto"].draw();
-    
-    return this.objectList[id];
   }
   
   /**

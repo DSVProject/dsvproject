@@ -60,27 +60,27 @@ var QueueLinkedList = function () {
     return coreObj;
   }
   
-  this.generatePseudocode = function (command) {
-    coreObj.clearPseudocode();
+  this.generateAlgorithm = function (command) {
+    coreObj.clearAlgorithm();
     
     switch (command) {
         case ENQUEUE:
-          coreObj.addPseudocodeLine(0, "newNode = new Node();");
-          coreObj.addPseudocodeLine(1, "newNode.value = input;");
-          coreObj.addPseudocodeLine(2, "if (isEmpty()) {");
-          coreObj.addPseudocodeLine(3, "&nbsp;&nbsp;head = tail = newNode;");
-          coreObj.addPseudocodeLine(4, "} else {");
-          coreObj.addPseudocodeLine(5, "&nbsp;&nbsp;tail.next = newNode;");
-          coreObj.addPseudocodeLine(6, "&nbsp;&nbsp;tail = newNode;");
-          coreObj.addPseudocodeLine(7, "}");
+          coreObj.addAlgorithmLine(0, "newNode = new Node();");
+          coreObj.addAlgorithmLine(1, "newNode.value = input;");
+          coreObj.addAlgorithmLine(2, "if (isEmpty()) {");
+          coreObj.addAlgorithmLine(3, "&nbsp;&nbsp;head = tail = newNode;");
+          coreObj.addAlgorithmLine(4, "} else {");
+          coreObj.addAlgorithmLine(5, "&nbsp;&nbsp;tail.next = newNode;");
+          coreObj.addAlgorithmLine(6, "&nbsp;&nbsp;tail = newNode;");
+          coreObj.addAlgorithmLine(7, "}");
           break;
         case DEQUEUE:
-          coreObj.addPseudocodeLine(0, "toReturn = head.item;");
-          coreObj.addPseudocodeLine(1, "if (head == tail) {");
-          coreObj.addPseudocodeLine(2, "&nbsp;&nbsp;head = tail = null;");
-          coreObj.addPseudocodeLine(3, "} else {");
-          coreObj.addPseudocodeLine(4, "&nbsp;&nbsp;head = head.next;");
-          coreObj.addPseudocodeLine(5, "}");
+          coreObj.addAlgorithmLine(0, "toReturn = head.item;");
+          coreObj.addAlgorithmLine(1, "if (head == tail) {");
+          coreObj.addAlgorithmLine(2, "&nbsp;&nbsp;head = tail = null;");
+          coreObj.addAlgorithmLine(3, "} else {");
+          coreObj.addAlgorithmLine(4, "&nbsp;&nbsp;head = head.next;");
+          coreObj.addAlgorithmLine(5, "}");
           break;
     }
   }
@@ -108,12 +108,12 @@ var QueueLinkedList = function () {
           
   this.enqueue = function(item, duration) {
     if (item.trim() == "") {
-      coreObj.displayAlert(ALERT_TYPES.negative, "The input should not be empty.");
+      coreObj.displayAlert(ALERT_TYPES.NEGATIVE, "The input should not be empty.");
       return false;
     }
 
     if (coreObj.isLearningMode()) {
-      coreObj.clearPseudocode();
+      coreObj.clearAlgorithm();
       
       // Create the first user object
       learnObj["newValue"] = coreObj.newUserObject("newValue", 500, 75, 25, item, "learning value", null, USER_OBJ_TYPE.VALUE, null, null);
@@ -131,7 +131,7 @@ var QueueLinkedList = function () {
         iterator.drawing.setIsValidTarget(true);
         
         // Create user objects for DELETE_ITEM
-        //learnObj[iterator.drawing.getID()] = coreObj.newUserObject("d" + iterator.drawing.getID(), iterator.drawing.getCoordinateX() + 25, iterator.drawing.getCoordinateY() + iterator.drawing.getHeight(), 10, "X", "learning delete", "learning delete", USER_OBJ_TYPE.DELETING, iterator.drawing.getID(), LEARN_ACTION_CODES.DELETE_ITEM, false);
+        learnObj[iterator.drawing.getID()] = coreObj.newUserObject("d" + iterator.drawing.getID(), iterator.drawing.getCoordinateX() + 25, iterator.drawing.getCoordinateY() + iterator.drawing.getHeight(), 10, "X", "learning delete", "learning delete", USER_OBJ_TYPE.DELETING, iterator.drawing.getID(), LEARN_ACTION_CODES.DELETE_ITEM, false);
         
         // Create user objects on the edges, used to update the position
         //learnObj[iterator.edge.getID() + "1"] = coreObj.newUserObject("e1" + iterator.edge.getID(), iterator.edge.getCoordinateX1(), iterator.edge.getCoordinateY1(), 10, null, "learning edge", null, USER_OBJ_TYPE.EDGE, iterator.edge.getID(), LEARN_ACTION_CODES.UPDATE_EDGE_A, false);
@@ -142,7 +142,7 @@ var QueueLinkedList = function () {
       
       coreObj.saveLearnState();
       coreObj.beginLearn();
-      coreObj.displayAlert(ALERT_TYPES.information, "Click on the grey circles to schedule the changes of this method.</br>The <strong>Green</strong> is used to create a new node or update an existing node value. The <strong>Purple</strong> is used to update where an edge is poiting to.")
+      coreObj.displayAlert(ALERT_TYPES.INFORMATION, "Click on the grey circles to schedule the changes of this method.</br>The <strong>Green</strong> is used to create a new node or update an existing node value. The <strong>Purple</strong> is used to update where an edge is poiting to.")
       
       DEFERRED.done(function() {
         coreObj.cancelLearn();
@@ -151,14 +151,15 @@ var QueueLinkedList = function () {
       });
       
     } else {      
-      this.generatePseudocode(ENQUEUE);
+      this.generateAlgorithm(ENQUEUE);
+      coreObj.newStateList();
 
       var newNode = new Node();
       newNode.item = item;
       newNode.next = null;
 
       newNode.drawing = coreObj.newSquareObject(++counterID, 200, 200, null, null, "node", null, null);
-      newNode.edge = coreObj.newEdgeObject(counterID, newNode.drawing.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.RIGHT, EDGE_POSITION.LEFT, USER_TYPE_OBJ_CREATED.SQUARE_EDGE_1);
+      newNode.edge = coreObj.newEdgeObject(counterID, newNode.drawing.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.RIGHT, EDGE_POSITION.LEFT);
 
       coreObj.saveState("Inserting new node.", 0);
       
@@ -197,10 +198,11 @@ var QueueLinkedList = function () {
   this.dequeue = function() {
     if (this.isEmpty()) {
       return false;
-      coreObj.displayAlert("The queue is already empty.");
+      coreObj.displayAlert(ALERT_TYPES.NEGATIVE, "The queue is already empty.");
     }
 
-    this.generatePseudocode(DEQUEUE);
+    this.generateAlgorithm(DEQUEUE);
+    coreObj.newStateList();
 
     var item = head.item;
     
@@ -212,7 +214,7 @@ var QueueLinkedList = function () {
       edgeHeadD.setIdObjectB(null);
       edgeTailD.setIdObjectB(null);
       
-      coreObj.saveState("The queue had 1 item, so update head and tail pointes.", 2);
+      coreObj.saveState("The queue had 1 item, so update head and tail pointers.", 2);
     } else {
       head = head.next;
       edgeHeadD.setIdObjectB(head.drawing.getID());

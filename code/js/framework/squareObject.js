@@ -32,8 +32,8 @@
   *
   * @param {!CoreAnimObject} coreObj : instance of the CoreAnimObject class.
   * @param {!(String|Number)} id : the id of this object.
-  * @param {!Number} x : the x coordinate of this object inside the svg element.
-  * @param {!Number} y : the y coordinate of this object inside the svg element.
+  * @param {?Number} x : the x coordinate of this object inside the svg element.
+  * @param {?Number} y : the y coordinate of this object inside the svg element.
   * @param {?String=} text : the inner text of this object, that will be displayed on the screen.
   * @param {?String=} label : the text underneath this object, that will be displayed on the screen.
   * @param {?String=} shapeClass : the CSS class of the shape svg element.

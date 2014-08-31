@@ -58,6 +58,7 @@ $('#help-btn').on('click', function () {
   $("#div-panels").popover('toggle');
   $("#div-media-buttons").popover('toggle');
   $("#div-learning-buttons").popover('toggle');
+  $("#div-panel-buttons").popover('toggle');
 });
 
 /**
@@ -77,11 +78,11 @@ $('#variables-btn').on('click', function () {
 });
 
 /**
-  * Show or hide the pseudocode panel.
+  * Show or hide the algorithm track panel.
   */
-$('#pseudocode-btn').on('click', function () {
+$('#algorithm-btn').on('click', function () {
   $(this).toggleClass('active ');
-  $("#pseudocode-panel").toggle();
+  $("#algorithm-panel").toggle();
 });
 
 /**
@@ -99,6 +100,7 @@ $('#chk-learn').on('click', function () {
   DEFERRED = $.Deferred();
 });
 
+// Functions used for bootstrap
 $('.dropdown-menu').find('form').click(function (e) {
   e.stopPropagation();
 });
@@ -124,5 +126,5 @@ $(document).ready(function() {
 });
 
 $('.prevent-submit').submit(function(e){
-    e.preventDefault();
+  e.preventDefault();
 });

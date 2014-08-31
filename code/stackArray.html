@@ -69,7 +69,7 @@
           <ul class="nav navbar-nav navbar-right">
             <!-- Template: Learning Mode Buttons (If not available comment this div tag) -->
             <!--
-            <div id="div-learning-buttons" class="btn-group popover-dismiss" data-popover="popover" data-html="true" data-placement="bottom" title="Learning Mode" data-content="Use this switch to toggle between the <b>Exploration</b> and the <b>Learning</b> modes.<br/><br/>In Exploration mode animations will happen automatically.<br/>In Learning mode you will have to create the final state of each method.">
+            <div id="div-learning-buttons" class="btn-group popover-dismiss" data-popover="popover" data-html="true" data-placement="bottom" title="Learning Mode" data-content="Use this switch to toggle between the <b>Exploration</b> and the <b>Learning</b> modes.<br>In Exploration mode animations will happen automatically.<br>In Learning mode you will have to schedule the changes of each method.">
               <button id="chk-answer-btn" type="button" disabled class="btn btn-default navbar-btn" data-toggle="tooltip" data-placement="bottom" title="Check Answer">
                     <span class="glyphicon glyphicon-check"></span>
               </button>
@@ -101,14 +101,14 @@
         <div class="col-md-9">
           <div id="viz"></div>
         </div>
-        <div id="div-panels" class="col-md-3 popover-dismiss" data-popover="popover" data-html="true" data-placement="left" title="Panels" data-content="In these panels you will find a <b>Log</b> of what happened during the animation, the <b>Pseudocode</b> and a <b>Variable Watch</b>.">
-          <div id="pseudocode-panel" class="panel panel-first">
+        <div id="div-panels" class="col-md-3 popover-dismiss" data-popover="popover" data-html="true" data-placement="left" title="Panels" data-content="In these panels you will find the <b>Algorithm Track</b>, a <b>Variable Watch</b> and a <b>Log</b> of what happened during the animation.">
+          <div id="algorithm-panel" class="panel panel-first">
             <div class="panel-heading">
-              <h3 class="panel-title">Pseudocode</h3>
+              <h3 class="panel-title">Algorithm Track</h3>
             </div>
             <div class="panel-body">
               <table class="table">
-                <tbody id="pseudocode"></tbody>
+                <tbody id="algorithm"></tbody>
               </table>
             </div>
           </div>
@@ -152,7 +152,7 @@
         </div>
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav navbar-left">
-            <div id="div-media-buttons" class="popover-dismiss" data-popover="popover" data-html="true" data-placement="top" title="Media Controls" data-content="Use these to <b>iterate</b> through the animation steps, <b>undo</b> or <b>redo</b> your actions and change the <b>animation speed</b>.">
+            <div id="div-media-buttons" class="popover-dismiss" data-popover="popover" data-html="true" data-placement="top" title="Media Controls" data-content="Use these to <b>iterate</b> through the animation steps and to change the <b>animation speed</b>.">
               <div class="btn-group">
                 <button type="button" class="btn btn-default navbar-btn" data-toggle="tooltip" data-placement="top" title="Previous Step" onclick="previous()">
                   <span class="glyphicon glyphicon-backward"></span>
@@ -184,17 +184,19 @@
             </div>
           </ul>
           <ul class="nav navbar-nav navbar-right">
-            <button type="button" class="btn btn-default navbar-btn" onclick="resetPos()">Reset Position</button>
-            <div class="btn-group">
-              <button id="log-btn" type="button" class="btn btn-default navbar-btn active" data-toggle="tooltip" data-placement="top" title="Log">
-                <span class="glyphicon glyphicon-list-alt"></span>
-              </button>
-              <button id="variables-btn" type="button" class="btn btn-default navbar-btn active" data-toggle="tooltip" data-placement="top" title="Variables">
-                <span class="glyphicon glyphicon-eye-open"></span>
-              </button>
-              <button id="pseudocode-btn" type="button" class="btn btn-default navbar-btn active" data-toggle="tooltip" data-placement="top" title="Pseudocode">
-                <span class="glyphicon glyphicon-list"></span>
-              </button>
+            <div id="div-panel-buttons" class="popover-dismiss" data-popover="popover" data-html="true" data-placement="top" title="Panel Buttons" data-content="After zooming or panning, use the <b>Reset Position</b> button to bring the visualisation to default size.<br>These three other buttons toggle the visibility of the panels.">
+              <button type="button" class="btn btn-default navbar-btn" onclick="resetPos()">Reset Position</button>
+              <div class="btn-group">
+                <button id="algorithm-btn" type="button" class="btn btn-default navbar-btn active" data-toggle="tooltip" data-placement="top" title="Algorithm Track">
+                  <span class="glyphicon glyphicon-list"></span>
+                </button>
+                <button id="variables-btn" type="button" class="btn btn-default navbar-btn active" data-toggle="tooltip" data-placement="top" title="Variables">
+                  <span class="glyphicon glyphicon-eye-open"></span>
+                </button>
+                <button id="log-btn" type="button" class="btn btn-default navbar-btn active" data-toggle="tooltip" data-placement="top" title="Log">
+                  <span class="glyphicon glyphicon-list-alt"></span>
+                </button>
+              </div>
             </div>
           </ul>
         </div>
@@ -253,14 +255,6 @@
       
       function next () {
         core.next();
-      }
-      
-      function undo () {
-        core.undo();
-      }
-      
-      function redo () {
-        core.redo();
       }
     </script>
   </body>

@@ -32,8 +32,8 @@
   *
   * @param {!CoreAnimObject} coreObj : instance of the CoreAnimObject class.
   * @param {!(String|Number)} id : the id of this object.
-  * @param {!Number} cx : the cx coordinate of this object inside the svg element.
-  * @param {!Number} cy : the cy coordinate of this object inside the svg element.
+  * @param {?Number} cx : the cx coordinate of this object inside the svg element.
+  * @param {?Number} cy : the cy coordinate of this object inside the svg element.
   * @param {!Number} radius : the radius of this object.
   * @param {?String=} text : the inner text of this object, that will be displayed on the screen.
   * @param {?String=} label : the text underneath this object, that will be displayed on the screen.
@@ -151,8 +151,8 @@ var CircleObject = function (coreObj, id, cx, cy, radius, text, label, shapeClas
   /**
     * Move this object from its current position to a new position.
     *
-    * @param {!Number} x : the destination x coordinate.
-    * @param {!Number} y : the destination y coordinate.
+    * @param {!Number} cx : the destination cx coordinate.
+    * @param {!Number} cy : the destination cy coordinate.
     */
   this.moveShape = function (cx, cy) {
     if(cx == null || cy == null || isNaN(cx) || isNaN(cy)) return;
@@ -214,7 +214,7 @@ var CircleObject = function (coreObj, id, cx, cy, radius, text, label, shapeClas
       return coord - this.propObj.shape.r;
     } else if (point == EDGE_POSITION.BOTTOM) { 
       if (this.propObj.label.text == null) {
-        return coord + + this.propObj.shape.r;
+        return coord + this.propObj.shape.r;
       } else {
         return coord + this.propObj.shape.r + 50;
       }

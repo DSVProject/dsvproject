@@ -44,7 +44,7 @@ var StackArray = function(){
   // ARRAY TO STORE LEARNING MODE OBJECTS
   var learnObj = [];
   
-  // CONSTANTS FOR PSEUDOCODE GENERATION
+  // CONSTANTS FOR ALGORITHM TRACK GENERATION
   const PUSH = 0,
         POP = 1;
   
@@ -52,16 +52,16 @@ var StackArray = function(){
   coreObj.newStateList();
 
   var cap = 16;
-  var top = new Pointer();
+  var head = new Pointer();
   var mArray = [];
   
   for (var i=0; i<16; i++){
     mArray[i] = coreObj.newSquareObject(i, (i+1)*50, 300, null, i, null, null, null);  
   }
   
-  top.value = 0;
-  top.drawing = coreObj.newSquareObject("top", 50, 50, 0, "top", null, null, null);
-  top.edge = coreObj.newEdgeObject("top", top.drawing.getID(), mArray[top.value].getID(), null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.BOTTOM, EDGE_POSITION.TOP);
+  head.value = 0;
+  head.drawing = coreObj.newSquareObject("head", 50, 50, 0, "head", null, null, null);
+  head.edge = coreObj.newEdgeObject("head", head.drawing.getID(), mArray[head.value].getID(), null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.BOTTOM, EDGE_POSITION.TOP);
   
   coreObj.saveState();
   coreObj.begin(0);
@@ -71,29 +71,26 @@ var StackArray = function(){
     return coreObj;
   }
   
-  this.generatePseudocode = function (command) {
-    coreObj.clearPseudocode();
+  this.generateAlgorithm = function (command) {
+    coreObj.clearAlgorithm();
     
     switch (command) {
         case PUSH:
-          coreObj.addPseudocodeLine(0, "Array[top] = value;");
-          coreObj.addPseudocodeLine(1, "top++;");
+          coreObj.addAlgorithmLine(0, "Array[head] = value;");
+          coreObj.addAlgorithmLine(1, "head++;");
           break;
         case POP:
-          coreObj.addPseudocodeLine(0, "top--;");
-          coreObj.addPseudocodeLine(1, "Value = Array[top];");
-          coreObj.addPseudocodeLine(2, "Array[top] = '';");
+          coreObj.addAlgorithmLine(0, "head--;");
+          coreObj.addAlgorithmLine(1, "Value = Array[head];");
+          coreObj.addAlgorithmLine(2, "Array[head] = '';");
           break;
     }
   }
   
-  this.init = function() {
-    coreObj.clearLog();
-    //coreObj.saveState();
-    
-    top.value = 0;
-    top.drawing.setText(top.value);
-    top.edge.setIdObjectB(mArray[0].getID());
+  this.init = function() {    
+    head.value = 0;
+    head.drawing.setText(head.value);
+    head.edge.setIdObjectB(mArray[0].getID());
     
     for(var i=0; i<16; i++){
       mArray[i].setText(null);
@@ -103,116 +100,62 @@ var StackArray = function(){
     coreObj.begin();
   }
   
-  this.isEmpty = function () { return top.value == 0; }
+  this.isEmpty = function () { return head.value == 0; }
   
   this.push = function (item) {
-    if (top.value >= cap || item == "") {
+    if (head.value >= cap || item == "") {
+      coreObj.displayAlert(ALERT_TYPES.NEGATIVE, "The input should not be empty.");
       return false;
     }
     
     if (coreObj.newActionEnabled() == false) return false;
     
-    coreObj.clearLog();
-    
-    if (coreObj.isLearningMode()){
-      coreObj.clearPseudocode();
-      
-      learnObj["newValue"] = coreObj.newUserObject("newValue", 500, 75, 25, item, "learning", null, USER_OBJ_TYPE.VALUE, true, null);
-      learnObj["newTopPointer"] = coreObj.newUserObject("newTopPointer", top.edge.getCoordinateX2(), top.edge.getCoordinateY2(), 10, null, "learning", null, USER_OBJ_TYPE.MOVEMENT, null, top.edge.getID(), true, USER_TEXT_SOURCE.LABEL);
-      
-      for (var key in mArray) {
-        mArray[key].setIsValidTarget(true);
-        coreObj.saveState();
-      }
-      
-      coreObj.saveState("Use the grey circles to create the final state.");
-      coreObj.play(0);
-      
-    } else {
-      this.generatePseudocode(PUSH);
-      
-      mArray[top.value].setText(item);
-      coreObj.saveState("Inserting the new value", 0);
-  
-      top.value++;
-      top.drawing.setFill(defaultProperties["shape"]["fill"]["update"]);
-      coreObj.saveState();
-      
-      top.edge.setIdObjectB(mArray[top.value].getID());
-      top.drawing.setText(top.value);
-      top.drawing.setFill(defaultProperties["shape"]["fill"]["default"]);
-      coreObj.saveState("Update the top pointer.", 1);
-      
-      coreObj.play(coreObj.getAnimationDuration());
-    }
-    
-    /*
-    if (coreObj.isLearningMode()){
-      coreObj.clearPseudocode();
-      
-      learnObj["newValue"] = coreObj.newUserObject("newValue", 500, 75, 25, item, "learning", null, USER_OBJ_TYPE.VALUE, true, null);
-      learnObj["newTopPointer"] = coreObj.newUserObject("newTopPointer", top.edge.getCoordinateX2(), top.edge.getCoordinateY2(), 10, null, "learning", null, USER_OBJ_TYPE.MOVEMENT, null, top.edge.getID());
-      
-      for (var key in mArray) {
-        mArray[key].setIsValidTarget(true);
-      }
-      
-      coreObj.learnState();
-    }
-    
-    mArray[top.value].setText(item);
+    this.generateAlgorithm(PUSH);
+    coreObj.newStateList();
+
+    mArray[head.value].setText(item);
     coreObj.saveState("Inserting the new value", 0);
 
-    top.value++;
-    top.drawing.setFill(defaultProperties["shape"]["fill"]["update"]);
+    head.value++;
+    head.drawing.setFill(defaultProperties["shape"]["fill"]["update"]);
     coreObj.saveState();
 
-    top.edge.setIdObjectB(mArray[top.value].getID());
-    top.drawing.setText(top.value);
-    top.drawing.setFill(defaultProperties["shape"]["fill"]["default"]);
-    coreObj.saveVariableToWatch("top", top.value);
-    coreObj.saveVariableToWatch("isEmpty", this.isEmpty());
-    coreObj.saveState("Update the top pointer.", 1);
-    
-    if (!coreObj.isLearningMode()){
-      this.generatePseudocode(PUSH);
-      
-      coreObj.begin();
-    }
-    */
+    head.edge.setIdObjectB(mArray[head.value].getID());
+    head.drawing.setText(head.value);
+    head.drawing.setFill(defaultProperties["shape"]["fill"]["default"]);
+    coreObj.saveState("Update the head pointer.", 1);
+
+    coreObj.begin();
     
     return true;
   }
   
   this.pop = function () {
     if(this.isEmpty()){
+      coreObj.displayAlert(ALERT_TYPES.NEGATIVE, "The stack is already empty.");
       return false;
     }
+
+    this.generateAlgorithm(POP);
+    coreObj.newStateList();
     
-    coreObj.clearLog();
-    //coreObj.newAction();
-    this.generatePseudocode(POP);
-    //coreObj.saveState();
+    head.value--;
     
-    top.value--;
-    
-    top.drawing.setFill(defaultProperties["shape"]["fill"]["update"]);
+    head.drawing.setFill(defaultProperties["shape"]["fill"]["update"]);
     coreObj.saveState();
     
-    top.edge.setIdObjectB(mArray[top.value].getID());
+    head.edge.setIdObjectB(mArray[head.value].getID());
     
-    top.drawing.setText(top.value);
-    top.drawing.setFill(defaultProperties["shape"]["fill"]["default"]);
-    coreObj.saveVariableToWatch("top", top.value);
-    coreObj.saveVariableToWatch("isEmpty", this.isEmpty());
-    coreObj.saveState("Update the top pointer.", 0);
+    head.drawing.setText(head.value);
+    head.drawing.setFill(defaultProperties["shape"]["fill"]["default"]);
+    coreObj.saveState("Update the head pointer.", 0);
     
-    mArray[top.value].setFill(defaultProperties["shape"]["fill"]["delete"]);
+    mArray[head.value].setFill(defaultProperties["shape"]["fill"]["delete"]);
     coreObj.saveState(null, 1);
     
-    mArray[top.value].setText(null);
-    mArray[top.value].setFill(defaultProperties["shape"]["fill"]["default"]);
-    coreObj.saveState("Pop the top position.", 2);
+    mArray[head.value].setText(null);
+    mArray[head.value].setFill(defaultProperties["shape"]["fill"]["default"]);
+    coreObj.saveState("Pop the head position.", 2);
     
     coreObj.begin();
     
