@@ -53,7 +53,7 @@ background-color: #1abc9c;
 border-color: #1abc9c;
 }
 
-#pseudocode-panel .panel-body {
+#algorithm-panel .panel-body {
   height: 200px;
   overflow: auto;
   padding: 0px;

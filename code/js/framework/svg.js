@@ -24,6 +24,7 @@
 
 var zoom = d3.behavior.zoom();
 
+// this will make the svg container fit the screen size of client
 var w = window,
     d = document,
     e = d.documentElement,
@@ -41,7 +42,6 @@ var svgContainer = d3.select("#viz").append("svg")
     .call(zoom.on("zoom", rescale))
     .on("dblclick.zoom", null)
     .on("dblclick.", null);
-
 
 // this code enables panning and zooming
 var panGroup = svgContainer.append("g")

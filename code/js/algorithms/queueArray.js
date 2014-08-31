@@ -72,19 +72,19 @@ var QueueArray = function () {
     return coreObj;
   }
   
-  this.generatePseudocode = function (command) {
-    coreObj.clearPseudocode();
+  this.generateAlgorithm = function (command) {
+    coreObj.clearAlgorithm();
     
     switch (command) {
         case ENQUEUE:
-          coreObj.addPseudocodeLine(0, "Array[tail] = value;");
-          coreObj.addPseudocodeLine(1, "tail++;");
+          coreObj.addAlgorithmLine(0, "Array[tail] = value;");
+          coreObj.addAlgorithmLine(1, "tail++;");
           break;
         case DEQUEUE:
-          coreObj.addPseudocodeLine(0, "Value = Array[head];");
-          coreObj.addPseudocodeLine(1, "Array[head] = '';");
-          coreObj.addPseudocodeLine(2, "head++;");
-          coreObj.addPseudocodeLine(3, "if (head == tail) head = 0; tail = 0;");
+          coreObj.addAlgorithmLine(0, "Value = Array[head];");
+          coreObj.addAlgorithmLine(1, "Array[head] = '';");
+          coreObj.addAlgorithmLine(2, "head++;");
+          coreObj.addAlgorithmLine(3, "if (head == tail) head = 0; tail = 0;");
           break;
     }
   }
@@ -112,11 +112,12 @@ var QueueArray = function () {
           
   this.enqueue = function (item) {
     if (tail.value >= cap || item.trim() == "") {
-      coreObj.displayAlert("The input should not be empty.");
+      coreObj.displayAlert(ALERT_TYPES.NEGATIVE, "The input should not be empty.");
       return false;
     }
     
-    this.generatePseudocode(ENQUEUE);
+    this.generateAlgorithm(ENQUEUE);
+    coreObj.newStateList();
 
     mArray[tail.value].setText(item);
     coreObj.saveState("Inserting the new value", 0);
@@ -129,8 +130,6 @@ var QueueArray = function () {
 
     tail.drawing.setText(tail.value);
     tail.drawing.setFill(defaultProperties["shape"]["fill"]["default"]);
-    coreObj.saveVariableToWatch("head", head.value);
-    coreObj.saveVariableToWatch("tail", tail.value);
     coreObj.saveState("Update the tail pointer.", 1);
     
     coreObj.begin();
@@ -138,11 +137,12 @@ var QueueArray = function () {
     
   this.dequeue = function () {
     if (this.isEmpty()) {
-      coreObj.displayAlert("The queue is already empty.");
+      coreObj.displayAlert(ALERT_TYPES.NEGATIVE, "The queue is already empty.");
       return false;
     }
     
-    this.generatePseudocode(DEQUEUE);
+    this.generateAlgorithm(DEQUEUE);
+    coreObj.newStateList();
     
     mArray[head.value].setFill(defaultProperties["shape"]["fill"]["delete"]);
     coreObj.saveState(null, 0);
@@ -159,8 +159,6 @@ var QueueArray = function () {
     
     head.drawing.setText(head.value);
     head.drawing.setFill(defaultProperties["shape"]["fill"]["default"]);
-    coreObj.saveVariableToWatch("head", head.value);
-    coreObj.saveVariableToWatch("tail", tail.value);
     coreObj.saveState("Update the head pointer.", 2);
     
     if (head.value == tail.value) {

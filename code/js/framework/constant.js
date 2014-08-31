@@ -51,16 +51,19 @@ const SHAPE_POSITION = {
   }
 }
 
+/**
+  * SVG Shape names.
+  *
+  * @const 
+  */
 const SVG_CIRCLE = "circle";
 const SVG_RECT = "rect";
 const SVG_TEXT = "text";
 const SVG_LINE = "line";
 const SVG_MARKER = "marker";
 
-//Values in miliseconds
+// Values in miliseconds
 const DEFAULT_ANIMATION_DURATION = 500;
-
-var DEFERRED;
 
 /**
   * Values used by CoreAnimObject, to control the playing status of the animation.
@@ -117,49 +120,35 @@ const ORIENTATION = {
 const USER_OBJ_TYPE = {
   VALUE: 0,
   EDGE: 1,
-  DELETING: 2,
-  CREATED: 3
+  DELETING: 2
 };
 
+// Used in learning mode. Defined here to be used as a global variable.
+var DEFERRED;
+
 /**
-  * Values used when creating an instance of EdgeObject, for the learning mode to determine which object will be created.
-  * The names stand for the type and how many edges.
+  * Types of actions that can happen in the learning mode. These codes will be used when generating answer keys and user answers.
   *
   * @const 
   */
-const USER_TYPE_OBJ_CREATED = {
-  CIRCLE_EDGE_0: 0,
-  CIRCLE_EDGE_1: 1,
-  CIRCLE_EDGE_2: 2,
-  SQUARE_EDGE_0: 3,
-  SQUARE_EDGE_1: 4,
-};
-
-/**
-  * Values used when creating an instance of UserObject, for the learning mode to determine which text will be placed at a shape when updating an edge.
-  *
-  * @const 
-  */
-const USER_TEXT_SOURCE = {
-  LABEL: 0,
-  TEXT: 1
-};
-
 const LEARN_ACTION_CODES = {
   NEW_CIRCLE: 0,
   NEW_SQUARE: 1,
   DELETE_ITEM: 2,
-  SWAP_TEXT: 3,
-  UPDATE_TEXT: 4,
-  UPDATE_EDGE_A: 5,
-  UPDATE_EDGE_B: 6
+  UPDATE_TEXT: 3,
+  UPDATE_EDGE_A: 4,
+  UPDATE_EDGE_B: 5
 }
 
+/**
+  * Descripition of the learning mode actions. Used to print feedback to the user.
+  *
+  * @const 
+  */
 const LEARN_ACTION_STRINGS = {
-  NEW_CIRCLE: "Create new node",
-  NEW_SQUARE: "Create new node",
+  NEW_CIRCLE: "Create new node (Circle)",
+  NEW_SQUARE: "Create new node (Square)",
   DELETE_ITEM: "Delete node",
-  SWAP_TEXT: "Swap text",
   UPDATE_TEXT: "Update text",
   UPDATE_EDGE_A: "Update edge origin",
   UPDATE_EDGE_B: "Update edge end"
@@ -171,9 +160,9 @@ const LEARN_ACTION_STRINGS = {
   * @const 
   */
 const ALERT_TYPES = {
-  positive: "success",
-  negative: "danger",
-  information: "info"
+  POSITIVE: "success",
+  NEGATIVE: "danger",
+  INFORMATION: "info"
 }
 
 /**
@@ -196,7 +185,7 @@ const DEFAULT_CLASSES = {
     OBJECT_SELECTED:"selected"
   },
   PAGE:{
-    PSEUDOCODE:{
+    ALGORITHM:{
       HIGHLIGHT:"codeHighlight"
     }
   }
@@ -211,13 +200,13 @@ const DEFAULT_IDS = {
   PAGE:{
     LOG:"log",
     VARIABLE:"variables",
-    PSEUDOCODE:"pseudocode",
+    ALGORITHM:"algorithm",
     LEARNING_MODE:"chk-learn",
     ANIMATION_DURATION:"animation-duration",
     ALERT_PLACEHOLDER:"alert_placeholder"
   },
   HTML_ELEMENT:{
-    PSEUDOCODE_LINE:"line"
+    ALGORITHM_LINE:"line"
   },
   SVG_GROUP:{
     MAIN:"g-main",

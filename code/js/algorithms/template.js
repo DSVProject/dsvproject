@@ -50,10 +50,7 @@ var Template = function(){
   var self = this;
   var coreObj = new CoreObject();
   
-  // ARRAY TO STORE LEARNING MODE OBJECTS
-  var learnObj = [];
-  
-  // CONSTANTS FOR PSEUDOCODE GENERATION
+  // CONSTANTS FOR ALGORITHM TRACK GENERATION
   const PUSH = 0,
         POP = 1;
   
@@ -81,15 +78,15 @@ var Template = function(){
     return coreObj;
   }
   
-  this.generatePseudocode = function (command) {
-    coreObj.clearPseudocode();
+  this.generateAlgorithm = function (command) {
+    coreObj.clearAlgorithm();
     
     switch (command) {
         case PUSH:
-          coreObj.addPseudocodeLine(lineNo, "Instruction");
+          coreObj.addAlgorithmLine(lineNo, "Instruction");
           break;
         case POP:
-          coreObj.addPseudocodeLine(lineNo, "Instruction");
+          coreObj.addAlgorithmLine(lineNo, "Instruction");
           break;
     }
   }
