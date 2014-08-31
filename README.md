@@ -1,5 +1,5 @@
 # DSVProject
-![preview](dsvproject.github.io/dsvproject/documentation/userGuide/img/index.png)
+![preview](http://dsvproject.github.io/dsvproject/documentation/userGuide/img/index.png)
 
 This project was developed as a Summer Internship project by two former Computer Science students of Trinity College Dublin. The aim was to design and implement an extensible software framework that could allow continuation of the project by other interested parties, while generating a tool for online visual interaction with Algorithms and Data Structures that students could use to practice and test their knowledge.
 
