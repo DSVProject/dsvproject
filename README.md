@@ -5,7 +5,7 @@ This project was developed as a Summer Internship project by two former Computer
 
 It is an ongoing development and new functionalities are being implemented by the original programmers.
 
-You can see what we've done already in [this link](http://dsvproject.github.io/dsvproject)
+You can see what we've done already in [this link](http://dsvproject.github.io/dsvproject).
 
 ## Getting involved
 
