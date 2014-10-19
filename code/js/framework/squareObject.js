@@ -187,9 +187,9 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
   this.getEdgeCoordinateX = function (point) {
     var coord = this.propObj.shape.x;
 
-    if (point == EDGE_POSITION.RIGHT) {
+    if (point == EDGE_POSITION.RIGHT || point == EDGE_POSITION.RIGHT_UP || point == EDGE_POSITION.RIGHT_DOWN) {
       return coord + this.propObj.shape.width;
-    } else if (point == EDGE_POSITION.LEFT) { 
+    } else if (point == EDGE_POSITION.LEFT || point == EDGE_POSITION.LEFT_UP || point == EDGE_POSITION.LEFT_DOWN) { 
       return coord;
     } else { // TOP, CENTER OR BOTTOM
       return coord + (this.propObj.shape.width/2);
@@ -220,6 +220,12 @@ var SquareObject = function (coreObj, id, x, y, text, label, shapeClass, textCla
         return coord + this.propObj.shape.height + 50;
       }
     } else { // LEFT, CENTER OR RIGHT
+      if (point == EDGE_POSITION.RIGHT_DOWN || point == EDGE_POSITION.LEFT_DOWN) {
+        return coord + (this.propObj.shape.height/2 + 5);
+      } else if (point == EDGE_POSITION.RIGHT_UP || point == EDGE_POSITION.LEFT_UP) {
+        return coord + (this.propObj.shape.height/2 - 5);
+      }
+      
       return coord + (this.propObj.shape.height/2);
     }
   }
