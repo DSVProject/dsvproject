@@ -307,13 +307,13 @@ var EdgeObject = function (coreObj, id, idObjectA, idObjectB, edgeClass, edgeTyp
           } else if (point == EDGE_POSITION.BOTTOM) {
             this.propObj.edge.x2 = this.propObj.edge.x1;
             this.propObj.edge.y2 = this.propObj.edge.y1 + 25;
-          } else if (point == EDGE_POSITION.RIGHT) {
+          } else if (point == EDGE_POSITION.RIGHT || point == EDGE_POSITION.RIGHT_UP || point == EDGE_POSITION.RIGHT_DOWN) {
             this.propObj.edge.x2 = this.propObj.edge.x1 + 25;
-            this.propObj.edge.y2 = this.propObj.edge.y1;
+            this.propObj.edge.y2 = this.propObj.edge.y1; 
           } else if (point == EDGE_POSITION.TOP) {
             this.propObj.edge.x2 = this.propObj.edge.x1;
             this.propObj.edge.y2 = this.propObj.edge.y1 - 25;
-          } else if (point == EDGE_POSITION.LEFT) {
+          } else if (point == EDGE_POSITION.LEFT || point == EDGE_POSITION.LEFT_UP || point == EDGE_POSITION.LEFT_DOWN) {
             this.propObj.edge.x2 = this.propObj.edge.x1 - 25;
             this.propObj.edge.y2 = this.propObj.edge.y1;
           }

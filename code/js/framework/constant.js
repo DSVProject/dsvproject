@@ -97,7 +97,11 @@ const EDGE_POSITION = {
   TOP: 1,
   LEFT: 2,
   BOTTOM: 3,
-  RIGHT: 4
+  RIGHT: 4,
+  LEFT_UP: 5,
+  LEFT_DOWN: 6,
+  RIGHT_UP: 7,
+  RIGHT_DOWN: 8
 };
 
 /**
@@ -279,7 +283,7 @@ const defaultProperties = {
   edge:{
     "stroke":{
       "default":"black",
-      "null":"tomato"
+      "null":"#ccc"
     },
     "stroke-width":{
       "default":3,

@@ -159,8 +159,8 @@ var DoublyLinkedList = function () {
     var newNode = new Node();
 
     newNode.drawing = coreObj.newSquareObject(++counterID, 200, 200, null, null, "node", null, null);
-    newNode.edgeNext = coreObj.newEdgeObject(counterID + "n", newNode.drawing.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.RIGHT, EDGE_POSITION.LEFT);
-    newNode.edgePrev = coreObj.newEdgeObject(counterID + "p", newNode.drawing.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.LEFT, EDGE_POSITION.RIGHT);
+    newNode.edgeNext = coreObj.newEdgeObject(counterID + "n", newNode.drawing.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.RIGHT_DOWN, EDGE_POSITION.LEFT_DOWN);
+    newNode.edgePrev = coreObj.newEdgeObject(counterID + "p", newNode.drawing.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.LEFT_UP, EDGE_POSITION.RIGHT_UP);
 
     coreObj.saveState("Inserting new node.", 0);
 
@@ -192,7 +192,70 @@ var DoublyLinkedList = function () {
     //coreObj.repositionDAG(first.drawing, 100, 300, ORIENTATION.RIGHT);
     this.repositionDLL(first, 100, 300);
 
-    //tail.drawing.moveShape((N+1)*100, 300);
+    coreObj.saveVariableToWatch("first", first.item);
+    coreObj.saveVariableToWatch("last", last.item);
+    coreObj.saveState();
+
+    N++;
+
+    coreObj.begin();
+  }
+  
+  this.insertBefore = function (item, position) {
+    if (item.trim() == "") {
+      coreObj.displayAlert(ALERT_TYPES.NEGATIVE, "The input should not be empty.");
+      return false;
+    } else if (isNaN(position) || position.trim() == "") {
+      coreObj.displayAlert(ALERT_TYPES.NEGATIVE, "The position should be a numeric value.");
+      return false;
+    }
+     
+    this.generateAlgorithm(INSERT_BEFORE);
+    coreObj.newStateList();
+
+    if (this.isEmpty() || position < 0) {
+      this.insertFirst(item);
+    } else if (position > this.size()) {
+      this.insertLast(item);
+    } else {
+      var cNode = first;
+      
+      for (c = 0; c < position; c++) {
+        cNode = cNode.next;
+      }
+      
+      var newNode = new Node();
+
+      newNode.drawing = coreObj.newSquareObject(++counterID, 200, 200, null, null, "node", null, null);
+      newNode.edgeNext = coreObj.newEdgeObject(counterID + "n", newNode.drawing.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.RIGHT_DOWN, EDGE_POSITION.LEFT_DOWN);
+      newNode.edgePrev = coreObj.newEdgeObject(counterID + "p", newNode.drawing.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.LEFT_UP, EDGE_POSITION.RIGHT_UP);
+
+      coreObj.saveState("Inserting new node.", 0);
+
+      newNode.item = item;
+      newNode.drawing.setText(item);
+      coreObj.saveState("New node value is: " + item, 1);
+      
+      cNode.prev.next = newNode;
+      cNode.prev.edgeNext.setIdObjectB(newNode.drawing.getID());
+      coreObj.saveState("Update next pointer of pos.prev.")
+      
+      newNode.prev = cNode.prev;
+      newNode.edgePrev.setIdObjectB(cNode.prev.drawing.getID());
+      coreObj.saveState("Update prev pointer of newNode.")
+      
+      newNode.next = cNode;
+      newNode.edgeNext.setIdObjectB(cNode.drawing.getID());
+      coreObj.saveState("Update next pointer of newNode.")
+      
+      cNode.prev = newNode;
+      cNode.edgePrev.setIdObjectB(newNode.drawing.getID());
+      coreObj.saveState("Update prev pointer of pos.")
+    }
+
+    //coreObj.repositionDAG(first.drawing, 100, 300, ORIENTATION.RIGHT);
+    this.repositionDLL(first, 100, 300);
+    
     coreObj.saveVariableToWatch("first", first.item);
     coreObj.saveVariableToWatch("last", last.item);
     coreObj.saveState();
@@ -214,8 +277,8 @@ var DoublyLinkedList = function () {
     var newNode = new Node();
 
     newNode.drawing = coreObj.newSquareObject(++counterID, 200, 200, null, null, "node", null, null);
-    newNode.edgeNext = coreObj.newEdgeObject(counterID + "n", newNode.drawing.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.RIGHT, EDGE_POSITION.LEFT);
-    newNode.edgePrev = coreObj.newEdgeObject(counterID + "p", newNode.drawing.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.LEFT, EDGE_POSITION.RIGHT);
+    newNode.edgeNext = coreObj.newEdgeObject(counterID + "n", newNode.drawing.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.RIGHT_DOWN, EDGE_POSITION.LEFT_DOWN);
+    newNode.edgePrev = coreObj.newEdgeObject(counterID + "p", newNode.drawing.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.LEFT_UP, EDGE_POSITION.RIGHT_UP);
 
     coreObj.saveState("Inserting new node.", 0);
 
@@ -247,62 +310,6 @@ var DoublyLinkedList = function () {
     //coreObj.repositionDAG(first.drawing, 100, 300, ORIENTATION.RIGHT);
     this.repositionDLL(first, 100, 300);
 
-    //tail.drawing.moveShape((N+1)*100, 300);
-    coreObj.saveVariableToWatch("first", first.item);
-    coreObj.saveVariableToWatch("last", last.item);
-    coreObj.saveState();
-
-    N++;
-
-    coreObj.begin();
-  }
-  
-  this.insertBefore = function (item, position) {
-    if (item.trim() == "") {
-      coreObj.displayAlert(ALERT_TYPES.NEGATIVE, "The input should not be empty.");
-      return false;
-    } else if (isNaN(position)) {
-      coreObj.displayAlert(ALERT_TYPES.NEGATIVE, "The position should be a numeric value.");
-      return false;
-    }
-     
-    this.generateAlgorithm(INSERT_BEFORE);
-    coreObj.newStateList();
-
-    if (this.isEmpty() || position < 0) {
-      this.insertFirst(item);
-    } else if (position > this.size) {
-      this.insertLast(item);
-    } else {
-      var cNode;
-      
-      for (c = 0; c < position; c++) {
-        cNode = cNode.next;
-      }
-      
-      var newNode = new Node();
-
-      newNode.drawing = coreObj.newSquareObject(++counterID, 200, 200, null, null, "node", null, null);
-      newNode.edgeNext = coreObj.newEdgeObject(counterID + "n", newNode.drawing.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.RIGHT, EDGE_POSITION.LEFT);
-      newNode.edgePrev = coreObj.newEdgeObject(counterID + "p", newNode.drawing.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.LEFT, EDGE_POSITION.RIGHT);
-
-      coreObj.saveState("Inserting new node.", 0);
-
-      newNode.item = item;
-      newNode.drawing.setText(item);
-      coreObj.saveState("New node value is: " + item, 1);
-      
-      newNode.next = cNode;
-      newNode.edgeNext.setIdObjectB(cNode.drawing.getID());
-      cNode.prev = newNode;
-      cNode.edgePrev.setIdObjectB(newNode.drawing.getID());
-      
-      coreObj.saveState("Update the previous pointer of the old first.", 5)
-    }
-
-    //coreObj.repositionDAG(first.drawing, 100, 300, ORIENTATION.RIGHT);
-
-    //tail.drawing.moveShape((N+1)*100, 300);
     coreObj.saveVariableToWatch("first", first.item);
     coreObj.saveVariableToWatch("last", last.item);
     coreObj.saveState();
@@ -334,13 +341,16 @@ var DoublyLinkedList = function () {
       coreObj.saveState("The list had 1 item, so update first and last pointers.", 2);
     } else {
       first = first.next;
+      
       first.edgePrev.setIdObjectB(null);
+      coreObj.saveState();
       
       edgeFirstD.setIdObjectB(first.drawing.getID());
       coreObj.saveState("Update the first pointer.", 4);
 
       //coreObj.repositionDAG(first.drawing, 100, 300, ORIENTATION.RIGHT);
       this.repositionDLL(first, 100, 300);
+      
       coreObj.saveVariableToWatch("first", first.item);
       coreObj.saveVariableToWatch("last", last.item);
       coreObj.saveState();
@@ -374,13 +384,16 @@ var DoublyLinkedList = function () {
       coreObj.saveState("The list had 1 item, so update first and last pointers.", 2);
     } else {
       last = last.prev;
+      
       last.edgeNext.setIdObjectB(null);
+      coreObj.saveState();
       
       edgeLastD.setIdObjectB(last.drawing.getID());
       coreObj.saveState("Update the last pointer.", 4);
 
       //coreObj.repositionDAG(first.drawing, 100, 300, ORIENTATION.RIGHT);
       this.repositionDLL(first, 100, 300);
+      
       coreObj.saveVariableToWatch("first", first.item);
       coreObj.saveVariableToWatch("last", last.item);
       coreObj.saveState();
@@ -446,6 +459,7 @@ var DoublyLinkedList = function () {
     }
     
     if (first != null) this.repositionDLL(first, 100, 300);
+    
     coreObj.saveVariableToWatch("first", first.item);
     coreObj.saveVariableToWatch("last", last.item);
     coreObj.saveState();

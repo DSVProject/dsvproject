@@ -73,7 +73,7 @@
                       <input id="txt-insert-before-pos" type="text" class="form-control-2" maxlength="2" placeholder="pos">
                       <span class="input-group-btn">
                         <!-- Template: onclick function -->
-                        <button class="btn btn-default" type="submit" onclick="insertBefore()">
+                        <button class="btn btn-default" type="submit" onclick="insertBeforePos()">
                           <span class="glyphicon glyphicon-ok"></span>
                         </button>
                       </span>
@@ -161,6 +161,7 @@
           <div id="viz"></div>
         </div>
         <div id="div-panels" class="col-md-3 popover-dismiss" data-popover="popover" data-html="true" data-placement="left" title="Panels" data-content="In these panels you will find the <b>Algorithm Track</b>, a <b>Variable Watch</b> and a <b>Log</b> of what happened during the animation.">
+          <!--
           <div id="algorithm-panel" class="panel panel-first">
             <div class="panel-heading">
               <h3 class="panel-title">Algorithm Track</h3>
@@ -182,6 +183,7 @@
               </table>
             </div>
           </div>
+          -->
 
           <div id="log-panel" class="panel panel-first">
             <div class="panel-heading">
@@ -291,11 +293,12 @@
         input.val("");
       }
       
-      function insertBefore () {
+      function insertBeforePos(){
         var input = $("#txt-insert-before");
         var pos = $("#txt-insert-before-pos");
         
         dll.insertBefore(input.val().toUpperCase(), pos.val());
+        
         input.val("");
         pos.val("");
       }
