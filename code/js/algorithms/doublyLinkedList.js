@@ -409,7 +409,7 @@ var DoublyLinkedList = function () {
     if (this.isEmpty()) {
       return false;
       coreObj.displayAlert(ALERT_TYPES.NEGATIVE, "The list is already empty.");
-    } else if (isNaN(position)) {
+    } else if (isNaN(position) || position.trim() == "") {
       coreObj.displayAlert(ALERT_TYPES.NEGATIVE, "The position should be a numeric value.");
       return false;
     } else if (position < 0 || position > this.size()) {

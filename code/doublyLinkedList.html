@@ -160,8 +160,10 @@
         <div class="col-md-9">
           <div id="viz"></div>
         </div>
+        <div id="div-panels" class="col-md-3">
+        <!--
+
         <div id="div-panels" class="col-md-3 popover-dismiss" data-popover="popover" data-html="true" data-placement="left" title="Panels" data-content="In these panels you will find the <b>Algorithm Track</b>, a <b>Variable Watch</b> and a <b>Log</b> of what happened during the animation.">
-          <!--
           <div id="algorithm-panel" class="panel panel-first">
             <div class="panel-heading">
               <h3 class="panel-title">Algorithm Track</h3>
@@ -183,7 +185,7 @@
               </table>
             </div>
           </div>
-          -->
+          
 
           <div id="log-panel" class="panel panel-first">
             <div class="panel-heading">
@@ -197,6 +199,7 @@
           </div>
         </div>
       </div>
+      -->
       <div id = "alert_placeholder"></div>
     </div>
 
@@ -248,13 +251,13 @@
             <div id="div-panel-buttons" class="popover-dismiss" data-popover="popover" data-html="true" data-placement="top" title="Panel Buttons" data-content="After zooming or panning, use the <b>Reset Position</b> button to bring the visualisation to default size.<br>These three other buttons toggle the visibility of the panels.">
               <button type="button" class="btn btn-default navbar-btn" onclick="resetPos()">Reset Position</button>
               <div class="btn-group">
-                <button id="algorithm-btn" type="button" class="btn btn-default navbar-btn active" data-toggle="tooltip" data-placement="top" title="Algorithm Track">
+                <button id="algorithm-btn" type="button" class="btn btn-default navbar-btn active" data-toggle="tooltip" data-placement="top" title="Algorithm Track" disabled="true">
                   <span class="glyphicon glyphicon-list"></span>
                 </button>
-                <button id="variables-btn" type="button" class="btn btn-default navbar-btn active" data-toggle="tooltip" data-placement="top" title="Variables">
+                <button id="variables-btn" type="button" class="btn btn-default navbar-btn active" data-toggle="tooltip" data-placement="top" title="Variables" disabled="true">
                   <span class="glyphicon glyphicon-eye-open"></span>
                 </button>
-                <button id="log-btn" type="button" class="btn btn-default navbar-btn active" data-toggle="tooltip" data-placement="top" title="Log">
+                <button id="log-btn" type="button" class="btn btn-default navbar-btn active" data-toggle="tooltip" data-placement="top" title="Log" disabled="true">
                   <span class="glyphicon glyphicon-list-alt"></span>
                 </button>
               </div>
