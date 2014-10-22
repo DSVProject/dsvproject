@@ -246,7 +246,7 @@ var DoublyLinkedList = function () {
         edgeFirstD.setIdObjectB(first.drawing.getID());
         coreObj.saveState("Update the first pointer.", 7);
       }
-    } else if (position > this.size()) {
+    } else if (position >= this.size()) {
       if (this.isEmpty()) {
         first = last = newNode;
         edgeFirstD.setIdObjectB(newNode.drawing.getID());
