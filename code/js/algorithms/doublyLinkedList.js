@@ -212,29 +212,67 @@ var DoublyLinkedList = function () {
      
     this.generateAlgorithm(INSERT_BEFORE);
     coreObj.newStateList();
+    
+    var newNode = new Node();
 
-    if (this.isEmpty() || position < 0) {
-      this.insertFirst(item);
+    newNode.drawing = coreObj.newSquareObject(++counterID, 200, 200, null, null, "node", null, null);
+    newNode.edgeNext = coreObj.newEdgeObject(counterID + "n", newNode.drawing.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.RIGHT_DOWN, EDGE_POSITION.LEFT_DOWN);
+    newNode.edgePrev = coreObj.newEdgeObject(counterID + "p", newNode.drawing.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.LEFT_UP, EDGE_POSITION.RIGHT_UP);
+
+    coreObj.saveState("Inserting new node.", 0);
+
+    newNode.item = item;
+    newNode.drawing.setText(item);
+    coreObj.saveState("New node value is: " + item, 1);
+
+    if (this.isEmpty() || position <= 0) {
+      if (this.isEmpty()) {
+        first = last = newNode;
+        edgeFirstD.setIdObjectB(newNode.drawing.getID());
+        edgeLastD.setIdObjectB(newNode.drawing.getID());
+
+        coreObj.saveState("The list was empty, so update first and last pointers.", 3);
+      } else {      
+        newNode.next = first;
+        newNode.edgeNext.setIdObjectB(first.drawing.getID());
+        coreObj.saveState("Update the next pointer of the new node.", 5)
+
+        first.prev = newNode;
+        first.edgePrev.setIdObjectB(newNode.drawing.getID());
+
+        coreObj.saveState("Update the previous pointer of the old first.", 6)
+
+        first = first.prev;
+        edgeFirstD.setIdObjectB(first.drawing.getID());
+        coreObj.saveState("Update the first pointer.", 7);
+      }
     } else if (position > this.size()) {
-      this.insertLast(item);
+      if (this.isEmpty()) {
+        first = last = newNode;
+        edgeFirstD.setIdObjectB(newNode.drawing.getID());
+        edgeLastD.setIdObjectB(newNode.drawing.getID());
+
+        coreObj.saveState("The list was empty, so update first and last pointers.", 3);
+      } else {      
+        newNode.prev = last;
+        newNode.edgePrev.setIdObjectB(last.drawing.getID());
+        coreObj.saveState("Update the previous pointer of the new node.", 5)
+
+        last.next = newNode;
+        last.edgeNext.setIdObjectB(newNode.drawing.getID());
+
+        coreObj.saveState("Update the next pointer of the old last.", 6)
+
+        last = last.next;
+        edgeLastD.setIdObjectB(last.drawing.getID());
+        coreObj.saveState("Update the last pointer.", 7);
+      }
     } else {
       var cNode = first;
       
       for (c = 0; c < position; c++) {
         cNode = cNode.next;
       }
-      
-      var newNode = new Node();
-
-      newNode.drawing = coreObj.newSquareObject(++counterID, 200, 200, null, null, "node", null, null);
-      newNode.edgeNext = coreObj.newEdgeObject(counterID + "n", newNode.drawing.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.RIGHT_DOWN, EDGE_POSITION.LEFT_DOWN);
-      newNode.edgePrev = coreObj.newEdgeObject(counterID + "p", newNode.drawing.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.LEFT_UP, EDGE_POSITION.RIGHT_UP);
-
-      coreObj.saveState("Inserting new node.", 0);
-
-      newNode.item = item;
-      newNode.drawing.setText(item);
-      coreObj.saveState("New node value is: " + item, 1);
       
       cNode.prev.next = newNode;
       cNode.prev.edgeNext.setIdObjectB(newNode.drawing.getID());
