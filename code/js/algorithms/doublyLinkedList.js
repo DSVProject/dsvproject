@@ -51,8 +51,8 @@ var DoublyLinkedList = function () {
   var N = 0;
   var counterID = 0;
   
-  var firstD = coreObj.newSquareObject("first", 50, 50, "first", null, null, null, "pointer");
-  var lastD = coreObj.newSquareObject("last", 150, 50, "last", null, null, null, "pointer");
+  var firstD = coreObj.newSquareObject("first", 50, 50, "head", null, null, null, "pointer");
+  var lastD = coreObj.newSquareObject("last", 150, 50, "tail", null, null, null, "pointer");
   var edgeFirstD = coreObj.newEdgeObject("first", firstD.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.BOTTOM, EDGE_POSITION.TOP);
   var edgeLastD = coreObj.newEdgeObject("last", lastD.getID(), null, null, EDGE_TYPE.UNIDIRECTIONAL, EDGE_POSITION.BOTTOM, EDGE_POSITION.TOP);
 
